@@ -1,0 +1,23 @@
+name: example
+version: 1.0.0
+
+publish_to: "none"
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_fortune_wheel:
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+dependency_overrides:
+  flutter_fortune_wheel:
+    path: ../
+
+flutter:
+  uses-material-design: true
