@@ -1,3 +1,3 @@
-## [0.0.1] - TODO: Add release date.
+## [0.0.1] - 2020-07-06
 
-* TODO: Describe initial release.
+initial draft of the fortune wheel
