@@ -66,10 +66,20 @@ class _FortuneWheelState extends State<FortuneWheel>
     }
 
     final smallerSide = getSmallerSide(constraints);
-    final offset = Offset(
-      (constraints.maxWidth - smallerSide) / 2,
-      (constraints.maxHeight - smallerSide) / 2,
-    );
+    Offset offset = Offset(0, 0);
+    if (indicator.alignment == Alignment.topCenter) {
+      offset = Offset(0, (constraints.maxHeight - smallerSide) / 2);
+    }
+    if (indicator.alignment == Alignment.bottomCenter) {
+      offset = Offset(0, -(constraints.maxHeight - smallerSide) / 2);
+    }
+    if (indicator.alignment == Alignment.centerLeft) {
+      offset = Offset((constraints.maxWidth - smallerSide) / 2, 0);
+    }
+    if (indicator.alignment == Alignment.centerRight) {
+      offset = Offset(-(constraints.maxWidth - smallerSide) / 2, 0);
+    }
+    // TODO: implement topLeft, topRight, bottomLeft and bottomRight alignments
     return Align(
       alignment: indicator.alignment,
       child: Transform.translate(
