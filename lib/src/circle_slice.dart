@@ -177,11 +177,14 @@ class CircleSliceImpl extends StatelessWidget {
     Key key,
     this.child,
     @required this.radius,
-    this.fillColor,
-    this.strokeColor,
+    @required this.fillColor,
+    @required this.strokeColor,
     this.strokeWidth = 1,
     @required this.angle,
   })  : assert(radius > 0),
+        assert(fillColor != null),
+        assert(strokeColor != null),
+        assert(angle != null),
         super(key: key);
 
   @override
