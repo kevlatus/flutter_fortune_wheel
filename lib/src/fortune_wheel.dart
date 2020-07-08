@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'indicator.dart';
 import 'sliced_circle.dart';
 import 'triangle_indicator.dart';
 import 'util.dart';
@@ -10,7 +11,7 @@ class FortuneWheel extends StatefulWidget {
   final int rotationCount;
   final Duration minDuration;
   final Duration maxDuration;
-  final Widget topIndicator;
+  final List<FortuneWheelIndicator> indicators;
 
   const FortuneWheel({
     Key key,
@@ -19,7 +20,12 @@ class FortuneWheel extends StatefulWidget {
     this.selected = 0,
     this.minDuration = const Duration(seconds: 3),
     this.maxDuration = const Duration(seconds: 3),
-    this.topIndicator = const TriangleIndicator(),
+    this.indicators = const <FortuneWheelIndicator>[
+      const FortuneWheelIndicator(
+        alignment: Alignment.topLeft,
+        child: const TriangleIndicator(),
+      ),
+    ],
   })  : assert(slices != null && slices.length > 1),
         assert(selected >= 0 && selected < slices.length),
         super(key: key);
@@ -51,8 +57,11 @@ class _FortuneWheelState extends State<FortuneWheel>
     );
   }
 
-  Widget _buildTopIndicator(BoxConstraints constraints) {
-    if (widget.topIndicator == null) {
+  Widget _buildIndicator(
+    FortuneWheelIndicator indicator,
+    BoxConstraints constraints,
+  ) {
+    if (indicator.child == null) {
       return Container();
     }
 
@@ -62,10 +71,10 @@ class _FortuneWheelState extends State<FortuneWheel>
       (constraints.maxHeight - smallerSide) / 2,
     );
     return Align(
-      alignment: Alignment.topCenter,
+      alignment: indicator.alignment,
       child: Transform.translate(
         offset: offset,
-        child: widget.topIndicator,
+        child: indicator.child,
       ),
     );
   }
@@ -120,7 +129,9 @@ class _FortuneWheelState extends State<FortuneWheel>
                 ),
               ),
             ),
-            _buildTopIndicator(constraints),
+            ...widget.indicators
+                .map((indicator) => _buildIndicator(indicator, constraints))
+                .toList(),
           ],
         );
       },
