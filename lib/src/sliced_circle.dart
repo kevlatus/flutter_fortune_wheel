@@ -31,7 +31,7 @@ class SlicedCircle extends StatelessWidget {
     final anglePerChild = kPiDouble / slices.length;
 
     return LayoutBuilder(builder: (context, constraints) {
-      final smallerSide = Math.min(constraints.maxWidth, constraints.maxHeight);
+      final smallerSide = getSmallerSide(constraints);
 
       return Transform.translate(
         offset: Offset(constraints.maxWidth / 2, constraints.maxHeight / 2),
