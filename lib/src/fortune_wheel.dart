@@ -80,23 +80,26 @@ class _FortuneWheelState extends State<FortuneWheel>
     }
     if (indicator.alignment == Alignment.bottomCenter) {
       offset = Offset(0, -marginY);
+      angle = Math.pi;
     }
     if (indicator.alignment == Alignment.centerLeft) {
       offset = Offset(marginX, 0);
+      angle = -Math.pi * 0.5;
     }
     if (indicator.alignment == Alignment.centerRight) {
       offset = Offset(-marginX, 0);
+      angle = Math.pi * 0.5;
     }
     if (indicator.alignment == Alignment.topLeft) {
       offset = Offset(marginX + topRightCircleX, marginY + topRightCircleY);
       angle = -Math.pi * 0.25;
     }
     if (indicator.alignment == Alignment.topRight) {
-      offset = Offset(marginX - topRightCircleX, marginY + topRightCircleY);
+      offset = Offset(-marginX - topRightCircleX, marginY + topRightCircleY);
       angle = Math.pi * 0.25;
     }
     if (indicator.alignment == Alignment.bottomRight) {
-      offset = Offset(marginX - topRightCircleX, -marginY - topRightCircleY);
+      offset = Offset(-marginX - topRightCircleX, -marginY - topRightCircleY);
       angle = Math.pi * 0.75;
     }
     if (indicator.alignment == Alignment.bottomLeft) {
