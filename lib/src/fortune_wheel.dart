@@ -1,3 +1,5 @@
+import 'dart:math' as Math;
+
 import 'package:flutter/material.dart';
 
 import 'indicator.dart';
@@ -22,7 +24,7 @@ class FortuneWheel extends StatefulWidget {
     this.maxDuration = const Duration(seconds: 3),
     this.indicators = const <FortuneWheelIndicator>[
       const FortuneWheelIndicator(
-        alignment: Alignment.topLeft,
+        alignment: Alignment.topCenter,
         child: const TriangleIndicator(),
       ),
     ],
@@ -66,25 +68,49 @@ class _FortuneWheelState extends State<FortuneWheel>
     }
 
     final smallerSide = getSmallerSide(constraints);
+    final radius = smallerSide / 2;
+    final marginX = (constraints.maxWidth - smallerSide) / 2;
+    final marginY = (constraints.maxHeight - smallerSide) / 2;
+    final topRightCircleX = (radius - Math.cos(Math.pi / 4) * radius);
+    final topRightCircleY = (radius - Math.sin(Math.pi / 4) * radius);
     Offset offset = Offset(0, 0);
+    double angle = 0;
     if (indicator.alignment == Alignment.topCenter) {
-      offset = Offset(0, (constraints.maxHeight - smallerSide) / 2);
+      offset = Offset(0, marginY);
     }
     if (indicator.alignment == Alignment.bottomCenter) {
-      offset = Offset(0, -(constraints.maxHeight - smallerSide) / 2);
+      offset = Offset(0, -marginY);
     }
     if (indicator.alignment == Alignment.centerLeft) {
-      offset = Offset((constraints.maxWidth - smallerSide) / 2, 0);
+      offset = Offset(marginX, 0);
     }
     if (indicator.alignment == Alignment.centerRight) {
-      offset = Offset(-(constraints.maxWidth - smallerSide) / 2, 0);
+      offset = Offset(-marginX, 0);
     }
-    // TODO: implement topLeft, topRight, bottomLeft and bottomRight alignments
+    if (indicator.alignment == Alignment.topLeft) {
+      offset = Offset(marginX + topRightCircleX, marginY + topRightCircleY);
+      angle = -Math.pi * 0.25;
+    }
+    if (indicator.alignment == Alignment.topRight) {
+      offset = Offset(marginX - topRightCircleX, marginY + topRightCircleY);
+      angle = Math.pi * 0.25;
+    }
+    if (indicator.alignment == Alignment.bottomRight) {
+      offset = Offset(marginX - topRightCircleX, -marginY - topRightCircleY);
+      angle = Math.pi * 0.75;
+    }
+    if (indicator.alignment == Alignment.bottomLeft) {
+      offset = Offset(marginX + topRightCircleX, -marginY - topRightCircleY);
+      angle = Math.pi * 1.25;
+    }
     return Align(
       alignment: indicator.alignment,
       child: Transform.translate(
         offset: offset,
-        child: indicator.child,
+        child: Transform.rotate(
+          angle: angle,
+          child: indicator.child,
+        ),
       ),
     );
   }
