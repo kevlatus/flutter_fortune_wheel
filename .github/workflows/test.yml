@@ -1,8 +1,7 @@
-name: Coverage
+name: Test
 on:
   push:
-    branches:
-      - main
+  pull_request:
 
 jobs:
   build:
@@ -18,9 +17,4 @@ jobs:
           channel: 'beta'
 
       - run: flutter pub get
-      - run: flutter test --coverage
-
-      - name: Upload coverage to Coveralls
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - run: flutter test
