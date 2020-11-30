@@ -2,9 +2,8 @@ import 'dart:math' as Math;
 
 import 'package:flutter/material.dart';
 
-import 'indicator.dart';
+import 'indicators/indicators.dart';
 import 'sliced_circle.dart';
-import 'triangle_indicator.dart';
 import 'util.dart';
 
 class FortuneWheel extends StatefulWidget {

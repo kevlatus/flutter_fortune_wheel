@@ -2,7 +2,7 @@ import 'dart:math' as Math;
 
 import 'package:flutter/material.dart';
 
-import 'triangle.dart';
+import '../triangle.dart';
 
 class TriangleIndicator extends StatelessWidget {
   final Color color;
