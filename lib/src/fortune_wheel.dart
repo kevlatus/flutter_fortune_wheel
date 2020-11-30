@@ -2,6 +2,7 @@ import 'dart:math' as Math;
 
 import 'package:flutter/material.dart';
 
+import 'circle_slice.dart';
 import 'indicators/indicators.dart';
 import 'sliced_circle.dart';
 import 'util.dart';

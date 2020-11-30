@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_fortune_wheel/src/circle_slice.dart';
 import 'package:flutter_fortune_wheel/src/sliced_circle.dart';
 import 'package:flutter_test/flutter_test.dart';
 

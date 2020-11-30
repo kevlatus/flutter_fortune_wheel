@@ -1,29 +1,15 @@
-import 'dart:math' as Math;
-
 import 'package:flutter/material.dart';
 
 import 'circle_slice.dart';
 import 'util.dart';
 
-class CircleSlice {
-  final Color fillColor;
-  final Color strokeColor;
-  final double strokeWidth;
-  final Widget child;
-
-  const CircleSlice({
-    this.fillColor,
-    this.strokeColor,
-    this.strokeWidth = 1,
-    this.child,
-  }) : assert(strokeWidth != null);
-}
-
 class SlicedCircle extends StatelessWidget {
   final List<CircleSlice> slices;
 
-  const SlicedCircle({Key key, @required this.slices})
-      : assert(slices != null && slices.length > 1),
+  const SlicedCircle({
+    Key key,
+    @required this.slices,
+  })  : assert(slices != null && slices.length > 1),
         super(key: key);
 
   @override
