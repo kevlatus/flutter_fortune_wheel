@@ -8,12 +8,15 @@ import 'sliced_circle.dart';
 import 'util.dart';
 
 class FortuneWheel extends StatefulWidget {
+  /// A list of circle slices this fortune wheel should contain.
+  /// Must not be null and contain at least 2 slices.
   final List<CircleSlice> slices;
   final int selected;
   final int rotationCount;
   final Duration minDuration;
   final Duration maxDuration;
   final List<FortuneWheelIndicator> indicators;
+  final bool animateFirst;
 
   const FortuneWheel({
     Key key,
@@ -22,6 +25,7 @@ class FortuneWheel extends StatefulWidget {
     this.selected = 0,
     this.minDuration = const Duration(seconds: 3),
     this.maxDuration = const Duration(seconds: 3),
+    this.animateFirst = false,
     this.indicators = const <FortuneWheelIndicator>[
       const FortuneWheelIndicator(
         alignment: Alignment.topCenter,
@@ -41,21 +45,33 @@ class _FortuneWheelState extends State<FortuneWheel>
   AnimationController _controller;
   Animation<double> _animation;
 
-  double _getMaxAngle() {
-    return -kPiDouble * (widget.slices.length * widget.rotationCount);
-  }
+  double get _sliceAngle => -1 * kPiDouble * widget.rotationCount;
 
-  double _getTargetAngle() {
+  double get _maxAngle => widget.slices.length * _sliceAngle;
+
+  double get _targetAngle {
     final previousRotations = widget.selected / widget.rotationCount;
     final itemScale =
         widget.slices.length * widget.slices.length * widget.rotationCount;
     return previousRotations + widget.selected / itemScale;
   }
 
-  Tween<double> _getAngleTween() {
-    return Tween(
-      begin: 0.0,
-      end: _getMaxAngle(),
+  Tween<double> get _angleTween => Tween(
+        begin: 0,
+        end: _maxAngle,
+      );
+
+  void _animateRoll() {
+    double ensureAnimationValue = _targetAngle - 0.1;
+    if (ensureAnimationValue < 0) {
+      ensureAnimationValue += 0.2;
+    }
+    _controller.value = ensureAnimationValue;
+
+    _controller.animateTo(
+      _targetAngle,
+      duration: rangedRandomDuration(widget.minDuration, widget.maxDuration),
+      curve: Curves.easeOutExpo,
     );
   }
 
@@ -122,7 +138,11 @@ class _FortuneWheelState extends State<FortuneWheel>
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this);
-    _animation = _controller.drive(_getAngleTween());
+    _animation = _controller.drive(_angleTween);
+
+    if (widget.animateFirst) {
+      _animateRoll();
+    }
   }
 
   @override
@@ -130,14 +150,9 @@ class _FortuneWheelState extends State<FortuneWheel>
     super.didUpdateWidget(oldWidget);
 
     if (widget.slices != oldWidget.slices) {
-      _animation = _controller.drive(_getAngleTween());
+      _animation = _controller.drive(_angleTween);
     }
-
-    _controller.animateTo(
-      _getTargetAngle(),
-      duration: rangedRandomDuration(widget.minDuration, widget.maxDuration),
-      curve: Curves.easeOutExpo,
-    );
+    _animateRoll();
   }
 
   @override

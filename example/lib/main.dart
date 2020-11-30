@@ -32,16 +32,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final wheelFields = <Widget>[
-      Text('100.000'),
-      Text('10'),
-      Text('100.000'),
-      Text('10'),
-      Text('1.000.000'),
-      Text('100.000'),
-      Text('10'),
-      Text('1.000.000'),
-    ];
+    final wheelFields = <String>['1', '2', '3', '4', '5', '6', '7', '8'];
 
     final rollButton = RaisedButton(
       child: Text('Roll'),
@@ -99,9 +90,11 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               children: [
                 actions,
+                Text('Rolled Value: ${wheelFields[_value]}'),
                 Expanded(
                   child: FortuneWheel(
                     selected: _value,
+                    animateFirst: true,
                     indicators: [
                       FortuneWheelIndicator(
                         alignment: _alignment,
@@ -109,7 +102,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ],
                     slices: wheelFields.map((e) {
-                      return CircleSlice(child: e);
+                      return CircleSlice(child: Text(e));
                     }).toList(),
                   ),
                 ),
