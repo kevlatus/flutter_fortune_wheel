@@ -1,6 +1,6 @@
 name: flutter_fortune_wheel
 description: An easy-to-use and customizable wheel of fortune for Flutter on all platforms.
-version: 0.0.4
+version: 0.0.5
 homepage: https://github.com/kevlatus/flutter_fortune_wheel
 repository: https://github.com/kevlatus/flutter_fortune_wheel
 documentation: https://github.com/kevlatus/flutter_fortune_wheel#readme

@@ -1,6 +1,7 @@
-## [0.0.4] - 2020-12-11
+## [0.0.5] - 2020-12-11
 
-add animation types and start/end callbacks
+ - add animation types and start/end callbacks
+ - only animate when the selected value changes
 
 ## [0.0.3] - 2020-12-02
 
