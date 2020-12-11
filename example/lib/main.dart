@@ -94,7 +94,13 @@ class _HomePageState extends State<HomePage> {
                 Expanded(
                   child: FortuneWheel(
                     selected: _value,
-                    animateFirst: true,
+                    animation: FortuneWheelAnimation.Roll,
+                    onAnimationStart: () {
+                      print('Animation start');
+                    },
+                    onAnimationEnd: () {
+                      print('Animation end');
+                    },
                     indicators: [
                       FortuneWheelIndicator(
                         alignment: _alignment,

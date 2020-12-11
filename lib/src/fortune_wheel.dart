@@ -7,6 +7,12 @@ import 'indicators/indicators.dart';
 import 'sliced_circle.dart';
 import 'util.dart';
 
+enum FortuneWheelAnimation {
+  Roll,
+  // TODO: Move,
+  None,
+}
+
 class FortuneWheel extends StatefulWidget {
   /// A list of circle slices this fortune wheel should contain.
   /// Must not be null and contain at least 2 slices.
@@ -16,7 +22,9 @@ class FortuneWheel extends StatefulWidget {
   final Duration minDuration;
   final Duration maxDuration;
   final List<FortuneWheelIndicator> indicators;
-  final bool animateFirst;
+  final FortuneWheelAnimation animation;
+  final VoidCallback onAnimationStart;
+  final VoidCallback onAnimationEnd;
 
   const FortuneWheel({
     Key key,
@@ -25,15 +33,18 @@ class FortuneWheel extends StatefulWidget {
     this.selected = 0,
     this.minDuration = const Duration(seconds: 3),
     this.maxDuration = const Duration(seconds: 3),
-    this.animateFirst = false,
+    this.animation = FortuneWheelAnimation.Roll,
     this.indicators = const <FortuneWheelIndicator>[
       const FortuneWheelIndicator(
         alignment: Alignment.topCenter,
         child: const TriangleIndicator(),
       ),
     ],
+    this.onAnimationStart,
+    this.onAnimationEnd,
   })  : assert(slices != null && slices.length > 1),
         assert(selected >= 0 && selected < slices.length),
+        assert(animation != null),
         super(key: key);
 
   @override
@@ -61,18 +72,38 @@ class _FortuneWheelState extends State<FortuneWheel>
         end: _maxAngle,
       );
 
-  void _animateRoll() {
+  Future _animateRoll() async {
     double ensureAnimationValue = _targetAngle - 0.1;
     if (ensureAnimationValue < 0) {
       ensureAnimationValue += 0.2;
     }
     _controller.value = ensureAnimationValue;
 
-    _controller.animateTo(
+    await _controller.animateTo(
       _targetAngle,
       duration: rangedRandomDuration(widget.minDuration, widget.maxDuration),
       curve: Curves.easeOutExpo,
     );
+  }
+
+  Future _animateNone() async {
+    _controller.value = _targetAngle;
+  }
+
+  void _animate() async {
+    if (widget.onAnimationStart != null) {
+      widget.onAnimationStart();
+    }
+
+    if (widget.animation == FortuneWheelAnimation.Roll) {
+      await _animateRoll();
+    } else if (widget.animation == FortuneWheelAnimation.None) {
+      await _animateNone();
+    }
+
+    if (widget.onAnimationEnd != null) {
+      widget.onAnimationEnd();
+    }
   }
 
   Widget _buildIndicator(
@@ -139,10 +170,7 @@ class _FortuneWheelState extends State<FortuneWheel>
     super.initState();
     _controller = AnimationController(vsync: this);
     _animation = _controller.drive(_angleTween);
-
-    if (widget.animateFirst) {
-      _animateRoll();
-    }
+    _animate();
   }
 
   @override
@@ -152,7 +180,7 @@ class _FortuneWheelState extends State<FortuneWheel>
     if (widget.slices != oldWidget.slices) {
       _animation = _controller.drive(_angleTween);
     }
-    _animateRoll();
+    _animate();
   }
 
   @override
