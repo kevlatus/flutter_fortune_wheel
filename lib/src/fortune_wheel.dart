@@ -1,6 +1,7 @@
 import 'dart:math' as Math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import 'circle_slice.dart';
 import 'indicators/indicators.dart';
@@ -55,6 +56,7 @@ class _FortuneWheelState extends State<FortuneWheel>
     with SingleTickerProviderStateMixin {
   AnimationController _controller;
   Animation<double> _animation;
+  bool _isAnimating = false;
 
   double get _sliceAngle => -1 * kPiDouble * widget.rotationCount;
 
@@ -91,8 +93,11 @@ class _FortuneWheelState extends State<FortuneWheel>
   }
 
   void _animate() async {
-    if (widget.onAnimationStart != null) {
-      widget.onAnimationStart();
+    if (widget.onAnimationStart != null && !_isAnimating) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        _isAnimating = true;
+        widget.onAnimationStart();
+      });
     }
 
     if (widget.animation == FortuneWheelAnimation.Roll) {
@@ -101,8 +106,11 @@ class _FortuneWheelState extends State<FortuneWheel>
       await _animateNone();
     }
 
-    if (widget.onAnimationEnd != null) {
-      widget.onAnimationEnd();
+    if (widget.onAnimationEnd != null && _isAnimating) {
+      SchedulerBinding.instance.addPostFrameCallback((_) {
+        widget.onAnimationEnd();
+        _isAnimating = false;
+      });
     }
   }
 
@@ -177,10 +185,14 @@ class _FortuneWheelState extends State<FortuneWheel>
   void didUpdateWidget(FortuneWheel oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (widget.slices != oldWidget.slices) {
+    if (widget.slices.length != oldWidget.slices.length) {
       _animation = _controller.drive(_angleTween);
     }
-    _animate();
+
+    // TODO: find a way to select same value in a row
+    if (oldWidget.selected != widget.selected) {
+      _animate();
+    }
   }
 
   @override

@@ -28,6 +28,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _value = 0;
+  bool _isAnimating = false;
   Alignment _alignment = Alignment.topCenter;
 
   @override
@@ -91,15 +92,22 @@ class _HomePageState extends State<HomePage> {
               children: [
                 actions,
                 Text('Rolled Value: ${wheelFields[_value]}'),
+                Text('Is animating: $_isAnimating'),
                 Expanded(
                   child: FortuneWheel(
                     selected: _value,
-                    animation: FortuneWheelAnimation.Roll,
+                    animation: FortuneWheelAnimation.None,
                     onAnimationStart: () {
-                      print('Animation start');
+                      setState(() {
+                        _isAnimating = true;
+                      });
+                      print('animation start');
                     },
                     onAnimationEnd: () {
-                      print('Animation end');
+                      setState(() {
+                        _isAnimating = false;
+                      });
+                      print('animation end');
                     },
                     indicators: [
                       FortuneWheelIndicator(
