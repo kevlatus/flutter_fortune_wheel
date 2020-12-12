@@ -94,9 +94,11 @@ class _FortuneWheelState extends State<FortuneWheel>
 
   void _animate() async {
     if (widget.onAnimationStart != null && !_isAnimating) {
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        _isAnimating = true;
-        widget.onAnimationStart();
+      await Future.delayed(Duration.zero, () {
+        setState(() {
+          widget.onAnimationStart();
+          _isAnimating = true;
+        });
       });
     }
 
@@ -107,9 +109,11 @@ class _FortuneWheelState extends State<FortuneWheel>
     }
 
     if (widget.onAnimationEnd != null && _isAnimating) {
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        widget.onAnimationEnd();
-        _isAnimating = false;
+      await Future.delayed(Duration.zero, () {
+        setState(() {
+          _isAnimating = false;
+          widget.onAnimationEnd();
+        });
       });
     }
   }
