@@ -14,7 +14,7 @@ class DemoApp extends StatelessWidget {
       title: 'Fortune Wheel Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        visualDensity: VisualDensity.comfortable,
       ),
       home: HomePage(),
     );
@@ -35,17 +35,19 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final wheelFields = <String>['1', '2', '3', '4', '5', '6', '7', '8'];
 
-    final rollButton = RaisedButton(
+    final rollButton = ElevatedButton(
       child: Text('Roll'),
-      onPressed: () {
-        setState(() {
-          int rand = _value;
-          while (rand == _value) {
-            rand = Random().nextInt(wheelFields.length);
-          }
-          _value = rand;
-        });
-      },
+      onPressed: _isAnimating
+          ? null
+          : () {
+              setState(() {
+                int rand = _value;
+                while (rand == _value) {
+                  rand = Random().nextInt(wheelFields.length);
+                }
+                _value = rand;
+              });
+            },
     );
 
     final Map<Alignment, String> alignments = {
@@ -62,12 +64,13 @@ class _HomePageState extends State<HomePage> {
 
     final indicatorPosition = DropdownButton(
       value: _alignment,
-      items: alignments.keys
-          .map((e) => DropdownMenuItem(
-                child: Text(alignments[e]),
-                value: e,
-              ))
-          .toList(),
+      items: [
+        for (final entry in alignments.entries)
+          DropdownMenuItem(
+            child: Text(entry.value),
+            value: entry.key,
+          )
+      ],
       onChanged: (value) {
         setState(() {
           _alignment = value;
@@ -92,11 +95,10 @@ class _HomePageState extends State<HomePage> {
               children: [
                 actions,
                 Text('Rolled Value: ${wheelFields[_value]}'),
-                Text('Is animating: $_isAnimating'),
                 Expanded(
                   child: FortuneWheel(
                     selected: _value,
-                    animation: FortuneWheelAnimation.None,
+                    animation: FortuneWheelAnimation.Roll,
                     onAnimationStart: () {
                       setState(() {
                         _isAnimating = true;
