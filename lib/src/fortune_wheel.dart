@@ -93,13 +93,16 @@ class _FortuneWheelState extends State<FortuneWheel>
   }
 
   void _animate() async {
-    if (widget.onAnimationStart != null && !_isAnimating) {
-      await Future.delayed(Duration.zero, () {
-        setState(() {
-          widget.onAnimationStart();
-          _isAnimating = true;
-        });
+    if (!_isAnimating) {
+      setState(() {
+        _isAnimating = true;
       });
+
+      if (widget.onAnimationStart != null) {
+        await Future.delayed(Duration.zero, () {
+          widget.onAnimationStart();
+        });
+      }
     }
 
     if (widget.animation == FortuneWheelAnimation.Roll) {
@@ -108,13 +111,16 @@ class _FortuneWheelState extends State<FortuneWheel>
       await _animateNone();
     }
 
-    if (widget.onAnimationEnd != null && _isAnimating) {
-      await Future.delayed(Duration.zero, () {
-        setState(() {
-          _isAnimating = false;
+    if (_isAnimating) {
+      setState(() {
+        _isAnimating = false;
+      });
+
+      if (widget.onAnimationEnd != null) {
+        await Future.delayed(Duration.zero, () {
           widget.onAnimationEnd();
         });
-      });
+      }
     }
   }
 
