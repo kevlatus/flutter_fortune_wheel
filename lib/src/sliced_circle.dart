@@ -26,8 +26,8 @@ class SlicedCircle extends StatelessWidget {
             final theme = Theme.of(context);
             final fillColor = slices[index].fillColor ??
                 (Color.alphaBlend(
-                  theme.primaryColor.withOpacity(index % 2 == 0 ? 0.2 : 0.4),
-                  Colors.white,
+                  theme.primaryColor.withOpacity(index % 2 == 0 ? 0.5 : 1),
+                  theme.colorScheme.background,
                 ));
             final strokeColor = slices[index].strokeColor ?? theme.primaryColor;
 
@@ -40,7 +40,10 @@ class SlicedCircle extends StatelessWidget {
               alignment: Alignment.topLeft,
               angle: childAngle + angleOffset,
               child: CircleSliceImpl(
-                child: slices[index].child,
+                child: DefaultTextStyle(
+                  style: TextStyle(color: theme.colorScheme.onPrimary),
+                  child: slices[index].child,
+                ),
                 radius: smallerSide / 2,
                 angle: kPiDouble / slices.length,
                 fillColor: fillColor,
