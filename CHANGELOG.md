@@ -1,3 +1,8 @@
+## [0.0.8] - 2020-12-13
+
+feat: make triangle indicator square
+feat: make wheel theme-aware by adjusting text and wheel colors to theme colors
+
 ## [0.0.7] - 2020-12-13
 
 feat: remove opacity from default circle slice colors
