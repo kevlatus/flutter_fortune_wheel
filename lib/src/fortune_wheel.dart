@@ -32,8 +32,8 @@ class FortuneWheel extends StatefulWidget {
     @required this.slices,
     this.rotationCount = 100,
     this.selected = 0,
-    this.minDuration = const Duration(seconds: 3),
-    this.maxDuration = const Duration(seconds: 3),
+    this.minDuration = const Duration(seconds: 2),
+    this.maxDuration = const Duration(seconds: 2),
     this.animation = FortuneWheelAnimation.Roll,
     this.indicators = const <FortuneWheelIndicator>[
       const FortuneWheelIndicator(
@@ -84,7 +84,7 @@ class _FortuneWheelState extends State<FortuneWheel>
     await _controller.animateTo(
       _targetAngle,
       duration: rangedRandomDuration(widget.minDuration, widget.maxDuration),
-      curve: Curves.easeOutExpo,
+      curve: Cubic(0, 1.0, 0, 1.0),
     );
   }
 
