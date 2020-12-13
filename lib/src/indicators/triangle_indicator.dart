@@ -18,7 +18,7 @@ class TriangleIndicator extends StatelessWidget {
     return Transform.rotate(
       angle: Math.pi,
       child: SizedBox(
-        width: 24,
+        width: 36,
         height: 36,
         child: Triangle(
           fillColor: color ?? theme.accentColor,

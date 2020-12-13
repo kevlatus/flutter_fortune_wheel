@@ -14,6 +14,7 @@ class DemoApp extends StatelessWidget {
       title: 'Fortune Wheel Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        accentColor: Colors.orangeAccent,
         visualDensity: VisualDensity.comfortable,
       ),
       home: HomePage(),
