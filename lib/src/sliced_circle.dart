@@ -25,7 +25,10 @@ class SlicedCircle extends StatelessWidget {
           children: slices.asMap().keys.map((index) {
             final theme = Theme.of(context);
             final fillColor = slices[index].fillColor ??
-                theme.primaryColor.withOpacity(index % 2 == 0 ? 0.2 : 0.4);
+                (Color.alphaBlend(
+                  theme.primaryColor.withOpacity(index % 2 == 0 ? 0.2 : 0.4),
+                  Colors.white,
+                ));
             final strokeColor = slices[index].strokeColor ?? theme.primaryColor;
 
             final childAngle = anglePerChild * index;
