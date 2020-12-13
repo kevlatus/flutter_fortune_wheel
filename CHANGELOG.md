@@ -1,3 +1,8 @@
+## [0.0.7] - 2020-12-13
+
+feat: remove opacity from default circle slice colors
+fix: fire onAnimationEnd when onAnimationStart is not provided and vice versa
+
 ## [0.0.6] - 2020-12-12
 
 fix bug, which prevented animation end callbacks to be called on web
