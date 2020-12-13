@@ -1,5 +1,10 @@
+## [0.0.9] - 2020-12-13
+
+feat: adjust default roll duration to 2 seconds and increase bezier easing
+
 ## [0.0.8] - 2020-12-13
 
+feat: adjust default roll duration to 2 seconds and increase bezier easing
 feat: make triangle indicator square
 feat: make wheel theme-aware by adjusting text and wheel colors to theme colors
 
