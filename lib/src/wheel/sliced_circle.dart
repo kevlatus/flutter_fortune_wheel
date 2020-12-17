@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'circle_slice.dart';
-import 'util.dart';
+import '../util.dart';
 
 class SlicedCircle extends StatelessWidget {
   final List<CircleSlice> slices;

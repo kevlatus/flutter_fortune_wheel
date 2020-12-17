@@ -2,7 +2,7 @@ import 'dart:math' as Math;
 
 import 'package:flutter/material.dart';
 
-import 'util.dart';
+import '../util.dart';
 
 class CircleSlice {
   final Color fillColor;

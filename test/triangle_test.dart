@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_fortune_wheel/src/triangle.dart';
+import 'file:///C:/Users/kevin/dev/kevlatus/libs/flutter_fortune_wheel/lib/src/wheel/triangle.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

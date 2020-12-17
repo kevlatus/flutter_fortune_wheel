@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_fortune_wheel/src/circle_slice.dart';
+import 'file:///C:/Users/kevin/dev/kevlatus/libs/flutter_fortune_wheel/lib/src/wheel/circle_slice.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

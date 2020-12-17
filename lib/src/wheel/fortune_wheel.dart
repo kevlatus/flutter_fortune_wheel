@@ -5,7 +5,7 @@ import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_fortune_wheel/src/util.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-import 'animations.dart';
+import '../animations.dart';
 import 'circle_slice.dart';
 import 'indicators/indicators.dart';
 
