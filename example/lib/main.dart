@@ -17,17 +17,17 @@ class DemoApp extends StatelessWidget {
         accentColor: Colors.orangeAccent,
         visualDensity: VisualDensity.comfortable,
       ),
-      home: HomePage(),
+      home: ExamplePage(),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
+class WheelPage extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _WheelPageState createState() => _WheelPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _WheelPageState extends State<WheelPage> {
   int _value = 0;
   bool _isAnimating = false;
   Alignment _alignment = Alignment.topCenter;
@@ -36,21 +36,128 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final wheelFields = <String>['1', '2', '3', '4', '5', '6', '7', '8'];
 
-    final rollButton = ElevatedButton(
-      child: Text('Roll'),
-      onPressed: _isAnimating
-          ? null
-          : () {
-              setState(() {
-                int rand = _value;
-                while (rand == _value) {
-                  rand = Random().nextInt(wheelFields.length);
-                }
-                _value = rand;
-              });
-            },
+    final alignmentSelector = AlignmentSelector(
+      selected: _alignment,
+      onChanged: (v) {
+        setState(() {
+          _alignment = v;
+        });
+      },
     );
 
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        children: [
+          RollButtonWithPreview(
+            selected: _value,
+            items: wheelFields,
+            onPressed: _isAnimating
+                ? null
+                : (value) {
+                    setState(() {
+                      _value = value;
+                    });
+                  },
+          ),
+          alignmentSelector,
+          Expanded(
+            child: FortuneWheel(
+              selected: _value,
+              animation: FortuneAnimation.Roll,
+              onAnimationStart: () {
+                setState(() {
+                  _isAnimating = true;
+                });
+              },
+              onAnimationEnd: () {
+                setState(() {
+                  _isAnimating = false;
+                });
+              },
+              indicators: [
+                FortuneWheelIndicator(
+                  alignment: _alignment,
+                  child: TriangleIndicator(),
+                ),
+              ],
+              slices: [
+                for (var it in wheelFields) CircleSlice(child: Text(it))
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class BandPage extends StatefulWidget {
+  @override
+  _BandPageState createState() => _BandPageState();
+}
+
+class _BandPageState extends State<BandPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Center(child: Text('Coming soon'));
+  }
+}
+
+class ExamplePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Flutter Fortune Wheel'),
+          bottom: TabBar(
+            tabs: [
+              Tab(text: 'Wheel'),
+              Tab(text: 'Band'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            Layout(child: WheelPage()),
+            Layout(child: BandPage()),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+typedef Callback<T> = void Function(T);
+
+class Layout extends StatelessWidget {
+  final Widget child;
+
+  const Layout({
+    Key key,
+    @required this.child,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(child: child);
+  }
+}
+
+class AlignmentSelector extends StatelessWidget {
+  final Alignment selected;
+  final Callback<Alignment> onChanged;
+
+  const AlignmentSelector({
+    Key key,
+    @required this.selected,
+    this.onChanged,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     final Map<Alignment, String> alignments = {
       Alignment.topCenter: 'top center',
       Alignment.topRight: 'top right',
@@ -63,8 +170,11 @@ class _HomePageState extends State<HomePage> {
       Alignment.center: 'center',
     };
 
-    final indicatorPosition = DropdownButton(
-      value: _alignment,
+    return DropdownButtonFormField<Alignment>(
+      decoration: InputDecoration(
+        labelText: 'Indicator Alignment',
+      ),
+      value: selected,
       items: [
         for (final entry in alignments.entries)
           DropdownMenuItem(
@@ -72,62 +182,58 @@ class _HomePageState extends State<HomePage> {
             value: entry.key,
           )
       ],
-      onChanged: (value) {
-        setState(() {
-          _alignment = value;
-        });
-      },
+      onChanged: onChanged,
     );
+  }
+}
 
-    final actions = Row(
-      mainAxisSize: MainAxisSize.min,
+class RollButton extends StatelessWidget {
+  final Callback<int> onPressed;
+  final int itemCount;
+
+  const RollButton({
+    Key key,
+    this.onPressed,
+    this.itemCount,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    int roll() {
+      return Random().nextInt(itemCount);
+    }
+
+    return ElevatedButton(
+      child: Text('Roll'),
+      onPressed: onPressed == null ? null : () => onPressed(roll()),
+    );
+  }
+}
+
+class RollButtonWithPreview extends StatelessWidget {
+  final int selected;
+  final List<String> items;
+  final Callback<int> onPressed;
+
+  const RollButtonWithPreview({
+    Key key,
+    this.selected,
+    this.items,
+    this.onPressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: 8,
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
-        Padding(padding: const EdgeInsets.all(8.0), child: rollButton),
-        Padding(padding: const EdgeInsets.all(8.0), child: indicatorPosition),
-      ],
-    );
-
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                actions,
-                Text('Rolled Value: ${wheelFields[_value]}'),
-                Expanded(
-                  child: FortuneWheel(
-                    selected: _value,
-                    animation: FortuneAnimation.Roll,
-                    onAnimationStart: () {
-                      setState(() {
-                        _isAnimating = true;
-                      });
-                      print('animation start');
-                    },
-                    onAnimationEnd: () {
-                      setState(() {
-                        _isAnimating = false;
-                      });
-                      print('animation end');
-                    },
-                    indicators: [
-                      FortuneWheelIndicator(
-                        alignment: _alignment,
-                        child: TriangleIndicator(),
-                      ),
-                    ],
-                    slices: wheelFields.map((e) {
-                      return CircleSlice(child: Text(e));
-                    }).toList(),
-                  ),
-                ),
-              ],
-            ),
-          ),
+        RollButton(
+          itemCount: items.length,
+          onPressed: onPressed,
         ),
-      ),
+        Text('Rolled Value: ${items[selected]}'),
+      ],
     );
   }
 }
