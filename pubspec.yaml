@@ -12,6 +12,9 @@ dependencies:
   flutter:
     sdk: flutter
 
+  equatable: ^1.2.5
+  flutter_hooks: ^0.15.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

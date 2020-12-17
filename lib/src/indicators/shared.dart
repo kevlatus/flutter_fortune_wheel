@@ -6,6 +6,6 @@ class FortuneWheelIndicator {
 
   const FortuneWheelIndicator({
     this.alignment = Alignment.center,
-    this.child,
-  });
+    @required this.child,
+  }) : assert(child != null);
 }

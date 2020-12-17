@@ -29,3 +29,11 @@ Duration rangedRandomDuration(Duration min, Duration max) {
 double getSmallerSide(BoxConstraints constraints) {
   return Math.min(constraints.maxWidth, constraints.maxHeight);
 }
+
+Offset getCenteredMargins(BoxConstraints constraints) {
+  final smallerSide = getSmallerSide(constraints);
+  return Offset(
+    (constraints.maxWidth - smallerSide) / 2,
+    (constraints.maxHeight - smallerSide) / 2,
+  );
+}

@@ -99,7 +99,7 @@ class _HomePageState extends State<HomePage> {
                 Expanded(
                   child: FortuneWheel(
                     selected: _value,
-                    animation: FortuneWheelAnimation.Roll,
+                    animation: FortuneAnimation.Roll,
                     onAnimationStart: () {
                       setState(() {
                         _isAnimating = true;

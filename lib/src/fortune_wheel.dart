@@ -1,20 +1,114 @@
 import 'dart:math' as Math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
+import 'package:flutter_fortune_wheel/src/util.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 
+import 'animations.dart';
 import 'circle_slice.dart';
 import 'indicators/indicators.dart';
-import 'sliced_circle.dart';
-import 'util.dart';
 
-enum FortuneWheelAnimation {
-  Roll,
-  // TODO: Move,
-  None,
+const double _anglePerRotation = -2 * Math.pi;
+
+class _PositionedIndicator extends StatelessWidget {
+  final FortuneWheelIndicator indicator;
+
+  Offset _getOffset(Alignment alignment, Offset margins, Offset circleMargins) {
+    if (indicator.alignment == Alignment.topCenter) {
+      return margins.scale(0, 1);
+    }
+    if (indicator.alignment == Alignment.bottomCenter) {
+      return margins.scale(0, -1);
+    }
+    if (indicator.alignment == Alignment.centerLeft) {
+      return margins.scale(1, 0);
+    }
+    if (indicator.alignment == Alignment.centerRight) {
+      return margins.scale(-1, 0);
+    }
+    if (indicator.alignment == Alignment.topLeft) {
+      return margins.translate(circleMargins.dx, circleMargins.dy);
+    }
+    if (indicator.alignment == Alignment.topRight) {
+      return margins
+          .scale(-1, 1)
+          .translate(-circleMargins.dx, circleMargins.dy);
+    }
+    if (indicator.alignment == Alignment.bottomRight) {
+      return margins
+          .scale(-1, -1)
+          .translate(-circleMargins.dx, -circleMargins.dy);
+    }
+    if (indicator.alignment == Alignment.bottomLeft) {
+      return margins
+          .scale(1, -1)
+          .translate(circleMargins.dx, -circleMargins.dy);
+    }
+
+    return Offset(0, 0);
+  }
+
+  double _getAngle(Alignment alignment) {
+    if (indicator.alignment == Alignment.bottomCenter) {
+      return Math.pi;
+    }
+    if (indicator.alignment == Alignment.centerLeft) {
+      return -Math.pi * 0.5;
+    }
+    if (indicator.alignment == Alignment.centerRight) {
+      return Math.pi * 0.5;
+    }
+    if (indicator.alignment == Alignment.topLeft) {
+      return -Math.pi * 0.25;
+    }
+    if (indicator.alignment == Alignment.topRight) {
+      return Math.pi * 0.25;
+    }
+    if (indicator.alignment == Alignment.bottomRight) {
+      return Math.pi * 0.75;
+    }
+    if (indicator.alignment == Alignment.bottomLeft) {
+      return Math.pi * 1.25;
+    }
+
+    return 0;
+  }
+
+  const _PositionedIndicator({
+    Key key,
+    @required this.indicator,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final margins = getCenteredMargins(constraints);
+        final smallerSide = getSmallerSide(constraints);
+        final radius = smallerSide / 2;
+        final circleMargins = Offset(
+          (radius - Math.cos(Math.pi / 4) * radius),
+          (radius - Math.sin(Math.pi / 4) * radius),
+        );
+        Offset offset = _getOffset(indicator.alignment, margins, circleMargins);
+        double angle = _getAngle(indicator.alignment);
+        return Align(
+          alignment: indicator.alignment,
+          child: Transform.translate(
+            offset: offset,
+            child: Transform.rotate(
+              angle: angle,
+              child: indicator.child,
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
 
-class FortuneWheel extends StatefulWidget {
+class FortuneWheel extends HookWidget {
   /// A list of circle slices this fortune wheel should contain.
   /// Must not be null and contain at least 2 slices.
   final List<CircleSlice> slices;
@@ -23,9 +117,22 @@ class FortuneWheel extends StatefulWidget {
   final Duration minDuration;
   final Duration maxDuration;
   final List<FortuneWheelIndicator> indicators;
-  final FortuneWheelAnimation animation;
+  final FortuneAnimation animation;
   final VoidCallback onAnimationStart;
   final VoidCallback onAnimationEnd;
+
+  double get _maxAngle => slices.length * _anglePerRotation * rotationCount;
+
+  double get _animationProgress {
+    final previousRotations = selected / rotationCount;
+    final itemScale = slices.length * slices.length * rotationCount;
+    return previousRotations + selected / itemScale;
+  }
+
+  Tween<double> get _angleTween => Tween(
+        begin: 0,
+        end: _maxAngle,
+      );
 
   const FortuneWheel({
     Key key,
@@ -34,7 +141,7 @@ class FortuneWheel extends StatefulWidget {
     this.selected = 0,
     this.minDuration = const Duration(seconds: 2),
     this.maxDuration = const Duration(seconds: 2),
-    this.animation = FortuneWheelAnimation.Roll,
+    this.animation = FortuneAnimation.Roll,
     this.indicators = const <FortuneWheelIndicator>[
       const FortuneWheelIndicator(
         alignment: Alignment.topCenter,
@@ -49,196 +156,64 @@ class FortuneWheel extends StatefulWidget {
         super(key: key);
 
   @override
-  _FortuneWheelState createState() => _FortuneWheelState();
-}
+  Widget build(BuildContext context) {
+    final animationCtrl = useAnimationController();
+    final wheelAnimation = animationCtrl.drive(_angleTween);
+    final AnimationFunc animFunc = getAnimationFunc(animation);
 
-class _FortuneWheelState extends State<FortuneWheel>
-    with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation<double> _animation;
-  bool _isAnimating = false;
+    Future<void> animate() async {
+      if (animationCtrl.isAnimating) {
+        return;
+      }
 
-  double get _sliceAngle => -1 * kPiDouble * widget.rotationCount;
+      if (onAnimationStart != null) {
+        await Future.delayed(Duration.zero, onAnimationStart);
+      }
 
-  double get _maxAngle => widget.slices.length * _sliceAngle;
-
-  double get _targetAngle {
-    final previousRotations = widget.selected / widget.rotationCount;
-    final itemScale =
-        widget.slices.length * widget.slices.length * widget.rotationCount;
-    return previousRotations + widget.selected / itemScale;
-  }
-
-  Tween<double> get _angleTween => Tween(
-        begin: 0,
-        end: _maxAngle,
+      await animFunc(
+        controller: animationCtrl,
+        duration: rangedRandomDuration(minDuration, maxDuration),
+        targetProgress: _animationProgress,
       );
 
-  Future _animateRoll() async {
-    double ensureAnimationValue = _targetAngle - 0.1;
-    if (ensureAnimationValue < 0) {
-      ensureAnimationValue += 0.2;
-    }
-    _controller.value = ensureAnimationValue;
-
-    await _controller.animateTo(
-      _targetAngle,
-      duration: rangedRandomDuration(widget.minDuration, widget.maxDuration),
-      curve: Cubic(0, 1.0, 0, 1.0),
-    );
-  }
-
-  Future _animateNone() async {
-    _controller.value = _targetAngle;
-  }
-
-  void _animate() async {
-    if (!_isAnimating) {
-      setState(() {
-        _isAnimating = true;
-      });
-
-      if (widget.onAnimationStart != null) {
-        await Future.delayed(Duration.zero, () {
-          widget.onAnimationStart();
-        });
+      if (onAnimationEnd != null) {
+        await Future.delayed(Duration.zero, onAnimationEnd);
       }
     }
 
-    if (widget.animation == FortuneWheelAnimation.Roll) {
-      await _animateRoll();
-    } else if (widget.animation == FortuneWheelAnimation.None) {
-      await _animateNone();
-    }
+    useEffect(() {
+      animate();
+      return null;
+    }, []);
 
-    if (_isAnimating) {
-      setState(() {
-        _isAnimating = false;
-      });
+    useValueChanged(selected, (_, __) {
+      animate();
+    });
 
-      if (widget.onAnimationEnd != null) {
-        await Future.delayed(Duration.zero, () {
-          widget.onAnimationEnd();
-        });
-      }
-    }
-  }
-
-  Widget _buildIndicator(
-    FortuneWheelIndicator indicator,
-    BoxConstraints constraints,
-  ) {
-    if (indicator.child == null) {
-      return Container();
-    }
-
-    final smallerSide = getSmallerSide(constraints);
-    final radius = smallerSide / 2;
-    final marginX = (constraints.maxWidth - smallerSide) / 2;
-    final marginY = (constraints.maxHeight - smallerSide) / 2;
-    final topRightCircleX = (radius - Math.cos(Math.pi / 4) * radius);
-    final topRightCircleY = (radius - Math.sin(Math.pi / 4) * radius);
-    Offset offset = Offset(0, 0);
-    double angle = 0;
-    if (indicator.alignment == Alignment.topCenter) {
-      offset = Offset(0, marginY);
-    }
-    if (indicator.alignment == Alignment.bottomCenter) {
-      offset = Offset(0, -marginY);
-      angle = Math.pi;
-    }
-    if (indicator.alignment == Alignment.centerLeft) {
-      offset = Offset(marginX, 0);
-      angle = -Math.pi * 0.5;
-    }
-    if (indicator.alignment == Alignment.centerRight) {
-      offset = Offset(-marginX, 0);
-      angle = Math.pi * 0.5;
-    }
-    if (indicator.alignment == Alignment.topLeft) {
-      offset = Offset(marginX + topRightCircleX, marginY + topRightCircleY);
-      angle = -Math.pi * 0.25;
-    }
-    if (indicator.alignment == Alignment.topRight) {
-      offset = Offset(-marginX - topRightCircleX, marginY + topRightCircleY);
-      angle = Math.pi * 0.25;
-    }
-    if (indicator.alignment == Alignment.bottomRight) {
-      offset = Offset(-marginX - topRightCircleX, -marginY - topRightCircleY);
-      angle = Math.pi * 0.75;
-    }
-    if (indicator.alignment == Alignment.bottomLeft) {
-      offset = Offset(marginX + topRightCircleX, -marginY - topRightCircleY);
-      angle = Math.pi * 1.25;
-    }
-    return Align(
-      alignment: indicator.alignment,
-      child: Transform.translate(
-        offset: offset,
-        child: Transform.rotate(
-          angle: angle,
-          child: indicator.child,
-        ),
-      ),
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(vsync: this);
-    _animation = _controller.drive(_angleTween);
-    _animate();
-  }
-
-  @override
-  void didUpdateWidget(FortuneWheel oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    if (widget.slices.length != oldWidget.slices.length) {
-      _animation = _controller.drive(_angleTween);
-    }
-
-    // TODO: find a way to select same value in a row
-    if (oldWidget.selected != widget.selected) {
-      _animate();
-    }
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Stack(
-          children: [
-            Align(
-              alignment: Alignment.center,
-              child: SizedBox.expand(
-                child: AnimatedBuilder(
-                  animation: _animation,
-                  builder: (context, child) {
-                    return Transform.rotate(
-                      angle: _animation.value,
-                      child: SlicedCircle(
-                        slices: widget.slices,
-                      ),
-                    );
-                  },
-                ),
-              ),
+    final wheel = AnimatedBuilder(
+      animation: animationCtrl,
+      builder: (context, _) {
+        return Transform.rotate(
+          angle: wheelAnimation.value,
+          child: SizedBox.expand(
+            child: SlicedCircle(
+              slices: slices,
             ),
-            ...widget.indicators
-                .map((indicator) => _buildIndicator(indicator, constraints))
-                .toList(),
-          ],
+          ),
         );
       },
+    );
+
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black),
+      ),
+      child: Stack(
+        children: [
+          wheel,
+          for (var it in indicators) _PositionedIndicator(indicator: it),
+        ],
+      ),
     );
   }
 }
