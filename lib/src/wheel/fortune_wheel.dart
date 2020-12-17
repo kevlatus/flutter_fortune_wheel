@@ -204,16 +204,11 @@ class FortuneWheel extends HookWidget {
       },
     );
 
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black),
-      ),
-      child: Stack(
-        children: [
-          wheel,
-          for (var it in indicators) _PositionedIndicator(indicator: it),
-        ],
-      ),
+    return Stack(
+      children: [
+        wheel,
+        for (var it in indicators) _PositionedIndicator(indicator: it),
+      ],
     );
   }
 }
