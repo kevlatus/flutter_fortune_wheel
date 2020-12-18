@@ -144,7 +144,11 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
 
   @override
   Widget build(BuildContext context) {
-    final animationCtrl = useAnimationController();
+    final animationCtrl = useAnimationController(duration: duration);
+    final animation = CurvedAnimation(
+      parent: animationCtrl,
+      curve: Cubic(0, 1.0, 0, 1.0),
+    );
     final AnimationFunc animFunc = getAnimationFunc(animationType);
 
     Future<void> animate() async {
@@ -156,10 +160,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
         await Future.delayed(Duration.zero, onAnimationStart);
       }
 
-      await animFunc(
-        controller: animationCtrl,
-        duration: duration,
-      );
+      await animFunc(animationCtrl);
 
       if (onAnimationEnd != null) {
         await Future.delayed(Duration.zero, onAnimationEnd);
@@ -176,12 +177,12 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     });
 
     final wheel = AnimatedBuilder(
-      animation: animationCtrl,
+      animation: animation,
       builder: (context, _) {
         return Transform.rotate(
           angle: -2 * Math.pi * (selected / items.length),
           child: Transform.rotate(
-            angle: _getAngle(animationCtrl.value),
+            angle: _getAngle(animation.value),
             child: SizedBox.expand(
               child: SlicedCircle(
                 items: items,

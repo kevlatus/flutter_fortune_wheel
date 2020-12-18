@@ -11,6 +11,40 @@ double _getItemWidth(double maxWidth, int itemCount) {
   return maxWidth / visibleItemCount;
 }
 
+class _BandItem extends StatelessWidget {
+  final double width;
+  final double height;
+  final Widget child;
+
+  const _BandItem({
+    Key key,
+    @required this.child,
+    @required this.width,
+    @required this.height,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        border: Border(right: BorderSide(color: theme.primaryColor)),
+        color: theme.primaryColor,
+      ),
+      child: Center(
+        child: DefaultTextStyle(
+          textAlign: TextAlign.center,
+          style: TextStyle(color: theme.colorScheme.onPrimary),
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+
 class FortuneBand extends HookWidget implements FortuneWidget {
   final Duration duration;
   final double height;
@@ -56,8 +90,10 @@ class FortuneBand extends HookWidget implements FortuneWidget {
 
   @override
   Widget build(BuildContext context) {
-    final animationCtrl = useAnimationController(
-      duration: duration,
+    final animationCtrl = useAnimationController(duration: duration);
+    final animation = CurvedAnimation(
+      parent: animationCtrl,
+      curve: Cubic(0, 1.0, 0, 1.0),
     );
     final AnimationFunc animFunc = getAnimationFunc(animationType);
 
@@ -70,10 +106,7 @@ class FortuneBand extends HookWidget implements FortuneWidget {
         await Future.delayed(Duration.zero, onAnimationStart);
       }
 
-      await animFunc(
-        controller: animationCtrl,
-        duration: duration,
-      );
+      await animFunc(animationCtrl);
 
       if (onAnimationEnd != null) {
         await Future.delayed(Duration.zero, onAnimationEnd);
@@ -97,25 +130,22 @@ class FortuneBand extends HookWidget implements FortuneWidget {
           width: constraints.maxWidth,
           height: 56,
           child: AnimatedBuilder(
-            animation: animationCtrl,
+            animation: animation,
             builder: (context, _) {
               return Stack(
                 children: [
                   for (var i = 0; i < items.length; i++)
                     Transform.translate(
                       offset: _itemOffset(
-                        animationProgress: animationCtrl.value,
+                        animationProgress: animation.value,
                         // put selected item in center
                         itemIndex: (i + 1) % items.length,
                         width: constraints.maxWidth,
                       ),
-                      child: Container(
+                      child: _BandItem(
+                        child: items[i].child,
                         width: itemWidth,
                         height: height,
-                        decoration: BoxDecoration(
-                          border: Border(right: BorderSide()),
-                        ),
-                        child: Center(child: items[i].child),
                       ),
                     )
                 ],

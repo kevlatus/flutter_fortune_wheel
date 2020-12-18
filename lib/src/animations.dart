@@ -1,5 +1,4 @@
 import 'package:flutter/animation.dart';
-import 'package:meta/meta.dart';
 
 enum FortuneAnimation {
   Roll,
@@ -7,28 +6,13 @@ enum FortuneAnimation {
   None,
 }
 
-typedef AnimationFunc = Future<void> Function({
-  @required AnimationController controller,
-  @required Duration duration,
-});
+typedef AnimationFunc = Future<void> Function(AnimationController controller);
 
-final AnimationFunc _animateRoll = ({
-  @required AnimationController controller,
-  @required Duration duration,
-}) async {
-  controller.value = 0;
-
-  await controller.animateTo(
-    1,
-    duration: duration,
-    curve: Cubic(0, 1.0, 0, 1.0),
-  );
+final AnimationFunc _animateRoll = (AnimationController controller) async {
+  await controller.forward(from: 0);
 };
 
-final AnimationFunc _animateNone = ({
-  @required AnimationController controller,
-  @required Duration duration,
-}) async {
+final AnimationFunc _animateNone = (AnimationController controller) async {
   controller.value = 0;
 };
 
