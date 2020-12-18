@@ -59,6 +59,7 @@ class FortuneBand extends HookWidget implements FortuneWidget {
     final animationCtrl = useAnimationController(
       duration: duration,
     );
+    final AnimationFunc animFunc = getAnimationFunc(animationType);
 
     Future<void> animate() async {
       if (animationCtrl.isAnimating) {
@@ -69,11 +70,9 @@ class FortuneBand extends HookWidget implements FortuneWidget {
         await Future.delayed(Duration.zero, onAnimationStart);
       }
 
-      animationCtrl.value = 0;
-      await animationCtrl.animateTo(
-        1,
+      await animFunc(
+        controller: animationCtrl,
         duration: duration,
-        curve: Cubic(0, 1.0, 0, 1.0),
       );
 
       if (onAnimationEnd != null) {

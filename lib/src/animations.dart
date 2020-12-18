@@ -10,22 +10,16 @@ enum FortuneAnimation {
 typedef AnimationFunc = Future<void> Function({
   @required AnimationController controller,
   @required Duration duration,
-  @required double targetProgress,
 });
 
 final AnimationFunc _animateRoll = ({
   @required AnimationController controller,
   @required Duration duration,
-  @required double targetProgress,
 }) async {
-  double ensureAnimationValue = targetProgress - 0.1;
-  if (ensureAnimationValue < 0) {
-    ensureAnimationValue += 0.2;
-  }
-  controller.value = ensureAnimationValue;
+  controller.value = 0;
 
   await controller.animateTo(
-    targetProgress,
+    1,
     duration: duration,
     curve: Cubic(0, 1.0, 0, 1.0),
   );
@@ -34,9 +28,8 @@ final AnimationFunc _animateRoll = ({
 final AnimationFunc _animateNone = ({
   @required AnimationController controller,
   @required Duration duration,
-  @required double targetProgress,
 }) async {
-  controller.value = targetProgress;
+  controller.value = 0;
 };
 
 AnimationFunc getAnimationFunc(FortuneAnimation animation) {

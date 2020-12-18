@@ -9,8 +9,6 @@ import '../util.dart';
 import 'indicators/indicators.dart';
 import 'sliced_circle.dart';
 
-const double _anglePerRotation = -2 * Math.pi;
-
 class _PositionedIndicator extends StatelessWidget {
   final FortuneWheelIndicator indicator;
 
@@ -120,18 +118,9 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   final VoidCallback onAnimationStart;
   final VoidCallback onAnimationEnd;
 
-  double get _maxAngle => items.length * _anglePerRotation * rotationCount;
-
-  double get _animationProgress {
-    final previousRotations = selected / rotationCount;
-    final itemScale = items.length * items.length * rotationCount;
-    return previousRotations + selected / itemScale;
+  double _getAngle(double progress) {
+    return 2 * Math.pi * rotationCount * progress;
   }
-
-  Tween<double> get _angleTween => Tween(
-        begin: 0,
-        end: _maxAngle,
-      );
 
   const FortuneWheel({
     Key key,
@@ -156,7 +145,6 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   @override
   Widget build(BuildContext context) {
     final animationCtrl = useAnimationController();
-    final wheelAnimation = animationCtrl.drive(_angleTween);
     final AnimationFunc animFunc = getAnimationFunc(animationType);
 
     Future<void> animate() async {
@@ -171,7 +159,6 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
       await animFunc(
         controller: animationCtrl,
         duration: duration,
-        targetProgress: _animationProgress,
       );
 
       if (onAnimationEnd != null) {
@@ -192,10 +179,13 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
       animation: animationCtrl,
       builder: (context, _) {
         return Transform.rotate(
-          angle: wheelAnimation.value,
-          child: SizedBox.expand(
-            child: SlicedCircle(
-              items: items,
+          angle: -2 * Math.pi * (selected / items.length),
+          child: Transform.rotate(
+            angle: _getAngle(animationCtrl.value),
+            child: SizedBox.expand(
+              child: SlicedCircle(
+                items: items,
+              ),
             ),
           ),
         );
