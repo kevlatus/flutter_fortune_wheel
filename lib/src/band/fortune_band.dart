@@ -1,7 +1,10 @@
 import 'dart:math' as Math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+
+import '../fortune_widget.dart';
 
 double _getItemWidth(double maxWidth, int itemCount) {
   final visibleItemCount = Math.min(itemCount, 3);
@@ -14,26 +17,37 @@ double _getOffsetX({
   int itemCount,
   double animationOffset,
 }) {
-  if(itemWidth * (itemIndex + 1) < animationOffset) {
+  if (itemWidth * (itemIndex + 1) < animationOffset) {
     return itemWidth * itemIndex - animationOffset + itemWidth * itemCount;
   } else {
     return itemWidth * itemIndex - animationOffset;
-
   }
 }
 
-class FortuneBand extends HookWidget {
+class FortuneBand extends HookWidget implements FortuneWidget {
+  final Duration duration;
   final double height;
+  final VoidCallback onAnimationStart;
+  final VoidCallback onAnimationEnd;
+  final FortuneAnimation animationType;
+  final int selected;
+  final int rotationCount;
 
   const FortuneBand({
     Key key,
     this.height = 56.0,
+    this.duration = const Duration(seconds: 2), // TODO: shared const
+    this.onAnimationStart,
+    this.onAnimationEnd,
+    this.animationType = FortuneAnimation.Roll,
+    this.selected,
+    this.rotationCount = 100,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final animationCtrl = useAnimationController(
-      duration: Duration(milliseconds: 300),
+      duration: duration,
     );
 
     final items = <Widget>[

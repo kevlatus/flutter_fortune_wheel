@@ -64,7 +64,7 @@ class _WheelPageState extends State<WheelPage> {
           Expanded(
             child: FortuneWheel(
               selected: _value,
-              animation: FortuneAnimation.Roll,
+              animationType: FortuneAnimation.Roll,
               onAnimationStart: () {
                 setState(() {
                   _isAnimating = true;
