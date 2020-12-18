@@ -23,6 +23,10 @@ class DemoApp extends StatelessWidget {
 }
 
 class WheelPage extends StatefulWidget {
+  final List<String> items;
+
+  const WheelPage({Key key, this.items}) : super(key: key);
+
   @override
   _WheelPageState createState() => _WheelPageState();
 }
@@ -34,8 +38,6 @@ class _WheelPageState extends State<WheelPage> {
 
   @override
   Widget build(BuildContext context) {
-    final wheelFields = <String>['1', '2', '3', '4', '5', '6', '7', '8'];
-
     final alignmentSelector = AlignmentSelector(
       selected: _alignment,
       onChanged: (v) {
@@ -51,7 +53,7 @@ class _WheelPageState extends State<WheelPage> {
         children: [
           RollButtonWithPreview(
             selected: _value,
-            items: wheelFields,
+            items: widget.items,
             onPressed: _isAnimating
                 ? null
                 : (value) {
@@ -64,7 +66,6 @@ class _WheelPageState extends State<WheelPage> {
           Expanded(
             child: FortuneWheel(
               selected: _value,
-              animation: FortuneAnimation.Roll,
               onAnimationStart: () {
                 setState(() {
                   _isAnimating = true;
@@ -76,13 +77,13 @@ class _WheelPageState extends State<WheelPage> {
                 });
               },
               indicators: [
-                FortuneWheelIndicator(
+                FortuneIndicator(
                   alignment: _alignment,
                   child: TriangleIndicator(),
                 ),
               ],
-              slices: [
-                for (var it in wheelFields) CircleSlice(child: Text(it))
+              items: [
+                for (var it in widget.items) FortuneItem(child: Text(it))
               ],
             ),
           ),
@@ -93,20 +94,66 @@ class _WheelPageState extends State<WheelPage> {
 }
 
 class BandPage extends StatefulWidget {
+  final List<String> items;
+
+  const BandPage({Key key, this.items}) : super(key: key);
+
   @override
   _BandPageState createState() => _BandPageState();
 }
 
 class _BandPageState extends State<BandPage> {
+  int _value = 0;
+  bool _isAnimating = false;
+
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Coming soon'));
+    return Column(
+      children: [
+        RollButtonWithPreview(
+          selected: _value,
+          items: widget.items,
+          onPressed: _isAnimating
+              ? null
+              : (value) {
+                  setState(() {
+                    _value = value;
+                  });
+                },
+        ),
+        FortuneBand(
+          selected: _value,
+          items: [for (var it in widget.items) FortuneItem(child: Text(it))],
+          onAnimationStart: () {
+            setState(() {
+              _isAnimating = true;
+            });
+          },
+          onAnimationEnd: () {
+            setState(() {
+              _isAnimating = false;
+            });
+          },
+        ),
+      ],
+    );
   }
 }
 
 class ExamplePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final items = <String>[
+      'Grogu',
+      'Mace Windu',
+      'Obi-Wan Kenobi',
+      'Han Solo',
+      'Luke Skywalker',
+      'Darth Vader',
+      'Yoda',
+      'Ahsoka Tano',
+    ];
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -121,8 +168,8 @@ class ExamplePage extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            Layout(child: WheelPage()),
-            Layout(child: BandPage()),
+            Layout(child: WheelPage(items: items)),
+            Layout(child: BandPage(items: items)),
           ],
         ),
       ),
@@ -188,6 +235,7 @@ class AlignmentSelector extends StatelessWidget {
 }
 
 class RollButton extends StatelessWidget {
+  final int lastValue;
   final Callback<int> onPressed;
   final int itemCount;
 
@@ -195,12 +243,21 @@ class RollButton extends StatelessWidget {
     Key key,
     this.onPressed,
     this.itemCount,
+    this.lastValue,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     int roll() {
-      return Random().nextInt(itemCount);
+      if (lastValue == null) {
+        return Random().nextInt(itemCount);
+      } else {
+        int val = lastValue;
+        while (val == lastValue) {
+          val = Random().nextInt(itemCount);
+        }
+        return val;
+      }
     }
 
     return ElevatedButton(
@@ -231,6 +288,7 @@ class RollButtonWithPreview extends StatelessWidget {
         RollButton(
           itemCount: items.length,
           onPressed: onPressed,
+          lastValue: selected,
         ),
         Text('Rolled Value: ${items[selected]}'),
       ],

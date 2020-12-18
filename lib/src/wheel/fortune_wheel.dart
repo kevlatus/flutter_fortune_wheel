@@ -1,18 +1,16 @@
 import 'dart:math' as Math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
-import 'package:flutter_fortune_wheel/src/util.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 import '../animations.dart';
-import 'circle_slice.dart';
-import 'indicators/indicators.dart';
-
-const double _anglePerRotation = -2 * Math.pi;
+import '../fortune_widget.dart';
+import '../util.dart';
+import '../indicators/indicators.dart';
+import 'sliced_circle.dart';
 
 class _PositionedIndicator extends StatelessWidget {
-  final FortuneWheelIndicator indicator;
+  final FortuneIndicator indicator;
 
   Offset _getOffset(Alignment alignment, Offset margins, Offset circleMargins) {
     if (indicator.alignment == Alignment.topCenter) {
@@ -108,58 +106,50 @@ class _PositionedIndicator extends StatelessWidget {
   }
 }
 
-class FortuneWheel extends HookWidget {
+class FortuneWheel extends HookWidget implements FortuneWidget {
   /// A list of circle slices this fortune wheel should contain.
   /// Must not be null and contain at least 2 slices.
-  final List<CircleSlice> slices;
+  final List<FortuneItem> items;
   final int selected;
   final int rotationCount;
-  final Duration minDuration;
-  final Duration maxDuration;
-  final List<FortuneWheelIndicator> indicators;
-  final FortuneAnimation animation;
+  final Duration duration;
+  final List<FortuneIndicator> indicators;
+  final FortuneAnimation animationType;
   final VoidCallback onAnimationStart;
   final VoidCallback onAnimationEnd;
 
-  double get _maxAngle => slices.length * _anglePerRotation * rotationCount;
-
-  double get _animationProgress {
-    final previousRotations = selected / rotationCount;
-    final itemScale = slices.length * slices.length * rotationCount;
-    return previousRotations + selected / itemScale;
+  double _getAngle(double progress) {
+    return 2 * Math.pi * rotationCount * progress;
   }
-
-  Tween<double> get _angleTween => Tween(
-        begin: 0,
-        end: _maxAngle,
-      );
 
   const FortuneWheel({
     Key key,
-    @required this.slices,
-    this.rotationCount = 100,
+    @required this.items,
+    this.rotationCount = FortuneWidget.kRotationCount,
     this.selected = 0,
-    this.minDuration = const Duration(seconds: 2),
-    this.maxDuration = const Duration(seconds: 2),
-    this.animation = FortuneAnimation.Roll,
-    this.indicators = const <FortuneWheelIndicator>[
-      const FortuneWheelIndicator(
+    this.duration = FortuneWidget.kAnimationDuration,
+    this.animationType = FortuneAnimation.Roll,
+    this.indicators = const <FortuneIndicator>[
+      const FortuneIndicator(
         alignment: Alignment.topCenter,
         child: const TriangleIndicator(),
       ),
     ],
     this.onAnimationStart,
     this.onAnimationEnd,
-  })  : assert(slices != null && slices.length > 1),
-        assert(selected >= 0 && selected < slices.length),
-        assert(animation != null),
+  })  : assert(items != null && items.length > 1),
+        assert(selected >= 0 && selected < items.length),
+        assert(animationType != null),
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final animationCtrl = useAnimationController();
-    final wheelAnimation = animationCtrl.drive(_angleTween);
-    final AnimationFunc animFunc = getAnimationFunc(animation);
+    final animationCtrl = useAnimationController(duration: duration);
+    final animation = CurvedAnimation(
+      parent: animationCtrl,
+      curve: Cubic(0, 1.0, 0, 1.0),
+    );
+    final AnimationFunc animFunc = getAnimationFunc(animationType);
 
     Future<void> animate() async {
       if (animationCtrl.isAnimating) {
@@ -170,11 +160,7 @@ class FortuneWheel extends HookWidget {
         await Future.delayed(Duration.zero, onAnimationStart);
       }
 
-      await animFunc(
-        controller: animationCtrl,
-        duration: rangedRandomDuration(minDuration, maxDuration),
-        targetProgress: _animationProgress,
-      );
+      await animFunc(animationCtrl);
 
       if (onAnimationEnd != null) {
         await Future.delayed(Duration.zero, onAnimationEnd);
@@ -191,13 +177,16 @@ class FortuneWheel extends HookWidget {
     });
 
     final wheel = AnimatedBuilder(
-      animation: animationCtrl,
+      animation: animation,
       builder: (context, _) {
         return Transform.rotate(
-          angle: wheelAnimation.value,
-          child: SizedBox.expand(
-            child: SlicedCircle(
-              slices: slices,
+          angle: -2 * Math.pi * (selected / items.length),
+          child: Transform.rotate(
+            angle: _getAngle(animation.value),
+            child: SizedBox.expand(
+              child: SlicedCircle(
+                items: items,
+              ),
             ),
           ),
         );

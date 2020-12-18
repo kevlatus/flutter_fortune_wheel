@@ -1,0 +1,23 @@
+import 'package:flutter/widgets.dart';
+import 'package:quiver/core.dart';
+
+@immutable
+class FortuneIndicator {
+  final Alignment alignment;
+  final Widget child;
+
+  const FortuneIndicator({
+    this.alignment = Alignment.center,
+    @required this.child,
+  }) : assert(child != null);
+
+  @override
+  int get hashCode => hash2(alignment, child);
+
+  @override
+  bool operator ==(Object other) {
+    return other is FortuneIndicator &&
+        alignment == other.alignment &&
+        child == other.child;
+  }
+}

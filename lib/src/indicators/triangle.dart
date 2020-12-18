@@ -42,27 +42,27 @@ class _TrianglePainter extends CustomPainter {
 }
 
 class Triangle extends StatelessWidget {
-  final Color fillColor;
-  final Color strokeColor;
-  final double strokeWidth;
+  final Color color;
+  final Color borderColor;
+  final double borderWidth;
   final double elevation;
 
   const Triangle({
-    @required this.fillColor,
-    this.strokeColor,
-    this.strokeWidth = 1,
+    @required this.color,
+    this.borderColor,
+    this.borderWidth = 1,
     this.elevation = 0,
-  })  : assert(fillColor != null),
-        assert(strokeWidth != null),
+  })  : assert(color != null),
+        assert(borderWidth != null),
         assert(elevation != null);
 
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
       painter: _TrianglePainter(
-        fillColor: fillColor,
-        strokeColor: strokeColor,
-        strokeWidth: strokeWidth,
+        fillColor: color,
+        strokeColor: borderColor,
+        strokeWidth: borderWidth,
         elevation: elevation,
       ),
     );

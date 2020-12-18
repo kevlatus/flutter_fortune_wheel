@@ -4,20 +4,6 @@ import 'package:flutter/material.dart';
 
 import '../util.dart';
 
-class CircleSlice {
-  final Color fillColor;
-  final Color strokeColor;
-  final double strokeWidth;
-  final Widget child;
-
-  const CircleSlice({
-    this.fillColor,
-    this.strokeColor,
-    this.strokeWidth = 1,
-    this.child,
-  }) : assert(strokeWidth != null);
-}
-
 extension CirclePathExtensions on Path {
   void addSliceArc(double diameter, double angle) {
     this.arcTo(
@@ -168,7 +154,7 @@ class _CircleSliceLayoutDelegate extends MultiChildLayoutDelegate {
   }
 }
 
-class CircleSliceImpl extends StatelessWidget {
+class CircleSlice extends StatelessWidget {
   final double radius;
   final double angle;
   final Widget child;
@@ -187,7 +173,7 @@ class CircleSliceImpl extends StatelessWidget {
     );
   }
 
-  const CircleSliceImpl({
+  const CircleSlice({
     Key key,
     this.child,
     @required this.radius,

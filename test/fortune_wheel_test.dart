@@ -9,9 +9,9 @@ void main() {
         Directionality(
           textDirection: TextDirection.ltr,
           child: FortuneWheel(
-            slices: <CircleSlice>[
-              CircleSlice(),
-              CircleSlice(),
+            items: <FortuneItem>[
+              FortuneItem(child: Text('1')),
+              FortuneItem(child: Text('2')),
             ],
           ),
         ),
