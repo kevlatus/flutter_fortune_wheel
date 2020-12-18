@@ -6,7 +6,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import '../animations.dart';
 import '../fortune_widget.dart';
 import '../util.dart';
-import 'indicators/indicators.dart';
+import '../indicators/indicators.dart';
 import 'sliced_circle.dart';
 
 class _PositionedIndicator extends StatelessWidget {

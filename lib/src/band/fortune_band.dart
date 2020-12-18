@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 
 import '../animations.dart';
 import '../fortune_widget.dart';
+import '../indicators/indicators.dart';
 
 double _getItemWidth(double maxWidth, int itemCount) {
   final visibleItemCount = Math.min(itemCount, 3);
@@ -71,6 +72,7 @@ class FortuneBand extends HookWidget implements FortuneWidget {
   final int selected;
   final int rotationCount;
   final List<FortuneItem> items;
+  final List<FortuneWheelIndicator> indicators;
 
   Offset _itemOffset({
     int itemIndex,
@@ -103,6 +105,9 @@ class FortuneBand extends HookWidget implements FortuneWidget {
     this.selected,
     this.rotationCount = FortuneWidget.kRotationCount,
     this.items,
+    this.indicators = const <FortuneWheelIndicator>[
+      FortuneWheelIndicator(child: RectangleIndicator())
+    ],
   }) : super(key: key);
 
   @override
@@ -164,7 +169,15 @@ class FortuneBand extends HookWidget implements FortuneWidget {
                         width: itemWidth,
                         height: height,
                       ),
-                    )
+                    ),
+                  for (var it in indicators)
+                    Align(
+                      alignment: it.alignment,
+                      child: SizedBox(
+                        width: itemWidth,
+                        child: it.child,
+                      ),
+                    ),
                 ],
               );
             },
