@@ -10,7 +10,7 @@ import '../indicators/indicators.dart';
 import 'sliced_circle.dart';
 
 class _PositionedIndicator extends StatelessWidget {
-  final FortuneWheelIndicator indicator;
+  final FortuneIndicator indicator;
 
   Offset _getOffset(Alignment alignment, Offset margins, Offset circleMargins) {
     if (indicator.alignment == Alignment.topCenter) {
@@ -113,7 +113,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   final int selected;
   final int rotationCount;
   final Duration duration;
-  final List<FortuneWheelIndicator> indicators;
+  final List<FortuneIndicator> indicators;
   final FortuneAnimation animationType;
   final VoidCallback onAnimationStart;
   final VoidCallback onAnimationEnd;
@@ -129,8 +129,8 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     this.selected = 0,
     this.duration = FortuneWidget.kAnimationDuration,
     this.animationType = FortuneAnimation.Roll,
-    this.indicators = const <FortuneWheelIndicator>[
-      const FortuneWheelIndicator(
+    this.indicators = const <FortuneIndicator>[
+      const FortuneIndicator(
         alignment: Alignment.topCenter,
         child: const TriangleIndicator(),
       ),

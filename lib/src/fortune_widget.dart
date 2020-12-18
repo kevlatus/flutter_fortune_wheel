@@ -58,7 +58,7 @@ abstract class FortuneWidget implements Widget {
     int rotationCount,
     Duration duration,
     FortuneAnimation animationType,
-    List<FortuneWheelIndicator> indicators,
+    List<FortuneIndicator> indicators,
     VoidCallback onAnimationStart,
     VoidCallback onAnimationEnd,
   }) = FortuneWheel;
@@ -70,7 +70,7 @@ abstract class FortuneWidget implements Widget {
     int rotationCount,
     Duration duration,
     FortuneAnimation animationType,
-    List<FortuneWheelIndicator> indicators,
+    List<FortuneIndicator> indicators,
     VoidCallback onAnimationStart,
     VoidCallback onAnimationEnd,
     double height,
@@ -83,7 +83,7 @@ abstract class FortuneWidget implements Widget {
     int rotationCount,
     Duration duration,
     FortuneAnimation animationType,
-    List<FortuneWheelIndicator> indicators,
+    List<FortuneIndicator> indicators,
     VoidCallback onAnimationStart,
     VoidCallback onAnimationEnd,
   }) {

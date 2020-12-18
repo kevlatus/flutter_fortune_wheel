@@ -72,7 +72,7 @@ class FortuneBand extends HookWidget implements FortuneWidget {
   final int selected;
   final int rotationCount;
   final List<FortuneItem> items;
-  final List<FortuneWheelIndicator> indicators;
+  final List<FortuneIndicator> indicators;
 
   Offset _itemOffset({
     int itemIndex,
@@ -105,8 +105,8 @@ class FortuneBand extends HookWidget implements FortuneWidget {
     @required this.selected,
     this.rotationCount = FortuneWidget.kRotationCount,
     this.items,
-    this.indicators = const <FortuneWheelIndicator>[
-      FortuneWheelIndicator(child: RectangleIndicator())
+    this.indicators = const <FortuneIndicator>[
+      FortuneIndicator(child: RectangleIndicator())
     ],
   }) : super(key: key);
 

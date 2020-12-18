@@ -77,7 +77,7 @@ class _WheelPageState extends State<WheelPage> {
                 });
               },
               indicators: [
-                FortuneWheelIndicator(
+                FortuneIndicator(
                   alignment: _alignment,
                   child: TriangleIndicator(),
                 ),
