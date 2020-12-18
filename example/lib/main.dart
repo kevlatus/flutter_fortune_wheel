@@ -66,7 +66,6 @@ class _WheelPageState extends State<WheelPage> {
           Expanded(
             child: FortuneWheel(
               selected: _value,
-              animationType: FortuneAnimation.Roll,
               onAnimationStart: () {
                 setState(() {
                   _isAnimating = true;
@@ -104,12 +103,37 @@ class BandPage extends StatefulWidget {
 }
 
 class _BandPageState extends State<BandPage> {
+  int _value = 0;
+  bool _isAnimating = false;
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
+        RollButtonWithPreview(
+          selected: _value,
+          items: widget.items,
+          onPressed: _isAnimating
+              ? null
+              : (value) {
+                  setState(() {
+                    _value = value;
+                  });
+                },
+        ),
         FortuneBand(
+          selected: _value,
           items: [for (var it in widget.items) FortuneItem(child: Text(it))],
+          onAnimationStart: () {
+            setState(() {
+              _isAnimating = true;
+            });
+          },
+          onAnimationEnd: () {
+            setState(() {
+              _isAnimating = false;
+            });
+          },
         ),
       ],
     );
