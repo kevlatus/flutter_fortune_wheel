@@ -100,7 +100,11 @@ class BandPage extends StatefulWidget {
 class _BandPageState extends State<BandPage> {
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('Coming soon'));
+    return Column(
+      children: [
+        FortuneBand(),
+      ],
+    );
   }
 }
 
