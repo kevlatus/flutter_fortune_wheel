@@ -17,8 +17,8 @@ class FortuneItem {
     this.color,
     this.borderColor,
     this.borderWidth,
-    this.child,
-  });
+    @required this.child,
+  }) : assert(child != null);
 
   @override
   int get hashCode => hash4(color, borderColor, borderWidth, child);
