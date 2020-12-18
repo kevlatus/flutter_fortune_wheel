@@ -52,15 +52,6 @@ class FortuneBand extends HookWidget implements FortuneWidget {
       duration: duration,
     );
 
-    final items = <Widget>[
-      Text('A'),
-      Text('B'),
-      Text('C'),
-      Text('D'),
-      Text('E'),
-      Text('F'),
-    ];
-
     return GestureDetector(
       onTap: () {
         animationCtrl.forward();
@@ -99,7 +90,7 @@ class FortuneBand extends HookWidget implements FortuneWidget {
                           decoration: BoxDecoration(
                             border: Border(right: BorderSide()),
                           ),
-                          child: Center(child: entry.value),
+                          child: Center(child: entry.value.child),
                         ),
                       )
                   ],
