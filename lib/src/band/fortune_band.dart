@@ -27,13 +27,13 @@ class _BandItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final fillColor = item.fillColor ??
+    final fillColor = item.color ??
         Color.alphaBlend(
           theme.primaryColor.withOpacity(0.4),
           theme.colorScheme.surface,
         );
-    final borderColor = item.strokeColor ?? theme.primaryColor;
-    final borderWidth = item.strokeWidth ?? 3;
+    final borderColor = item.borderColor ?? theme.primaryColor;
+    final borderWidth = item.borderWidth ?? 3;
 
     return Container(
       width: width,
