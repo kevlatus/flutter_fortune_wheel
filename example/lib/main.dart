@@ -23,6 +23,10 @@ class DemoApp extends StatelessWidget {
 }
 
 class WheelPage extends StatefulWidget {
+  final List<String> items;
+
+  const WheelPage({Key key, this.items}) : super(key: key);
+
   @override
   _WheelPageState createState() => _WheelPageState();
 }
@@ -34,8 +38,6 @@ class _WheelPageState extends State<WheelPage> {
 
   @override
   Widget build(BuildContext context) {
-    final wheelFields = <String>['1', '2', '3', '4', '5', '6', '7', '8'];
-
     final alignmentSelector = AlignmentSelector(
       selected: _alignment,
       onChanged: (v) {
@@ -51,7 +53,7 @@ class _WheelPageState extends State<WheelPage> {
         children: [
           RollButtonWithPreview(
             selected: _value,
-            items: wheelFields,
+            items: widget.items,
             onPressed: _isAnimating
                 ? null
                 : (value) {
@@ -82,7 +84,7 @@ class _WheelPageState extends State<WheelPage> {
                 ),
               ],
               items: [
-                for (var it in wheelFields) FortuneItem(child: Text(it))
+                for (var it in widget.items) FortuneItem(child: Text(it))
               ],
             ),
           ),
@@ -93,6 +95,10 @@ class _WheelPageState extends State<WheelPage> {
 }
 
 class BandPage extends StatefulWidget {
+  final List<String> items;
+
+  const BandPage({Key key, this.items}) : super(key: key);
+
   @override
   _BandPageState createState() => _BandPageState();
 }
@@ -102,7 +108,9 @@ class _BandPageState extends State<BandPage> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        FortuneBand(),
+        FortuneBand(
+          items: [for (var it in widget.items) FortuneItem(child: Text(it))],
+        ),
       ],
     );
   }
@@ -111,6 +119,8 @@ class _BandPageState extends State<BandPage> {
 class ExamplePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final items = <String>['1', '2', '3', '4', '5', '6', '7', '8'];
+
     return DefaultTabController(
       length: 2,
       child: Scaffold(
@@ -125,8 +135,8 @@ class ExamplePage extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            Layout(child: WheelPage()),
-            Layout(child: BandPage()),
+            Layout(child: WheelPage(items: items)),
+            Layout(child: BandPage(items: items)),
           ],
         ),
       ),
