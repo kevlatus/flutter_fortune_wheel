@@ -10,8 +10,8 @@ void main() {
           textDirection: TextDirection.ltr,
           child: FortuneWheel(
             items: <FortuneItem>[
-              FortuneItem(),
-              FortuneItem(),
+              FortuneItem(child: Text('1')),
+              FortuneItem(child: Text('2')),
             ],
           ),
         ),

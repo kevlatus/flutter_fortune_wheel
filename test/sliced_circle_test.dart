@@ -10,8 +10,8 @@ void main() {
           textDirection: TextDirection.ltr,
           child: SlicedCircle(
             items: [
-              FortuneItem(),
-              FortuneItem(),
+              FortuneItem(child: Text('1')),
+              FortuneItem(child: Text('2')),
             ],
           ),
         ),
