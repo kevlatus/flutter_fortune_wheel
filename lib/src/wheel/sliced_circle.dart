@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 
+import '../fortune_widget.dart';
 import 'circle_slice.dart';
 import '../util.dart';
 
 class SlicedCircle extends StatelessWidget {
-  final List<CircleSlice> slices;
+  final List<FortuneItem> items;
 
   const SlicedCircle({
     Key key,
-    @required this.slices,
-  })  : assert(slices != null && slices.length > 1),
+    @required this.items,
+  })  : assert(items != null && items.length > 1),
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final anglePerChild = kPiDouble / slices.length;
+    final anglePerChild = kPiDouble / items.length;
 
     return LayoutBuilder(builder: (context, constraints) {
       final smallerSide = getSmallerSide(constraints);
@@ -22,14 +23,14 @@ class SlicedCircle extends StatelessWidget {
       return Transform.translate(
         offset: Offset(constraints.maxWidth / 2, constraints.maxHeight / 2),
         child: Stack(
-          children: slices.asMap().keys.map((index) {
+          children: items.asMap().keys.map((index) {
             final theme = Theme.of(context);
-            final fillColor = slices[index].fillColor ??
+            final fillColor = items[index].fillColor ??
                 (Color.alphaBlend(
                   theme.primaryColor.withOpacity(index % 2 == 0 ? 0.5 : 1),
                   theme.colorScheme.background,
                 ));
-            final strokeColor = slices[index].strokeColor ?? theme.primaryColor;
+            final strokeColor = items[index].strokeColor ?? theme.primaryColor;
 
             final childAngle = anglePerChild * index;
             // first slice starts at 90 degrees, if 0 degrees is at the top.
@@ -39,16 +40,16 @@ class SlicedCircle extends StatelessWidget {
             return Transform.rotate(
               alignment: Alignment.topLeft,
               angle: childAngle + angleOffset,
-              child: CircleSliceImpl(
+              child: CircleSlice(
                 child: DefaultTextStyle(
                   style: TextStyle(color: theme.colorScheme.onPrimary),
-                  child: slices[index].child,
+                  child: items[index].child,
                 ),
                 radius: smallerSide / 2,
-                angle: kPiDouble / slices.length,
+                angle: kPiDouble / items.length,
                 fillColor: fillColor,
                 strokeColor: strokeColor,
-                strokeWidth: slices[index].strokeWidth,
+                strokeWidth: items[index].strokeWidth,
               ),
             );
           }).toList(),

@@ -81,8 +81,8 @@ class _WheelPageState extends State<WheelPage> {
                   child: TriangleIndicator(),
                 ),
               ],
-              slices: [
-                for (var it in wheelFields) CircleSlice(child: Text(it))
+              items: [
+                for (var it in wheelFields) FortuneItem(child: Text(it))
               ],
             ),
           ),

@@ -6,7 +6,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import '../animations.dart';
 import '../fortune_widget.dart';
 import '../util.dart';
-import 'circle_slice.dart';
 import 'indicators/indicators.dart';
 import 'sliced_circle.dart';
 
@@ -112,7 +111,7 @@ class _PositionedIndicator extends StatelessWidget {
 class FortuneWheel extends HookWidget implements FortuneWidget {
   /// A list of circle slices this fortune wheel should contain.
   /// Must not be null and contain at least 2 slices.
-  final List<CircleSlice> slices;
+  final List<FortuneItem> items;
   final int selected;
   final int rotationCount;
   final Duration duration;
@@ -121,11 +120,11 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   final VoidCallback onAnimationStart;
   final VoidCallback onAnimationEnd;
 
-  double get _maxAngle => slices.length * _anglePerRotation * rotationCount;
+  double get _maxAngle => items.length * _anglePerRotation * rotationCount;
 
   double get _animationProgress {
     final previousRotations = selected / rotationCount;
-    final itemScale = slices.length * slices.length * rotationCount;
+    final itemScale = items.length * items.length * rotationCount;
     return previousRotations + selected / itemScale;
   }
 
@@ -136,7 +135,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
 
   const FortuneWheel({
     Key key,
-    @required this.slices,
+    @required this.items,
     this.rotationCount = 100,
     this.selected = 0,
     this.duration = const Duration(seconds: 2),
@@ -149,8 +148,8 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     ],
     this.onAnimationStart,
     this.onAnimationEnd,
-  })  : assert(slices != null && slices.length > 1),
-        assert(selected >= 0 && selected < slices.length),
+  })  : assert(items != null && items.length > 1),
+        assert(selected >= 0 && selected < items.length),
         assert(animationType != null),
         super(key: key);
 
@@ -196,7 +195,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
           angle: wheelAnimation.value,
           child: SizedBox.expand(
             child: SlicedCircle(
-              slices: slices,
+              items: items,
             ),
           ),
         );

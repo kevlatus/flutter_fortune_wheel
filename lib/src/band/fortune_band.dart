@@ -1,9 +1,9 @@
 import 'dart:math' as Math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
+import '../animations.dart';
 import '../fortune_widget.dart';
 
 double _getItemWidth(double maxWidth, int itemCount) {
@@ -32,6 +32,7 @@ class FortuneBand extends HookWidget implements FortuneWidget {
   final FortuneAnimation animationType;
   final int selected;
   final int rotationCount;
+  final List<FortuneItem> items;
 
   const FortuneBand({
     Key key,
@@ -42,6 +43,7 @@ class FortuneBand extends HookWidget implements FortuneWidget {
     this.animationType = FortuneAnimation.Roll,
     this.selected,
     this.rotationCount = 100,
+    this.items,
   }) : super(key: key);
 
   @override
