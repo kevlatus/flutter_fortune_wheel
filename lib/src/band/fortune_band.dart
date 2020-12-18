@@ -102,7 +102,7 @@ class FortuneBand extends HookWidget implements FortuneWidget {
     this.onAnimationStart,
     this.onAnimationEnd,
     this.animationType = FortuneAnimation.Roll,
-    this.selected,
+    @required this.selected,
     this.rotationCount = FortuneWidget.kRotationCount,
     this.items,
     this.indicators = const <FortuneWheelIndicator>[

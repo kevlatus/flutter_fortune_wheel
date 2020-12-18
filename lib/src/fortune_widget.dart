@@ -2,6 +2,9 @@ import 'package:flutter/widgets.dart';
 import 'package:quiver/core.dart';
 
 import 'animations.dart';
+import 'indicators/indicators.dart';
+import 'band/band.dart';
+import 'wheel/wheel.dart';
 
 @immutable
 class FortuneItem {
@@ -47,4 +50,67 @@ abstract class FortuneWidget implements Widget {
   VoidCallback get onAnimationStart;
 
   VoidCallback get onAnimationEnd;
+
+  const factory FortuneWidget.wheel({
+    Key key,
+    @required int selected,
+    @required List<FortuneItem> items,
+    int rotationCount,
+    Duration duration,
+    FortuneAnimation animationType,
+    List<FortuneWheelIndicator> indicators,
+    VoidCallback onAnimationStart,
+    VoidCallback onAnimationEnd,
+  }) = FortuneWheel;
+
+  const factory FortuneWidget.band({
+    Key key,
+    @required List<FortuneItem> items,
+    @required int selected,
+    int rotationCount,
+    Duration duration,
+    FortuneAnimation animationType,
+    List<FortuneWheelIndicator> indicators,
+    VoidCallback onAnimationStart,
+    VoidCallback onAnimationEnd,
+    double height,
+  }) = FortuneBand;
+
+  factory FortuneWidget({
+    Key key,
+    @required List<FortuneItem> items,
+    @required int selected,
+    int rotationCount,
+    Duration duration,
+    FortuneAnimation animationType,
+    List<FortuneWheelIndicator> indicators,
+    VoidCallback onAnimationStart,
+    VoidCallback onAnimationEnd,
+  }) {
+    if (items.length % 2 == 0) {
+      return FortuneWidget.wheel(
+        key: key,
+        items: items,
+        selected: selected,
+        rotationCount: rotationCount,
+        duration: duration,
+        animationType: animationType,
+        indicators: indicators,
+        onAnimationStart: onAnimationStart,
+        onAnimationEnd: onAnimationEnd,
+      );
+    } else {
+      return FortuneWidget.band(
+        key: key,
+        items: items,
+        selected: selected,
+        rotationCount: rotationCount,
+        duration: duration,
+        animationType: animationType,
+        indicators: indicators,
+        onAnimationStart: onAnimationStart,
+        onAnimationEnd: onAnimationEnd,
+      );
+    }
+  }
 }
