@@ -188,6 +188,7 @@ class AlignmentSelector extends StatelessWidget {
 }
 
 class RollButton extends StatelessWidget {
+  final int lastValue;
   final Callback<int> onPressed;
   final int itemCount;
 
@@ -195,12 +196,21 @@ class RollButton extends StatelessWidget {
     Key key,
     this.onPressed,
     this.itemCount,
+    this.lastValue,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     int roll() {
-      return Random().nextInt(itemCount);
+      if (lastValue == null) {
+        return Random().nextInt(itemCount);
+      } else {
+        int val = lastValue;
+        while (val == lastValue) {
+          val = Random().nextInt(itemCount);
+        }
+        return val;
+      }
     }
 
     return ElevatedButton(
@@ -231,6 +241,7 @@ class RollButtonWithPreview extends StatelessWidget {
         RollButton(
           itemCount: items.length,
           onPressed: onPressed,
+          lastValue: selected,
         ),
         Text('Rolled Value: ${items[selected]}'),
       ],
