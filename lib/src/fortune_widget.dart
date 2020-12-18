@@ -31,6 +31,8 @@ class FortuneItem {
 }
 
 abstract class FortuneWidget implements Widget {
+  static const Duration kDefaultAnimationDuration = const Duration(seconds: 5);
+
   List<FortuneItem> get items;
 
   int get selected;

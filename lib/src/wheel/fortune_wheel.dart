@@ -138,7 +138,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     @required this.items,
     this.rotationCount = 100,
     this.selected = 0,
-    this.duration = const Duration(seconds: 2),
+    this.duration = FortuneWidget.kDefaultAnimationDuration,
     this.animationType = FortuneAnimation.Roll,
     this.indicators = const <FortuneWheelIndicator>[
       const FortuneWheelIndicator(

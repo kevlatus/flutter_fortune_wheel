@@ -45,7 +45,7 @@ class FortuneBand extends HookWidget implements FortuneWidget {
   const FortuneBand({
     Key key,
     this.height = 56.0,
-    this.duration = const Duration(seconds: 2),
+    this.duration = FortuneWidget.kDefaultAnimationDuration,
     this.onAnimationStart,
     this.onAnimationEnd,
     this.animationType = FortuneAnimation.Roll,
