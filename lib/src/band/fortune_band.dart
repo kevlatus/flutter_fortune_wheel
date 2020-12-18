@@ -33,16 +33,20 @@ class _BandItem extends StatelessWidget {
           theme.colorScheme.surface,
         );
     final borderColor = item.borderColor ?? theme.primaryColor;
-    final borderWidth = item.borderWidth ?? 3;
+    final borderWidth = item.borderWidth ?? 4;
 
     return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
-        border: Border(
-          right: BorderSide(
+        border: Border.symmetric(
+          horizontal: BorderSide(
             color: borderColor,
-            width: borderWidth,
+            width: borderWidth / 2,
+          ),
+          vertical: BorderSide(
+            color: borderColor,
+            width: borderWidth / 4,
           ),
         ),
         color: fillColor,

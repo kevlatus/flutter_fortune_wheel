@@ -31,6 +31,7 @@ class SlicedCircle extends StatelessWidget {
                   theme.colorScheme.background,
                 ));
             final strokeColor = items[index].borderColor ?? theme.primaryColor;
+            final strokeWidth = items[index].borderWidth ?? 1;
 
             final childAngle = anglePerChild * index;
             // first slice starts at 90 degrees, if 0 degrees is at the top.
@@ -49,7 +50,7 @@ class SlicedCircle extends StatelessWidget {
                 angle: kPiDouble / items.length,
                 fillColor: fillColor,
                 strokeColor: strokeColor,
-                strokeWidth: items[index].borderWidth,
+                strokeWidth: strokeWidth,
               ),
             );
           }).toList(),

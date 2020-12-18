@@ -13,9 +13,9 @@ class FortuneItem {
   const FortuneItem({
     this.color,
     this.borderColor,
-    this.borderWidth = 1,
+    this.borderWidth,
     this.child,
-  }) : assert(borderWidth != null);
+  });
 
   @override
   int get hashCode => hash4(color, borderColor, borderWidth, child);
