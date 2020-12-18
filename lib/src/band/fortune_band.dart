@@ -11,19 +11,6 @@ double _getItemWidth(double maxWidth, int itemCount) {
   return maxWidth / visibleItemCount;
 }
 
-double _getOffsetX({
-  double itemWidth,
-  int itemIndex,
-  int itemCount,
-  double animationOffset,
-}) {
-  if (itemWidth * (itemIndex + 1) < animationOffset) {
-    return itemWidth * itemIndex - animationOffset + itemWidth * itemCount;
-  } else {
-    return itemWidth * itemIndex - animationOffset;
-  }
-}
-
 class FortuneBand extends HookWidget implements FortuneWidget {
   final Duration duration;
   final double height;
@@ -34,10 +21,31 @@ class FortuneBand extends HookWidget implements FortuneWidget {
   final int rotationCount;
   final List<FortuneItem> items;
 
+  Offset _itemOffset({
+    int itemIndex,
+    double width,
+    double animationProgress,
+  }) {
+    itemIndex = (itemIndex - selected) % items.length;
+    final itemWidth = _getItemWidth(width, items.length);
+    final rotationWidth = itemWidth * items.length;
+
+    final norm = 1 / rotationCount;
+    final rotation = (animationProgress / norm).floor();
+    final rotationProgress = animationProgress / norm - rotation;
+    final animationValue = rotationProgress * rotationWidth;
+
+    double x = itemWidth * itemIndex - animationValue;
+    if (itemWidth * (itemIndex + 1) < animationValue) {
+      x += rotationWidth;
+    }
+    return Offset(x, 0);
+  }
+
   const FortuneBand({
     Key key,
     this.height = 56.0,
-    this.duration = const Duration(seconds: 2), // TODO: shared const
+    this.duration = const Duration(seconds: 2),
     this.onAnimationStart,
     this.onAnimationEnd,
     this.animationType = FortuneAnimation.Roll,
@@ -52,54 +60,71 @@ class FortuneBand extends HookWidget implements FortuneWidget {
       duration: duration,
     );
 
-    return GestureDetector(
-      onTap: () {
-        animationCtrl.forward();
+    Future<void> animate() async {
+      if (animationCtrl.isAnimating) {
+        return;
+      }
+
+      if (onAnimationStart != null) {
+        await Future.delayed(Duration.zero, onAnimationStart);
+      }
+
+      animationCtrl.value = 0;
+      await animationCtrl.animateTo(
+        1,
+        duration: duration,
+        curve: Cubic(0, 1.0, 0, 1.0),
+      );
+
+      if (onAnimationEnd != null) {
+        await Future.delayed(Duration.zero, onAnimationEnd);
+      }
+    }
+
+    useEffect(() {
+      animate();
+      return null;
+    }, []);
+
+    useValueChanged(selected, (_, __) {
+      animate();
+    });
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final itemWidth = _getItemWidth(constraints.maxWidth, items.length);
+
+        return SizedBox(
+          width: constraints.maxWidth,
+          height: 56,
+          child: AnimatedBuilder(
+            animation: animationCtrl,
+            builder: (context, _) {
+              return Stack(
+                children: [
+                  for (var i = 0; i < items.length; i++)
+                    Transform.translate(
+                      offset: _itemOffset(
+                        animationProgress: animationCtrl.value,
+                        // put selected item in center
+                        itemIndex: (i + 1) % items.length,
+                        width: constraints.maxWidth,
+                      ),
+                      child: Container(
+                        width: itemWidth,
+                        height: height,
+                        decoration: BoxDecoration(
+                          border: Border(right: BorderSide()),
+                        ),
+                        child: Center(child: items[i].child),
+                      ),
+                    )
+                ],
+              );
+            },
+          ),
+        );
       },
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final itemWidth = _getItemWidth(constraints.maxWidth, items.length);
-          final totalWidth = itemWidth * items.length;
-
-          final animation = animationCtrl.drive(
-            Tween<double>(begin: 0, end: totalWidth),
-          );
-
-          return SizedBox(
-            width: constraints.maxWidth,
-            height: 56,
-            child: AnimatedBuilder(
-              animation: animation,
-              builder: (context, _) {
-                return Stack(
-                  children: [
-                    for (var entry in items.asMap().entries)
-                      Transform.translate(
-                        offset: Offset(
-                          _getOffsetX(
-                            itemIndex: entry.key,
-                            itemWidth: itemWidth,
-                            animationOffset: animation.value,
-                            itemCount: items.length,
-                          ),
-                          0,
-                        ),
-                        child: Container(
-                          width: itemWidth,
-                          height: height,
-                          decoration: BoxDecoration(
-                            border: Border(right: BorderSide()),
-                          ),
-                          child: Center(child: entry.value.child),
-                        ),
-                      )
-                  ],
-                );
-              },
-            ),
-          );
-        },
-      ),
     );
   }
 }
