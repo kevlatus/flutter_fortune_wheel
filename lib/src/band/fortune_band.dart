@@ -14,11 +14,11 @@ double _getItemWidth(double maxWidth, int itemCount) {
 class _BandItem extends StatelessWidget {
   final double width;
   final double height;
-  final Widget child;
+  final FortuneItem item;
 
   const _BandItem({
     Key key,
-    @required this.child,
+    @required this.item,
     @required this.width,
     @required this.height,
   }) : super(key: key);
@@ -27,18 +27,31 @@ class _BandItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    final fillColor = item.fillColor ??
+        Color.alphaBlend(
+          theme.primaryColor.withOpacity(0.4),
+          theme.colorScheme.surface,
+        );
+    final borderColor = item.strokeColor ?? theme.primaryColor;
+    final borderWidth = item.strokeWidth ?? 3;
+
     return Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
-        border: Border(right: BorderSide(color: theme.primaryColor)),
-        color: theme.primaryColor,
+        border: Border(
+          right: BorderSide(
+            color: borderColor,
+            width: borderWidth,
+          ),
+        ),
+        color: fillColor,
       ),
       child: Center(
         child: DefaultTextStyle(
           textAlign: TextAlign.center,
-          style: TextStyle(color: theme.colorScheme.onPrimary),
-          child: child,
+          style: TextStyle(color: theme.colorScheme.onSurface),
+          child: item.child,
         ),
       ),
     );
@@ -143,7 +156,7 @@ class FortuneBand extends HookWidget implements FortuneWidget {
                         width: constraints.maxWidth,
                       ),
                       child: _BandItem(
-                        child: items[i].child,
+                        item: items[i],
                         width: itemWidth,
                         height: height,
                       ),
