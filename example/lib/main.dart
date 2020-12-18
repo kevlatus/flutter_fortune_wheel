@@ -143,7 +143,16 @@ class _BandPageState extends State<BandPage> {
 class ExamplePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final items = <String>['1', '2', '3', '4', '5', '6', '7', '8'];
+    final items = <String>[
+      'Grogu',
+      'Mace Windu',
+      'Obi-Wan Kenobi',
+      'Han Solo',
+      'Luke Skywalker',
+      'Darth Vader',
+      'Yoda',
+      'Ahsoka Tano',
+    ];
 
     return DefaultTabController(
       length: 2,
