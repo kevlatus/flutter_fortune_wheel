@@ -12,12 +12,12 @@ double _getItemWidth(double maxWidth, int itemCount) {
   return maxWidth / visibleItemCount;
 }
 
-class _BandItem extends StatelessWidget {
+class _FortuneBarItem extends StatelessWidget {
   final double width;
   final double height;
   final FortuneItem item;
 
-  const _BandItem({
+  const _FortuneBarItem({
     Key key,
     @required this.item,
     @required this.width,
@@ -63,7 +63,7 @@ class _BandItem extends StatelessWidget {
   }
 }
 
-class FortuneBand extends HookWidget implements FortuneWidget {
+class FortuneBar extends HookWidget implements FortuneWidget {
   final Duration duration;
   final double height;
   final VoidCallback onAnimationStart;
@@ -95,7 +95,7 @@ class FortuneBand extends HookWidget implements FortuneWidget {
     return Offset(x, 0);
   }
 
-  const FortuneBand({
+  const FortuneBar({
     Key key,
     this.height = 56.0,
     this.duration = FortuneWidget.kAnimationDuration,
@@ -164,7 +164,7 @@ class FortuneBand extends HookWidget implements FortuneWidget {
                         itemIndex: (i + 1) % items.length,
                         width: constraints.maxWidth,
                       ),
-                      child: _BandItem(
+                      child: _FortuneBarItem(
                         item: items[i],
                         width: itemWidth,
                         height: height,

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class _TrianglePainter extends CustomPainter {
@@ -32,12 +33,17 @@ class _TrianglePainter extends CustomPainter {
 
     canvas.drawShadow(path, Colors.black, elevation, true);
     canvas.drawPath(path, fillPaint);
-    canvas.drawPath(path, strokePaint);
+    // TODO: remove condition once flutter bug is fixed
+    // https://github.com/flutter/flutter/issues/67993
+    if (!kIsWeb) canvas.drawPath(path, strokePaint);
   }
 
   @override
   bool shouldRepaint(_TrianglePainter oldDelegate) {
-    return fillColor != oldDelegate.fillColor;
+    return fillColor != oldDelegate.fillColor ||
+        elevation != oldDelegate.elevation ||
+        strokeWidth != oldDelegate.strokeWidth ||
+        strokeColor != oldDelegate.strokeColor;
   }
 }
 

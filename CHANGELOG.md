@@ -1,3 +1,7 @@
+## [0.1.0] - 2020-12-19
+
+feat: add alternative FortuneBar widget
+
 ## [0.0.9] - 2020-12-13
 
 feat: adjust default roll duration to 2 seconds and increase bezier easing
