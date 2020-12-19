@@ -93,16 +93,16 @@ class _WheelPageState extends State<WheelPage> {
   }
 }
 
-class BandPage extends StatefulWidget {
+class BarPage extends StatefulWidget {
   final List<String> items;
 
-  const BandPage({Key key, this.items}) : super(key: key);
+  const BarPage({Key key, this.items}) : super(key: key);
 
   @override
-  _BandPageState createState() => _BandPageState();
+  _BarPageState createState() => _BarPageState();
 }
 
-class _BandPageState extends State<BandPage> {
+class _BarPageState extends State<BarPage> {
   int _value = 0;
   bool _isAnimating = false;
 
@@ -121,7 +121,7 @@ class _BandPageState extends State<BandPage> {
                   });
                 },
         ),
-        FortuneBand(
+        FortuneBar(
           selected: _value,
           items: [for (var it in widget.items) FortuneItem(child: Text(it))],
           onAnimationStart: () {
@@ -162,14 +162,14 @@ class ExamplePage extends StatelessWidget {
           bottom: TabBar(
             tabs: [
               Tab(text: 'Wheel'),
-              Tab(text: 'Band'),
+              Tab(text: 'Bar'),
             ],
           ),
         ),
         body: TabBarView(
           children: [
             Layout(child: WheelPage(items: items)),
-            Layout(child: BandPage(items: items)),
+            Layout(child: BarPage(items: items)),
           ],
         ),
       ),

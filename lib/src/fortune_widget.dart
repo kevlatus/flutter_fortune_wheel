@@ -3,7 +3,7 @@ import 'package:quiver/core.dart';
 
 import 'animations.dart';
 import 'indicators/indicators.dart';
-import 'band/band.dart';
+import 'bar/bar.dart';
 import 'wheel/wheel.dart';
 
 @immutable
@@ -63,7 +63,7 @@ abstract class FortuneWidget implements Widget {
     VoidCallback onAnimationEnd,
   }) = FortuneWheel;
 
-  const factory FortuneWidget.band({
+  const factory FortuneWidget.bar({
     Key key,
     @required List<FortuneItem> items,
     @required int selected,
@@ -74,7 +74,7 @@ abstract class FortuneWidget implements Widget {
     VoidCallback onAnimationStart,
     VoidCallback onAnimationEnd,
     double height,
-  }) = FortuneBand;
+  }) = FortuneBar;
 
   factory FortuneWidget({
     Key key,
@@ -100,7 +100,7 @@ abstract class FortuneWidget implements Widget {
         onAnimationEnd: onAnimationEnd,
       );
     } else {
-      return FortuneWidget.band(
+      return FortuneWidget.bar(
         key: key,
         items: items,
         selected: selected,
