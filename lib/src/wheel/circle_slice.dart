@@ -1,5 +1,6 @@
 import 'dart:math' as Math;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../util.dart';
@@ -55,21 +56,27 @@ class _CircleSlicePainter extends CustomPainter {
     );
 
     // draw slice border
-    canvas.drawPath(
-      path,
-      Paint()
-        ..color = strokeColor
-        ..strokeWidth = strokeWidth
-        ..style = PaintingStyle.stroke,
-    );
+    // TODO: remove condition once flutter bug is fixed
+    // https://github.com/flutter/flutter/issues/67993
+    if (!kIsWeb)
+      canvas.drawPath(
+        path,
+        Paint()
+          ..color = strokeColor
+          ..strokeWidth = strokeWidth
+          ..style = PaintingStyle.stroke,
+      );
 
-    canvas.drawPath(
-      Path()..addSliceArc(diameter, angle),
-      Paint()
-        ..color = strokeColor
-        ..strokeWidth = strokeWidth * 2
-        ..style = PaintingStyle.stroke,
-    );
+    // TODO: remove condition once flutter bug is fixed
+    // https://github.com/flutter/flutter/issues/67993
+    if (!kIsWeb)
+      canvas.drawPath(
+        Path()..addSliceArc(diameter, angle),
+        Paint()
+          ..color = strokeColor
+          ..strokeWidth = strokeWidth * 2
+          ..style = PaintingStyle.stroke,
+      );
   }
 
   @override
