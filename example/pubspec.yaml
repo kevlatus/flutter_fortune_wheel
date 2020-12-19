@@ -1,4 +1,4 @@
-name: example
+name: flutter_fortune_wheel_example
 version: 1.0.0
 
 publish_to: "none"
@@ -9,15 +9,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
   flutter_fortune_wheel:
+    path: ../
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-dependency_overrides:
-  flutter_fortune_wheel:
-    path: ../
 
 flutter:
   uses-material-design: true
