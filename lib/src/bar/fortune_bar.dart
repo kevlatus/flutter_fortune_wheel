@@ -64,6 +64,10 @@ class _FortuneBarItem extends StatelessWidget {
 }
 
 class FortuneBar extends HookWidget implements FortuneWidget {
+  static const List<FortuneIndicator> kDefaultIndicators = const <FortuneIndicator>[
+    FortuneIndicator(child: RectangleIndicator()),
+  ];
+
   final Duration duration;
   final double height;
   final VoidCallback onAnimationStart;
@@ -98,16 +102,14 @@ class FortuneBar extends HookWidget implements FortuneWidget {
   const FortuneBar({
     Key key,
     this.height = 56.0,
-    this.duration = FortuneWidget.kAnimationDuration,
+    this.duration = FortuneWidget.kDefaultDuration,
     this.onAnimationStart,
     this.onAnimationEnd,
     this.animationType = FortuneAnimation.Roll,
     @required this.selected,
-    this.rotationCount = FortuneWidget.kRotationCount,
+    this.rotationCount = FortuneWidget.kDefaultRotationCount,
     this.items,
-    this.indicators = const <FortuneIndicator>[
-      FortuneIndicator(child: RectangleIndicator())
-    ],
+    this.indicators = kDefaultIndicators,
   }) : super(key: key);
 
   @override

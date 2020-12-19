@@ -107,6 +107,14 @@ class _PositionedIndicator extends StatelessWidget {
 }
 
 class FortuneWheel extends HookWidget implements FortuneWidget {
+  static const List<FortuneIndicator> kDefaultIndicators =
+      const <FortuneIndicator>[
+    const FortuneIndicator(
+      alignment: Alignment.topCenter,
+      child: const TriangleIndicator(),
+    ),
+  ];
+
   /// A list of circle slices this fortune wheel should contain.
   /// Must not be null and contain at least 2 slices.
   final List<FortuneItem> items;
@@ -125,16 +133,11 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   const FortuneWheel({
     Key key,
     @required this.items,
-    this.rotationCount = FortuneWidget.kRotationCount,
+    this.rotationCount = FortuneWidget.kDefaultRotationCount,
     this.selected = 0,
-    this.duration = FortuneWidget.kAnimationDuration,
+    this.duration = FortuneWidget.kDefaultDuration,
     this.animationType = FortuneAnimation.Roll,
-    this.indicators = const <FortuneIndicator>[
-      const FortuneIndicator(
-        alignment: Alignment.topCenter,
-        child: const TriangleIndicator(),
-      ),
-    ],
+    this.indicators = kDefaultIndicators,
     this.onAnimationStart,
     this.onAnimationEnd,
   })  : assert(items != null && items.length > 1),

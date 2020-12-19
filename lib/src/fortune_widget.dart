@@ -34,8 +34,8 @@ class FortuneItem {
 }
 
 abstract class FortuneWidget implements Widget {
-  static const Duration kAnimationDuration = const Duration(seconds: 5);
-  static const int kRotationCount = 100;
+  static const Duration kDefaultDuration = const Duration(seconds: 5);
+  static const int kDefaultRotationCount = 100;
 
   List<FortuneItem> get items;
 
@@ -80,9 +80,9 @@ abstract class FortuneWidget implements Widget {
     Key key,
     @required List<FortuneItem> items,
     @required int selected,
-    int rotationCount,
-    Duration duration,
-    FortuneAnimation animationType,
+    int rotationCount = kDefaultRotationCount,
+    Duration duration = kDefaultDuration,
+    FortuneAnimation animationType = FortuneAnimation.Roll,
     List<FortuneIndicator> indicators,
     VoidCallback onAnimationStart,
     VoidCallback onAnimationEnd,
@@ -95,7 +95,7 @@ abstract class FortuneWidget implements Widget {
         rotationCount: rotationCount,
         duration: duration,
         animationType: animationType,
-        indicators: indicators,
+        indicators: indicators ?? FortuneWheel.kDefaultIndicators,
         onAnimationStart: onAnimationStart,
         onAnimationEnd: onAnimationEnd,
       );
@@ -107,7 +107,7 @@ abstract class FortuneWidget implements Widget {
         rotationCount: rotationCount,
         duration: duration,
         animationType: animationType,
-        indicators: indicators,
+        indicators: indicators ?? FortuneBar.kDefaultIndicators,
         onAnimationStart: onAnimationStart,
         onAnimationEnd: onAnimationEnd,
       );
