@@ -19,6 +19,7 @@ class BarDemo extends HookWidget {
 
     return Column(
       children: [
+        SizedBox(height: 8),
         RollButtonWithPreview(
           selected: selected.value,
           items: items,

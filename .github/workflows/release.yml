@@ -29,8 +29,8 @@ jobs:
 
       - name: setup pub credentials
         run: |
-          mkdir -p ~/.pub-cache
-          cat <<EOF > ~/.pub-cache/credentials.json
+          mkdir -p "$FLUTTER_ROOT/.pub-cache"
+          cat <<EOF > "$FLUTTER_ROOT/.pub-cache/credentials.json"
           {
             "accessToken":"${{ secrets.OAUTH_ACCESS_TOKEN }}",
             "refreshToken":"${{ secrets.OAUTH_REFRESH_TOKEN }}",
