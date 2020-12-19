@@ -1,5 +1,4 @@
-import 'package:flutter/widgets.dart';
-import 'package:quiver/core.dart';
+part of 'indicators.dart';
 
 @immutable
 class FortuneIndicator {

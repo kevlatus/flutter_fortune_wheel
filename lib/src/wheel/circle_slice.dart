@@ -1,11 +1,6 @@
-import 'dart:math' as Math;
+part of 'wheel.dart';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
-import '../util.dart';
-
-extension CirclePathExtensions on Path {
+extension _CirclePathExtensions on Path {
   void addSliceArc(double diameter, double angle) {
     this.arcTo(
       Rect.fromCircle(
@@ -56,21 +51,21 @@ class _CircleSlicePainter extends CustomPainter {
     );
 
     // draw slice border
-      canvas.drawPath(
-        path,
-        Paint()
-          ..color = strokeColor
-          ..strokeWidth = strokeWidth
-          ..style = PaintingStyle.stroke,
-      );
+    canvas.drawPath(
+      path,
+      Paint()
+        ..color = strokeColor
+        ..strokeWidth = strokeWidth
+        ..style = PaintingStyle.stroke,
+    );
 
-      canvas.drawPath(
-        Path()..addSliceArc(diameter, angle),
-        Paint()
-          ..color = strokeColor
-          ..strokeWidth = strokeWidth * 2
-          ..style = PaintingStyle.stroke,
-      );
+    canvas.drawPath(
+      Path()..addSliceArc(diameter, angle),
+      Paint()
+        ..color = strokeColor
+        ..strokeWidth = strokeWidth * 2
+        ..style = PaintingStyle.stroke,
+    );
   }
 
   @override
@@ -155,7 +150,7 @@ class _CircleSliceLayoutDelegate extends MultiChildLayoutDelegate {
   }
 }
 
-class CircleSlice extends StatelessWidget {
+class _CircleSlice extends StatelessWidget {
   final double radius;
   final double angle;
   final Widget child;
@@ -174,7 +169,7 @@ class CircleSlice extends StatelessWidget {
     );
   }
 
-  const CircleSlice({
+  const _CircleSlice({
     Key key,
     this.child,
     @required this.radius,

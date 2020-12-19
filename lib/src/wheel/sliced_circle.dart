@@ -1,13 +1,9 @@
-import 'package:flutter/material.dart';
+part of 'wheel.dart';
 
-import '../fortune_widget.dart';
-import 'circle_slice.dart';
-import '../util.dart';
-
-class SlicedCircle extends StatelessWidget {
+class _SlicedCircle extends StatelessWidget {
   final List<FortuneItem> items;
 
-  const SlicedCircle({
+  const _SlicedCircle({
     Key key,
     @required this.items,
   })  : assert(items != null && items.length > 1),
@@ -41,7 +37,7 @@ class SlicedCircle extends StatelessWidget {
             return Transform.rotate(
               alignment: Alignment.topLeft,
               angle: childAngle + angleOffset,
-              child: CircleSlice(
+              child: _CircleSlice(
                 child: DefaultTextStyle(
                   style: TextStyle(color: theme.colorScheme.onPrimary),
                   child: items[index].child,

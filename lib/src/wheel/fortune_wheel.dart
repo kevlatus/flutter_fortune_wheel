@@ -1,13 +1,4 @@
-import 'dart:math' as Math;
-
-import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-
-import '../animations.dart';
-import '../fortune_widget.dart';
-import '../util.dart';
-import '../indicators/indicators.dart';
-import 'sliced_circle.dart';
+part of 'wheel.dart';
 
 class _PositionedIndicator extends StatelessWidget {
   final FortuneIndicator indicator;
@@ -187,7 +178,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
           child: Transform.rotate(
             angle: _getAngle(animation.value),
             child: SizedBox.expand(
-              child: SlicedCircle(
+              child: _SlicedCircle(
                 items: items,
               ),
             ),

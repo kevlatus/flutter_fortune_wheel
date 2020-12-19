@@ -1,70 +1,13 @@
-import 'dart:math' as Math;
-
-import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-
-import '../animations.dart';
-import '../fortune_widget.dart';
-import '../indicators/indicators.dart';
+part of 'bar.dart';
 
 double _getItemWidth(double maxWidth, int itemCount) {
   final visibleItemCount = Math.min(itemCount, 3);
   return maxWidth / visibleItemCount;
 }
 
-class _FortuneBarItem extends StatelessWidget {
-  final double width;
-  final double height;
-  final FortuneItem item;
-
-  const _FortuneBarItem({
-    Key key,
-    @required this.item,
-    @required this.width,
-    @required this.height,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    final fillColor = item.color ??
-        Color.alphaBlend(
-          theme.primaryColor.withOpacity(0.4),
-          theme.colorScheme.surface,
-        );
-    final borderColor = item.borderColor ?? theme.primaryColor;
-    final borderWidth = item.borderWidth ?? 4;
-
-    return Container(
-      width: width,
-      height: height,
-      decoration: BoxDecoration(
-        border: Border.symmetric(
-          horizontal: BorderSide(
-            color: borderColor,
-            width: borderWidth / 2,
-          ),
-          vertical: BorderSide(
-            color: borderColor,
-            width: borderWidth / 4,
-          ),
-        ),
-        color: fillColor,
-      ),
-      child: Center(
-        child: DefaultTextStyle(
-          textAlign: TextAlign.center,
-          style: TextStyle(color: theme.colorScheme.onSurface),
-          child: item.child,
-        ),
-      ),
-    );
-  }
-}
-
 class FortuneBar extends HookWidget implements FortuneWidget {
-  static const List<FortuneIndicator> kDefaultIndicators = const <FortuneIndicator>[
+  static const List<FortuneIndicator> kDefaultIndicators =
+      const <FortuneIndicator>[
     FortuneIndicator(child: RectangleIndicator()),
   ];
 

@@ -1,8 +1,4 @@
-import 'dart:math' as Math;
-
-import 'package:flutter/material.dart';
-
-import 'triangle.dart';
+part of 'indicators.dart';
 
 class TriangleIndicator extends StatelessWidget {
   final Color color;
@@ -20,7 +16,7 @@ class TriangleIndicator extends StatelessWidget {
       child: SizedBox(
         width: 36,
         height: 36,
-        child: Triangle(
+        child: _Triangle(
           color: color ?? theme.accentColor,
           elevation: 2,
         ),
