@@ -33,9 +33,7 @@ class _TrianglePainter extends CustomPainter {
 
     canvas.drawShadow(path, Colors.black, elevation, true);
     canvas.drawPath(path, fillPaint);
-    // TODO: remove condition once flutter bug is fixed
-    // https://github.com/flutter/flutter/issues/67993
-    if (!kIsWeb) canvas.drawPath(path, strokePaint);
+    canvas.drawPath(path, strokePaint);
   }
 
   @override
