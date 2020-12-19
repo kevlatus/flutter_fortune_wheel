@@ -28,7 +28,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: build demo
-        working-directory: ./example
+        working-directory: ./demo
         run: flutter build web --web-renderer auto
 
       - name: deploy to Github Pages
@@ -36,4 +36,4 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
-          FOLDER: example/build/web
+          FOLDER: demo/build/web

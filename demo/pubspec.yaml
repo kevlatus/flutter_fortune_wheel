@@ -1,7 +1,7 @@
-name: flutter_fortune_wheel_example
+name: fortune_wheel_demo
 version: 1.0.0
 
-publish_to: "none"
+publish_to: 'none'
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -10,11 +10,15 @@ dependencies:
   flutter:
     sdk: flutter
 
+  cupertino_icons: ^1.0.1
+  flutter_hooks: ^0.15.0
   flutter_fortune_wheel:
     path: ../
 
 dev_dependencies:
   flutter_test:
+    sdk: flutter
+  integration_test:
     sdk: flutter
 
 flutter:
