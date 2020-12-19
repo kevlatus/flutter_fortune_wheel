@@ -56,9 +56,6 @@ class _CircleSlicePainter extends CustomPainter {
     );
 
     // draw slice border
-    // TODO: remove condition once flutter bug is fixed
-    // https://github.com/flutter/flutter/issues/67993
-    if (!kIsWeb)
       canvas.drawPath(
         path,
         Paint()
@@ -67,9 +64,6 @@ class _CircleSlicePainter extends CustomPainter {
           ..style = PaintingStyle.stroke,
       );
 
-    // TODO: remove condition once flutter bug is fixed
-    // https://github.com/flutter/flutter/issues/67993
-    if (!kIsWeb)
       canvas.drawPath(
         Path()..addSliceArc(diameter, angle),
         Paint()
