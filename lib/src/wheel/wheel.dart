@@ -13,3 +13,5 @@ part 'circle_slice.dart';
 part 'fortune_wheel.dart';
 
 part 'sliced_circle.dart';
+
+part 'wheel_indicator.dart';
