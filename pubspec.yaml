@@ -1,5 +1,5 @@
 name: flutter_fortune_wheel
-description: Customizable widgets for visualizing random selections.
+description: Visualize (random) selection processes with widgets like a spinning wheel of fortune or a fortune bar.
 repository: https://github.com/kevlatus/flutter_fortune_wheel
 version: 0.1.1
 
