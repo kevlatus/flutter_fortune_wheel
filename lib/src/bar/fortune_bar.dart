@@ -83,7 +83,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
     this.duration = FortuneWidget.kDefaultDuration,
     this.onAnimationStart,
     this.onAnimationEnd,
-    this.animationType = FortuneAnimation.Roll,
+    this.animationType = FortuneAnimation.Spin,
     @required this.selected,
     this.rotationCount = FortuneWidget.kDefaultRotationCount,
     this.items,

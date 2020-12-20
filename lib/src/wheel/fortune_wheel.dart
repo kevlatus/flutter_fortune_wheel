@@ -65,7 +65,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     this.rotationCount = FortuneWidget.kDefaultRotationCount,
     this.selected = 0,
     this.duration = FortuneWidget.kDefaultDuration,
-    this.animationType = FortuneAnimation.Roll,
+    this.animationType = FortuneAnimation.Spin,
     this.indicators = kDefaultIndicators,
     this.onAnimationStart,
     this.onAnimationEnd,

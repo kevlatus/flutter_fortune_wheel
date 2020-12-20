@@ -77,7 +77,7 @@ abstract class FortuneWidget implements Widget {
   int get rotationCount;
 
   /// {@template flutter_fortune_wheel.FortuneWidget.duration}
-  /// The animation duration used for [FortuneAnimation.Roll]
+  /// The animation duration used for [FortuneAnimation.Spin]
   /// within [FortuneWidget] instances.
   /// {@endtemplate}
   Duration get duration;
@@ -114,7 +114,7 @@ abstract class FortuneWidget implements Widget {
   ///
   /// {@template flutter_fortune_wheel.FortuneWidget.ctorArgs}
   /// The type of animation to be used when [selected] changes is determined
-  /// by [animationType]. If it is set to [FortuneAnimation.Roll],
+  /// by [animationType]. If it is set to [FortuneAnimation.Spin],
   /// [rotationCount] determines the number of rotations around all items before
   /// settling on the selected value during the animation [duration].
   /// The callbacks [onAnimationStart] and [onAnimationEnd] are called whenever
@@ -131,7 +131,7 @@ abstract class FortuneWidget implements Widget {
     @required int selected,
     int rotationCount = kDefaultRotationCount,
     Duration duration = kDefaultDuration,
-    FortuneAnimation animationType = FortuneAnimation.Roll,
+    FortuneAnimation animationType = FortuneAnimation.Spin,
     List<FortuneIndicator> indicators,
     VoidCallback onAnimationStart,
     VoidCallback onAnimationEnd,
