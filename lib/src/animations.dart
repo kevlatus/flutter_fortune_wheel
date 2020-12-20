@@ -1,8 +1,14 @@
 import 'package:flutter/animation.dart';
 
+import 'fortune_widget.dart' show FortuneWidget;
+
+/// The type of animation, which is used when the value of
+/// [FortuneWidget.selected] changes.
 enum FortuneAnimation {
+  /// Animate to the [FortuneWidget.selected] item using a rolling animation.
   Roll,
   // TODO: Move,
+  /// Directly show the [FortuneWidget.selected] item without animating.
   None,
 }
 

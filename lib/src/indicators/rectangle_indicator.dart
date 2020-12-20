@@ -1,9 +1,4 @@
-import 'dart:math' as Math;
-
-import 'package:flutter/material.dart';
-
-import 'rectangle.dart';
-import 'triangle.dart';
+part of 'indicators.dart';
 
 class RectangleIndicator extends StatelessWidget {
   final double borderWidth;
@@ -29,7 +24,7 @@ class RectangleIndicator extends StatelessWidget {
         children: [
           Align(
             alignment: Alignment.center,
-            child: Rectangle(
+            child: _Rectangle(
               width: width,
               height: height,
               borderColor: borderColor,
@@ -42,7 +37,7 @@ class RectangleIndicator extends StatelessWidget {
             child: SizedBox(
               width: width / 2,
               height: height / 10,
-              child: Triangle(
+              child: _Triangle(
                 color: borderColor,
               ),
             ),
@@ -54,7 +49,7 @@ class RectangleIndicator extends StatelessWidget {
               child: SizedBox(
                 width: width / 2,
                 height: height / 10,
-                child: Triangle(
+                child: _Triangle(
                   color: borderColor,
                 ),
               ),

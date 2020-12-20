@@ -36,12 +36,12 @@ void main() {
     });
   });
 
-  group('rangedRandomInt', () {
+  group('Fortune.randomInt', () {
     test('returns all values within the given range after a million runs', () {
       final min = 10;
       final max = 100;
       for (int i = 0; i < 10e6; i++) {
-        final rnd = rangedRandomInt(min, max);
+        final rnd = Fortune.randomInt(min, max);
         expect(rnd >= min && rnd < max, true);
       }
     });

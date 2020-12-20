@@ -1,13 +1,9 @@
-import 'package:flutter/material.dart';
+part of 'wheel.dart';
 
-import '../fortune_widget.dart';
-import 'circle_slice.dart';
-import '../util.dart';
-
-class SlicedCircle extends StatelessWidget {
+class _SlicedCircle extends StatelessWidget {
   final List<FortuneItem> items;
 
-  const SlicedCircle({
+  const _SlicedCircle({
     Key key,
     @required this.items,
   })  : assert(items != null && items.length > 1),
@@ -15,7 +11,7 @@ class SlicedCircle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final anglePerChild = kPiDouble / items.length;
+    final anglePerChild = 2 * Math.pi / items.length;
 
     return LayoutBuilder(builder: (context, constraints) {
       final smallerSide = getSmallerSide(constraints);
@@ -36,18 +32,18 @@ class SlicedCircle extends StatelessWidget {
             final childAngle = anglePerChild * index;
             // first slice starts at 90 degrees, if 0 degrees is at the top.
             // The angle offset puts the center of the first slice at the top.
-            final angleOffset = -1 * (kPiHalf + anglePerChild / 2);
+            final angleOffset = -1 * (Math.pi / 2 + anglePerChild / 2);
 
             return Transform.rotate(
               alignment: Alignment.topLeft,
               angle: childAngle + angleOffset,
-              child: CircleSlice(
+              child: _CircleSlice(
                 child: DefaultTextStyle(
                   style: TextStyle(color: theme.colorScheme.onPrimary),
                   child: items[index].child,
                 ),
                 radius: smallerSide / 2,
-                angle: kPiDouble / items.length,
+                angle: 2 * Math.pi / items.length,
                 fillColor: fillColor,
                 strokeColor: strokeColor,
                 strokeWidth: strokeWidth,

@@ -1,7 +1,8 @@
 library flutter_fortune_wheel;
 
-export 'src/animations.dart' show FortuneAnimation;
-export 'src/fortune_widget.dart';
-export 'src/bar/bar.dart';
-export 'src/indicators/indicators.dart';
-export 'src/wheel/wheel.dart';
+export 'package:flutter_fortune_wheel/src/animations.dart' show FortuneAnimation;
+export 'package:flutter_fortune_wheel/src/fortune_widget.dart';
+export 'package:flutter_fortune_wheel/src/bar/bar.dart';
+export 'package:flutter_fortune_wheel/src/indicators/indicators.dart';
+export 'package:flutter_fortune_wheel/src/wheel/wheel.dart';
+export 'package:flutter_fortune_wheel/src/util.dart' show Fortune;

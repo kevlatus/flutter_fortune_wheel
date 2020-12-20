@@ -1,5 +1,4 @@
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+part of 'indicators.dart';
 
 class _TrianglePainter extends CustomPainter {
   final Color fillColor;
@@ -45,13 +44,13 @@ class _TrianglePainter extends CustomPainter {
   }
 }
 
-class Triangle extends StatelessWidget {
+class _Triangle extends StatelessWidget {
   final Color color;
   final Color borderColor;
   final double borderWidth;
   final double elevation;
 
-  const Triangle({
+  const _Triangle({
     @required this.color,
     this.borderColor,
     this.borderWidth = 1,

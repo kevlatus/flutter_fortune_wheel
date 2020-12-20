@@ -1,3 +1,7 @@
+## [0.1.1] - 2020-12-20
+
+docs: add basic dartdoc and README documentation
+
 ## [0.1.0] - 2020-12-19
 
 feat: add alternative FortuneBar widget
