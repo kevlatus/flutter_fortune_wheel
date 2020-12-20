@@ -1,5 +1,16 @@
 part of 'wheel.dart';
 
+/// A fortune wheel visualizes a (random) selection process as a spinning wheel
+/// divided into uniformly sized slices, which correspond to the number of
+/// [items].
+///
+/// ![](https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/img-wheel-256.png?sanitize=true)
+///
+/// See also:
+///  * [FortuneBar], which provides an alternative visualization
+///  * [FortuneWidget()], which automatically chooses a fitting widget
+///  * [Fortune.randomItem], which helps selecting random items from a list
+///  * [Fortune.randomDuration], which helps choosing a random duration
 class FortuneWheel extends HookWidget implements FortuneWidget {
   /// The default value for [indicators] on a [FortuneWheel].
   /// Currently uses a single [TriangleIndicator] on [Alignment.topCenter].
@@ -39,13 +50,15 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     return 2 * Math.pi * rotationCount * progress;
   }
 
-  /// Creates a new [FortuneWheel] with the given [items] and centered on the
-  /// [selected] value.
+  /// {@template flutter_fortune_wheel.FortuneWheel}
+  /// Creates a new [FortuneWheel] with the given [items], which is centered
+  /// on the [selected] value.
   ///
-  /// {@macro flutter_fortune_wheel.FortuneWidget.ctor_args}.
+  /// {@macro flutter_fortune_wheel.FortuneWidget.ctorArgs}.
   ///
   /// See also:
   ///  * [FortuneBar], which provides an alternative visualization.
+  /// {@endtemplate}
   const FortuneWheel({
     Key key,
     @required this.items,
