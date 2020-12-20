@@ -1,112 +1,8 @@
-import 'dart:math' as Math;
-
-import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-
-import '../animations.dart';
-import '../fortune_widget.dart';
-import '../util.dart';
-import '../indicators/indicators.dart';
-import 'sliced_circle.dart';
-
-class _PositionedIndicator extends StatelessWidget {
-  final FortuneIndicator indicator;
-
-  Offset _getOffset(Alignment alignment, Offset margins, Offset circleMargins) {
-    if (indicator.alignment == Alignment.topCenter) {
-      return margins.scale(0, 1);
-    }
-    if (indicator.alignment == Alignment.bottomCenter) {
-      return margins.scale(0, -1);
-    }
-    if (indicator.alignment == Alignment.centerLeft) {
-      return margins.scale(1, 0);
-    }
-    if (indicator.alignment == Alignment.centerRight) {
-      return margins.scale(-1, 0);
-    }
-    if (indicator.alignment == Alignment.topLeft) {
-      return margins.translate(circleMargins.dx, circleMargins.dy);
-    }
-    if (indicator.alignment == Alignment.topRight) {
-      return margins
-          .scale(-1, 1)
-          .translate(-circleMargins.dx, circleMargins.dy);
-    }
-    if (indicator.alignment == Alignment.bottomRight) {
-      return margins
-          .scale(-1, -1)
-          .translate(-circleMargins.dx, -circleMargins.dy);
-    }
-    if (indicator.alignment == Alignment.bottomLeft) {
-      return margins
-          .scale(1, -1)
-          .translate(circleMargins.dx, -circleMargins.dy);
-    }
-
-    return Offset(0, 0);
-  }
-
-  double _getAngle(Alignment alignment) {
-    if (indicator.alignment == Alignment.bottomCenter) {
-      return Math.pi;
-    }
-    if (indicator.alignment == Alignment.centerLeft) {
-      return -Math.pi * 0.5;
-    }
-    if (indicator.alignment == Alignment.centerRight) {
-      return Math.pi * 0.5;
-    }
-    if (indicator.alignment == Alignment.topLeft) {
-      return -Math.pi * 0.25;
-    }
-    if (indicator.alignment == Alignment.topRight) {
-      return Math.pi * 0.25;
-    }
-    if (indicator.alignment == Alignment.bottomRight) {
-      return Math.pi * 0.75;
-    }
-    if (indicator.alignment == Alignment.bottomLeft) {
-      return Math.pi * 1.25;
-    }
-
-    return 0;
-  }
-
-  const _PositionedIndicator({
-    Key key,
-    @required this.indicator,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final margins = getCenteredMargins(constraints);
-        final smallerSide = getSmallerSide(constraints);
-        final radius = smallerSide / 2;
-        final circleMargins = Offset(
-          (radius - Math.cos(Math.pi / 4) * radius),
-          (radius - Math.sin(Math.pi / 4) * radius),
-        );
-        Offset offset = _getOffset(indicator.alignment, margins, circleMargins);
-        double angle = _getAngle(indicator.alignment);
-        return Align(
-          alignment: indicator.alignment,
-          child: Transform.translate(
-            offset: offset,
-            child: Transform.rotate(
-              angle: angle,
-              child: indicator.child,
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
+part of 'wheel.dart';
 
 class FortuneWheel extends HookWidget implements FortuneWidget {
+  /// The default value for [indicators] on a [FortuneWheel].
+  /// Currently uses a single [TriangleIndicator] on [Alignment.topCenter].
   static const List<FortuneIndicator> kDefaultIndicators =
       const <FortuneIndicator>[
     const FortuneIndicator(
@@ -115,21 +11,41 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     ),
   ];
 
-  /// A list of circle slices this fortune wheel should contain.
-  /// Must not be null and contain at least 2 slices.
+  /// {@macro flutter_fortune_wheel.FortuneWidget.items}
   final List<FortuneItem> items;
+
+  /// {@macro flutter_fortune_wheel.FortuneWidget.selected}
   final int selected;
+
+  /// {@macro flutter_fortune_wheel.FortuneWidget.rotationCount}
   final int rotationCount;
+
+  /// {@macro flutter_fortune_wheel.FortuneWidget.duration}
   final Duration duration;
+
+  /// {@macro flutter_fortune_wheel.FortuneWidget.indicators}
   final List<FortuneIndicator> indicators;
+
+  /// {@macro flutter_fortune_wheel.FortuneWidget.animationType}
   final FortuneAnimation animationType;
+
+  /// {@macro flutter_fortune_wheel.FortuneWidget.onAnimationStart}
   final VoidCallback onAnimationStart;
+
+  /// {@macro flutter_fortune_wheel.FortuneWidget.onAnimationEnd}
   final VoidCallback onAnimationEnd;
 
   double _getAngle(double progress) {
     return 2 * Math.pi * rotationCount * progress;
   }
 
+  /// Creates a new [FortuneWheel] with the given [items] and centered on the
+  /// [selected] value.
+  ///
+  /// {@macro flutter_fortune_wheel.FortuneWidget.ctor_args}.
+  ///
+  /// See also:
+  ///  * [FortuneBar], which provides an alternative visualization.
   const FortuneWheel({
     Key key,
     @required this.items,
@@ -187,7 +103,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
           child: Transform.rotate(
             angle: _getAngle(animation.value),
             child: SizedBox.expand(
-              child: SlicedCircle(
+              child: _SlicedCircle(
                 items: items,
               ),
             ),
@@ -199,7 +115,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     return Stack(
       children: [
         wheel,
-        for (var it in indicators) _PositionedIndicator(indicator: it),
+        for (var it in indicators) _WheelIndicator(indicator: it),
       ],
     );
   }

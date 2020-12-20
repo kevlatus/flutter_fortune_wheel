@@ -1,11 +1,6 @@
-import 'dart:math' as Math;
+part of 'wheel.dart';
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-
-import '../util.dart';
-
-extension CirclePathExtensions on Path {
+extension _CirclePathExtensions on Path {
   void addSliceArc(double diameter, double angle) {
     this.arcTo(
       Rect.fromCircle(
@@ -39,9 +34,9 @@ class _CircleSlicePainter extends CustomPainter {
     @required this.fillColor,
     this.strokeColor,
     this.strokeWidth = 1,
-    this.angle = kPiHalf,
+    this.angle = Math.pi / 2,
   })  : assert(fillColor != null),
-        assert(angle > 0 && angle < kPiDouble);
+        assert(angle > 0 && angle < 2 * Math.pi);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -56,21 +51,21 @@ class _CircleSlicePainter extends CustomPainter {
     );
 
     // draw slice border
-      canvas.drawPath(
-        path,
-        Paint()
-          ..color = strokeColor
-          ..strokeWidth = strokeWidth
-          ..style = PaintingStyle.stroke,
-      );
+    canvas.drawPath(
+      path,
+      Paint()
+        ..color = strokeColor
+        ..strokeWidth = strokeWidth
+        ..style = PaintingStyle.stroke,
+    );
 
-      canvas.drawPath(
-        Path()..addSliceArc(diameter, angle),
-        Paint()
-          ..color = strokeColor
-          ..strokeWidth = strokeWidth * 2
-          ..style = PaintingStyle.stroke,
-      );
+    canvas.drawPath(
+      Path()..addSliceArc(diameter, angle),
+      Paint()
+        ..color = strokeColor
+        ..strokeWidth = strokeWidth * 2
+        ..style = PaintingStyle.stroke,
+    );
   }
 
   @override
@@ -132,9 +127,9 @@ class _CircleSliceLayoutDelegate extends MultiChildLayoutDelegate {
       final unitDiagonal = diagonal * (1 / diagonal.magnitude);
       Math.Point<double> target = unitDiagonal * (sliceSize.width / 2);
 
-      if (angle != kPiHalf) {
-        final disposition = (angle - kPiHalf).abs() / 2;
-        final direction = angle > kPiHalf ? 1 : -1;
+      if (angle != Math.pi / 2) {
+        final disposition = (angle - Math.pi / 2).abs() / 2;
+        final direction = angle > Math.pi / 2 ? 1 : -1;
         final rotation = disposition * direction;
         target = rotateVector(target, rotation);
       }
@@ -155,7 +150,7 @@ class _CircleSliceLayoutDelegate extends MultiChildLayoutDelegate {
   }
 }
 
-class CircleSlice extends StatelessWidget {
+class _CircleSlice extends StatelessWidget {
   final double radius;
   final double angle;
   final Widget child;
@@ -174,7 +169,7 @@ class CircleSlice extends StatelessWidget {
     );
   }
 
-  const CircleSlice({
+  const _CircleSlice({
     Key key,
     this.child,
     @required this.radius,

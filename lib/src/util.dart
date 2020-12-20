@@ -1,28 +1,52 @@
 import 'dart:math' as Math;
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/widgets.dart';
 
-const kPiHalf = Math.pi / 2;
-const kPiDouble = Math.pi * 2;
+import 'fortune_widget.dart' show FortuneWidget;
+
+/// Static methods for common tasks when working with [FortuneWidget]s.
+abstract class Fortune {
+  /// Generates a random integer uniformly distributed in the range
+  /// from [min], inclusive, to [max], exclusive.
+  ///
+  /// The value of [max] must be larger than or equal to [min]. If it is equal
+  /// to [min], this function always returns [min].
+  ///
+  /// An instance of [Math.Random] can optionally be passed to customize the
+  /// random sample distribution.
+  static int randomInt(int min, int max, [Math.Random random]) {
+    random = random ?? Math.Random();
+    if (min == max) {
+      return min;
+    }
+    final _rng = Math.Random();
+    return min + _rng.nextInt(max - min);
+  }
+
+  /// Generates a random [Duration] uniformly distributed in the range
+  /// from [min], inclusive, to [max], exclusive.
+  ///
+  /// The value of [max] must be larger than or equal to [min]. If it is equal
+  /// to [min], this function always returns [min].
+  ///
+  /// An instance of [Math.Random] can optionally be passed to customize the
+  /// random sample distribution.
+  static Duration randomDuration(
+    Duration min,
+    Duration max, [
+    Math.Random random,
+  ]) {
+    random = random ?? Math.Random();
+    return Duration(
+      milliseconds: randomInt(min.inMilliseconds, max.inMilliseconds, random),
+    );
+  }
+}
 
 Math.Point<double> rotateVector(Math.Point<double> vector, double angle) {
   return Math.Point(
     Math.cos(angle) * vector.x - Math.sin(angle) * vector.x,
     Math.sin(angle) * vector.y + Math.cos(angle) * vector.y,
-  );
-}
-
-int rangedRandomInt(int min, int max) {
-  if (min == max) {
-    return min;
-  }
-  final _rng = Math.Random();
-  return min + _rng.nextInt(max - min);
-}
-
-Duration rangedRandomDuration(Duration min, Duration max) {
-  return Duration(
-    milliseconds: rangedRandomInt(min.inMilliseconds, max.inMilliseconds),
   );
 }
 

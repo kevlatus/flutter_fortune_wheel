@@ -1,13 +1,13 @@
-import 'package:flutter/material.dart';
+part of 'indicators.dart';
 
-class Rectangle extends StatelessWidget {
+class _Rectangle extends StatelessWidget {
   final double width;
   final double height;
   final double borderWidth;
   final Color borderColor;
   final Color color;
 
-  const Rectangle({
+  const _Rectangle({
     Key key,
     @required this.width,
     @required this.height,
