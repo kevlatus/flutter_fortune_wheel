@@ -1,9 +1,6 @@
 import 'dart:math' as Math;
 
-import 'package:flutter/cupertino.dart';
-
-const kPiHalf = Math.pi / 2;
-const kPiDouble = Math.pi * 2;
+import 'package:flutter/widgets.dart';
 
 Math.Point<double> rotateVector(Math.Point<double> vector, double angle) {
   return Math.Point(
