@@ -6,7 +6,7 @@ Wheel of fortune widgets for Flutter, which allow you to visualize random select
 They are highly customizable and work across mobile, desktop and the web.
 
 <p align="center">
-  <img src="images/img-wheel-256.png">
+  <img src="https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/img-wheel-256.png?sanitize=true">
 </p>
 
 ## Quick Start

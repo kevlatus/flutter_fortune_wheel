@@ -1,54 +1,3 @@
-/// {@template flutter_fortune_wheel.FortuneWidget.items}
-/// A list of [FortuneItem]s to be shown within this [FortuneWidget].
-/// {@endtemplate}
-///
-/// {@template flutter_fortune_wheel.FortuneWidget.selected}
-/// The currently selected index within [items].
-/// Used by [FortuneWidget]s to align [indicators] on the selected item.
-/// {@endtemplate}
-///
-/// {@template flutter_fortune_wheel.FortuneWidget.rotationCount}
-/// The number of times a [FortuneWidget] rotates around all
-/// [items] before it settles on the [selected] value.
-/// {@endtemplate}
-///
-/// {@template flutter_fortune_wheel.FortuneWidget.duration}
-/// The animation duration used for [FortuneAnimation.Roll]
-/// within [FortuneWidget] instances.
-/// {@endtemplate}
-///
-/// {@template flutter_fortune_wheel.FortuneWidget.animationType}
-/// The type of animation to be used when [selected] changes.
-///
-/// See also:
-///  * [FortuneAnimation]
-/// {@endtemplate}
-///
-/// {@template flutter_fortune_wheel.FortuneWidget.onAnimationStart}
-/// Called when this widget starts an animation.
-/// Useful for disabling other widgets during the animation.
-/// {@endtemplate}
-///
-/// {@template flutter_fortune_wheel.FortuneWidget.onAnimationEnd}
-/// Called when this widget's animation ends.
-/// Useful for enabling other widgets after the animation ends.
-/// {@endtemplate}
-///
-/// {@template flutter_fortune_wheel.FortuneWidget.ctor_args}
-/// The type of animation to be used when [selected] changes is determined
-/// by [animationType]. If it is set to [FortuneAnimation.Roll],
-/// [rotationCount] determines the number of rotations around all items before
-/// settling on the selected value during the animation [duration].
-/// The callbacks [onAnimationStart] and [onAnimationEnd] are called whenever
-/// this widget starts and ends an animation respectively. This applies to all
-/// values of [animationType].
-///
-/// The list of [indicators] is rendered on top of the underlying
-/// [FortuneWidget]. These can be used to visualize the position of the
-/// [selected] item.
-/// {@endtemplate}
-///
-
 import 'package:flutter/widgets.dart';
 import 'package:quiver/core.dart';
 
@@ -110,71 +59,68 @@ abstract class FortuneWidget implements Widget {
   /// The default value for [rotationCount] (currently **100**).
   static const int kDefaultRotationCount = 100;
 
-  /// {@macro flutter_fortune_wheel.FortuneWidget.items}
+  /// {@template flutter_fortune_wheel.FortuneWidget.items}
+  /// A list of [FortuneItem]s to be shown within this [FortuneWidget].
+  /// {@endtemplate}
   List<FortuneItem> get items;
 
-  /// {@macro flutter_fortune_wheel.FortuneWidget.selected}
+  /// {@template flutter_fortune_wheel.FortuneWidget.selected}
+  /// The currently selected index within [items].
+  /// Used by [FortuneWidget]s to align [indicators] on the selected item.
+  /// {@endtemplate}
   int get selected;
 
-  /// {@macro flutter_fortune_wheel.FortuneWidget.rotationCount}
+  /// {@template flutter_fortune_wheel.FortuneWidget.rotationCount}
+  /// The number of times a [FortuneWidget] rotates around all
+  /// [items] before it settles on the [selected] value.
+  /// {@endtemplate}
   int get rotationCount;
 
-  /// {@macro flutter_fortune_wheel.FortuneWidget.duration}
+  /// {@template flutter_fortune_wheel.FortuneWidget.duration}
+  /// The animation duration used for [FortuneAnimation.Spin]
+  /// within [FortuneWidget] instances.
+  /// {@endtemplate}
   Duration get duration;
 
-  /// {@macro flutter_fortune_wheel.FortuneWidget.animationType}
+  /// {@template flutter_fortune_wheel.FortuneWidget.animationType}
+  /// The type of animation to be used when [selected] changes.
+  ///
+  /// See also:
+  ///  * [FortuneAnimation]
+  /// {@endtemplate}
   FortuneAnimation get animationType;
 
-  /// {@macro flutter_fortune_wheel.FortuneWidget.onAnimationStart}
+  /// {@template flutter_fortune_wheel.FortuneWidget.onAnimationStart}
+  /// Called when this widget starts an animation.
+  /// Useful for disabling other widgets during the animation.
+  /// {@endtemplate}
   VoidCallback get onAnimationStart;
 
-  /// {@macro flutter_fortune_wheel.FortuneWidget.onAnimationEnd}
+  /// {@template flutter_fortune_wheel.FortuneWidget.onAnimationEnd}
+  /// Called when this widget's animation ends.
+  /// Useful for enabling other widgets after the animation ends.
+  /// {@endtemplate}
   VoidCallback get onAnimationEnd;
 
-  /// Creates a new [FortuneWheel] with the given [items] and centered on the
-  /// [selected] value.
-  ///
-  /// {@macro flutter_fortune_wheel.FortuneWidget.ctor_args}.
-  ///
-  /// See also:
-  ///  * [FortuneWheel]
-  const factory FortuneWidget.wheel({
-    Key key,
-    @required int selected,
-    @required List<FortuneItem> items,
-    int rotationCount,
-    Duration duration,
-    FortuneAnimation animationType,
-    List<FortuneIndicator> indicators,
-    VoidCallback onAnimationStart,
-    VoidCallback onAnimationEnd,
-  }) = FortuneWheel;
-
-  /// Creates a new [FortuneBar] with the given [items] and centered on the
-  /// [selected] value.
-  ///
-  /// {@macro flutter_fortune_wheel.FortuneWidget.ctor_args}.
-  ///
-  /// See also:
-  ///  * [FortuneWidget()]
-  ///  * [FortuneWidget.wheel]
-  const factory FortuneWidget.bar({
-    Key key,
-    @required List<FortuneItem> items,
-    @required int selected,
-    int rotationCount,
-    Duration duration,
-    FortuneAnimation animationType,
-    List<FortuneIndicator> indicators,
-    VoidCallback onAnimationStart,
-    VoidCallback onAnimationEnd,
-    double height,
-  }) = FortuneBar;
+  /// {@template flutter_fortune_wheel.FortuneWidget.indicators}
+  /// The list of [indicators] is rendered on top of the underlying
+  /// [FortuneWidget]. These can be used to visualize the position of the
+  /// [selected] item.
+  /// {@endtemplate}
+  List<FortuneIndicator> get indicators;
 
   /// Creates a new [FortuneWheel] if the number of [items] is even or a
   /// [FortuneBar] if it is odd.
   ///
-  /// {@macro flutter_fortune_wheel.FortuneWidget.ctor_args}.
+  /// {@template flutter_fortune_wheel.FortuneWidget.ctorArgs}
+  /// The type of animation to be used when [selected] changes is determined
+  /// by [animationType]. If it is set to [FortuneAnimation.Spin],
+  /// [rotationCount] determines the number of rotations around all items before
+  /// settling on the selected value during the animation [duration].
+  /// The callbacks [onAnimationStart] and [onAnimationEnd] are called whenever
+  /// this widget starts and ends an animation respectively. This applies to all
+  /// values of [animationType].
+  /// {@endtemplate}
   ///
   /// See also:
   ///  * [FortuneWidget.bar()]
@@ -185,7 +131,7 @@ abstract class FortuneWidget implements Widget {
     @required int selected,
     int rotationCount = kDefaultRotationCount,
     Duration duration = kDefaultDuration,
-    FortuneAnimation animationType = FortuneAnimation.Roll,
+    FortuneAnimation animationType = FortuneAnimation.Spin,
     List<FortuneIndicator> indicators,
     VoidCallback onAnimationStart,
     VoidCallback onAnimationEnd,
@@ -216,4 +162,31 @@ abstract class FortuneWidget implements Widget {
       );
     }
   }
+
+  /// {@macro flutter_fortune_wheel.FortuneWheel}.
+  const factory FortuneWidget.wheel({
+    Key key,
+    @required int selected,
+    @required List<FortuneItem> items,
+    int rotationCount,
+    Duration duration,
+    FortuneAnimation animationType,
+    List<FortuneIndicator> indicators,
+    VoidCallback onAnimationStart,
+    VoidCallback onAnimationEnd,
+  }) = FortuneWheel;
+
+  /// {@macro flutter_fortune_wheel.FortuneBar}.
+  const factory FortuneWidget.bar({
+    Key key,
+    @required List<FortuneItem> items,
+    @required int selected,
+    int rotationCount,
+    Duration duration,
+    FortuneAnimation animationType,
+    List<FortuneIndicator> indicators,
+    VoidCallback onAnimationStart,
+    VoidCallback onAnimationEnd,
+    double height,
+  }) = FortuneBar;
 }

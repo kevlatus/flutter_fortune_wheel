@@ -5,6 +5,15 @@ double _getItemWidth(double maxWidth, int itemCount) {
   return maxWidth / visibleItemCount;
 }
 
+/// A fortune bar visualizes a (random) selection process as a horizontal bar
+/// divided into uniformly sized boxes, which correspond to the number of
+/// [items]. When spinning, items are moved horizontally for [duration].
+///
+/// See also:
+///  * [FortuneWheel], which provides an alternative visualization
+///  * [FortuneWidget()], which automatically chooses a fitting widget
+///  * [Fortune.randomItem], which helps selecting random items from a list
+///  * [Fortune.randomDuration], which helps choosing a random duration
 class FortuneBar extends HookWidget implements FortuneWidget {
   static const List<FortuneIndicator> kDefaultIndicators =
       const <FortuneIndicator>[
@@ -59,20 +68,22 @@ class FortuneBar extends HookWidget implements FortuneWidget {
     return Offset(x, 0);
   }
 
-  /// Creates a new [FortuneBar] with the given [items] and centered on the
-  /// [selected] value.
+  /// {@template flutter_fortune_wheel.FortuneBar}
+  /// Creates a new [FortuneBar] with the given [items], which is centered
+  /// on the [selected] value.
   ///
-  /// {@macro flutter_fortune_wheel.FortuneWidget.ctor_args}.
+  /// {@macro flutter_fortune_wheel.FortuneWidget.ctorArgs}.
   ///
   /// See also:
   ///  * [FortuneWheel], which provides an alternative visualization.
+  /// {@endtemplate}
   const FortuneBar({
     Key key,
     this.height = 56.0,
     this.duration = FortuneWidget.kDefaultDuration,
     this.onAnimationStart,
     this.onAnimationEnd,
-    this.animationType = FortuneAnimation.Roll,
+    this.animationType = FortuneAnimation.Spin,
     @required this.selected,
     this.rotationCount = FortuneWidget.kDefaultRotationCount,
     this.items,

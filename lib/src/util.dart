@@ -41,6 +41,19 @@ abstract class Fortune {
       milliseconds: randomInt(min.inMilliseconds, max.inMilliseconds, random),
     );
   }
+
+  /// Picks a random item from [iterable] and returns it.
+  ///
+  /// Uses [randomInt] internally to select an item index.
+  ///
+  /// An instance of [Math.Random] can optionally be passed to customize the
+  /// random sample distribution.
+  static T randomItem<T>(Iterable<T> iterable, [Math.Random random]) {
+    random = random ?? Math.Random();
+    return iterable.elementAt(
+      randomInt(0, iterable.length, random),
+    );
+  }
 }
 
 Math.Point<double> rotateVector(Math.Point<double> vector, double angle) {
