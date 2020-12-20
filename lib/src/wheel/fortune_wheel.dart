@@ -1,6 +1,8 @@
 part of 'wheel.dart';
 
 class FortuneWheel extends HookWidget implements FortuneWidget {
+  /// The default value for [indicators] on a [FortuneWheel].
+  /// Currently uses a single [TriangleIndicator] on [Alignment.topCenter].
   static const List<FortuneIndicator> kDefaultIndicators =
       const <FortuneIndicator>[
     const FortuneIndicator(
@@ -9,21 +11,41 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     ),
   ];
 
-  /// A list of circle slices this fortune wheel should contain.
-  /// Must not be null and contain at least 2 slices.
+  /// {@macro flutter_fortune_wheel.FortuneWidget.items}
   final List<FortuneItem> items;
+
+  /// {@macro flutter_fortune_wheel.FortuneWidget.selected}
   final int selected;
+
+  /// {@macro flutter_fortune_wheel.FortuneWidget.rotationCount}
   final int rotationCount;
+
+  /// {@macro flutter_fortune_wheel.FortuneWidget.duration}
   final Duration duration;
+
+  /// {@macro flutter_fortune_wheel.FortuneWidget.indicators}
   final List<FortuneIndicator> indicators;
+
+  /// {@macro flutter_fortune_wheel.FortuneWidget.animationType}
   final FortuneAnimation animationType;
+
+  /// {@macro flutter_fortune_wheel.FortuneWidget.onAnimationStart}
   final VoidCallback onAnimationStart;
+
+  /// {@macro flutter_fortune_wheel.FortuneWidget.onAnimationEnd}
   final VoidCallback onAnimationEnd;
 
   double _getAngle(double progress) {
     return 2 * Math.pi * rotationCount * progress;
   }
 
+  /// Creates a new [FortuneWheel] with the given [items] and centered on the
+  /// [selected] value.
+  ///
+  /// {@macro flutter_fortune_wheel.FortuneWidget.ctor_args}.
+  ///
+  /// See also:
+  ///  * [FortuneBar], which provides an alternative visualization.
   const FortuneWheel({
     Key key,
     @required this.items,
