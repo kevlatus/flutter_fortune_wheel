@@ -1,7 +1,7 @@
 name: flutter_fortune_wheel
 description: Customizable widgets for visualizing random selections.
 repository: https://github.com/kevlatus/flutter_fortune_wheel
-version: 0.1.0
+version: 0.1.1
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
