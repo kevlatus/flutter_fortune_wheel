@@ -31,7 +31,13 @@ FortuneWidget(
 
 ## Examples
 
-The wheel of fortune is the most iconic visualization. Unfortunately, its alternating slice colors only make sense, when there is an even number of items to be displayed.
+The wheel of fortune is the most iconic visualization.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/img-bar-anim.gif?sanitize=true">
+</p>
+
+Unfortunately, its alternating slice colors are only suitable, when there is an even number of items to be displayed.
 Furthermore, it is not the best solution when vertical screen space is scarse. Therefore the FortuneWidget example above automatically switches between the fortune wheel and
 fortune bar depending on the number of items and available space.
 
@@ -52,6 +58,10 @@ FortuneWidget.wheel(
 ```
 
 The fortune bar is an alternative visualization, which is smaller in the vertical direction, but is supposed to take the full screen width. See below for an example:
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/img-bar-anim.gif?sanitize=true">
+</p>
 
 ```dart
 import 'package:flutter/material.dart';
