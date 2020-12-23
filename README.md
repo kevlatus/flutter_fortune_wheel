@@ -7,7 +7,7 @@ Wheel of fortune widgets for Flutter, which allow you to visualize random select
 They are highly customizable and work across mobile, desktop and the web.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/img-wheel-256.png?sanitize=true">
+  <img src="https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/img-wheel-256.png">
 </p>
 
 ## Quick Start
@@ -34,7 +34,7 @@ FortuneWidget(
 The wheel of fortune is the most iconic visualization.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/img-bar-anim.gif?sanitize=true">
+  <img src="https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/img-wheel-anim.gif">
 </p>
 
 Unfortunately, its alternating slice colors are only suitable, when there is an even number of items to be displayed.
@@ -60,7 +60,7 @@ FortuneWidget.wheel(
 The fortune bar is an alternative visualization, which is smaller in the vertical direction, but is supposed to take the full screen width. See below for an example:
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/img-bar-anim.gif?sanitize=true">
+  <img src="https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/img-bar-anim.gif">
 </p>
 
 ```dart
