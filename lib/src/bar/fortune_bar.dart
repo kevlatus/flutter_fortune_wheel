@@ -17,7 +17,10 @@ double _getItemWidth(double maxWidth, int itemCount) {
 class FortuneBar extends HookWidget implements FortuneWidget {
   static const List<FortuneIndicator> kDefaultIndicators =
       const <FortuneIndicator>[
-    FortuneIndicator(child: RectangleIndicator()),
+    FortuneIndicator(
+      alignment: Alignment.topCenter,
+      child: RectangleIndicator(),
+    ),
   ];
 
   /// Requires this widget to have exactly this height.
@@ -155,6 +158,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
                       alignment: it.alignment,
                       child: SizedBox(
                         width: itemWidth,
+                        height: height,
                         child: it.child,
                       ),
                     ),
