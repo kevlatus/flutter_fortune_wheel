@@ -1,10 +1,5 @@
 part of 'bar.dart';
 
-double _getItemWidth(double maxWidth, int itemCount) {
-  final visibleItemCount = Math.min(itemCount, 3);
-  return maxWidth / visibleItemCount;
-}
-
 /// A fortune bar visualizes a (random) selection process as a horizontal bar
 /// divided into uniformly sized boxes, which correspond to the number of
 /// [items]. When spinning, items are moved horizontally for [duration].
@@ -53,17 +48,16 @@ class FortuneBar extends HookWidget implements FortuneWidget {
   /// If this value is true, this widget expands to the screen width and ignores
   /// width constraints imposed by parent widgets.
   ///
-  /// This is enabled by default.
+  /// This is disabled by default.
   final bool fullWidth;
 
   Offset _itemOffset({
     int itemIndex,
-    double width,
     double animationProgress,
     double offset = 0,
+    double itemWidth,
   }) {
     itemIndex = (itemIndex - selected) % items.length;
-    final itemWidth = _getItemWidth(width, items.length);
     final rotationWidth = itemWidth * items.length;
 
     final norm = 1 / rotationCount;
@@ -98,7 +92,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
     this.rotationCount = FortuneWidget.kDefaultRotationCount,
     this.items,
     this.indicators = kDefaultIndicators,
-    this.fullWidth = true,
+    this.fullWidth = false,
   }) : super(key: key);
 
   @override
@@ -137,50 +131,68 @@ class FortuneBar extends HookWidget implements FortuneWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
+        final visibleItemCount = Math.min(3, items.length);
         final screenSize = MediaQuery.of(context).size;
         final width = fullWidth ? screenSize.width : constraints.maxWidth;
-        final offsetX =
-            fullWidth ? (screenSize.width - constraints.maxWidth) / 2 : 0;
-        final itemWidth = _getItemWidth(width, items.length);
+        final offsetX = fullWidth && visibleItemCount > 1
+            ? (screenSize.width - constraints.maxWidth) / 2
+            : 0.0;
+        final itemWidth = width / visibleItemCount;
 
-        return SizedBox(
-          width: width,
-          height: 56,
-          child: AnimatedBuilder(
-            animation: animation,
-            builder: (context, _) {
-              return Stack(
-                children: [
-                  for (var i = 0; i < items.length; i++)
-                    Transform.translate(
-                      offset: _itemOffset(
-                        animationProgress: animation.value,
-                        // put selected item in center
-                        itemIndex: (i + 1) % items.length,
-                        width: width,
-                        offset: offsetX,
+        return ClipRect(
+          clipper: _RectClipper(Rect.fromLTWH(-offsetX, 0, width, height)),
+          child: SizedBox(
+            width: width,
+            height: height,
+            child: AnimatedBuilder(
+              animation: animation,
+              builder: (context, _) {
+                return Stack(
+                  children: [
+                    for (var i = 0; i < items.length; i++)
+                      Transform.translate(
+                        offset: _itemOffset(
+                          animationProgress: animation.value,
+                          // put selected item in center
+                          itemIndex: (i + 1) % items.length,
+                          offset: offsetX,
+                          itemWidth: itemWidth,
+                        ),
+                        child: _FortuneBarItem(
+                          item: items[i],
+                          width: itemWidth,
+                          height: height,
+                        ),
                       ),
-                      child: _FortuneBarItem(
-                        item: items[i],
-                        width: itemWidth,
-                        height: height,
+                    for (var it in indicators)
+                      Align(
+                        alignment: it.alignment,
+                        child: SizedBox(
+                          width: itemWidth,
+                          height: height,
+                          child: it.child,
+                        ),
                       ),
-                    ),
-                  for (var it in indicators)
-                    Align(
-                      alignment: it.alignment,
-                      child: SizedBox(
-                        width: itemWidth,
-                        height: height,
-                        child: it.child,
-                      ),
-                    ),
-                ],
-              );
-            },
+                  ],
+                );
+              },
+            ),
           ),
         );
       },
     );
   }
+}
+
+class _RectClipper extends CustomClipper<Rect> {
+  final Rect rect;
+
+  _RectClipper(this.rect);
+
+  @override
+  Rect getClip(Size size) => rect;
+
+  @override
+  bool shouldReclip(covariant _RectClipper oldClipper) =>
+      rect != oldClipper.rect;
 }
