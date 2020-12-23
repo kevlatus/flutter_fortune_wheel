@@ -50,10 +50,17 @@ class FortuneBar extends HookWidget implements FortuneWidget {
   /// {@macro flutter_fortune_wheel.FortuneWidget.onAnimationEnd}
   final VoidCallback onAnimationEnd;
 
+  /// If this value is true, this widget expands to the screen width and ignores
+  /// width constraints imposed by parent widgets.
+  ///
+  /// This is enabled by default.
+  final bool fullWidth;
+
   Offset _itemOffset({
     int itemIndex,
     double width,
     double animationProgress,
+    double offset = 0,
   }) {
     itemIndex = (itemIndex - selected) % items.length;
     final itemWidth = _getItemWidth(width, items.length);
@@ -64,7 +71,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
     final rotationProgress = animationProgress / norm - rotation;
     final animationValue = rotationProgress * rotationWidth;
 
-    double x = itemWidth * itemIndex - animationValue;
+    double x = itemWidth * itemIndex - animationValue - offset;
     if (itemWidth * (itemIndex + 1) < animationValue) {
       x += rotationWidth;
     }
@@ -91,6 +98,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
     this.rotationCount = FortuneWidget.kDefaultRotationCount,
     this.items,
     this.indicators = kDefaultIndicators,
+    this.fullWidth = true,
   }) : super(key: key);
 
   @override
@@ -129,10 +137,14 @@ class FortuneBar extends HookWidget implements FortuneWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final itemWidth = _getItemWidth(constraints.maxWidth, items.length);
+        final screenSize = MediaQuery.of(context).size;
+        final width = fullWidth ? screenSize.width : constraints.maxWidth;
+        final offsetX =
+            fullWidth ? (screenSize.width - constraints.maxWidth) / 2 : 0;
+        final itemWidth = _getItemWidth(width, items.length);
 
         return SizedBox(
-          width: constraints.maxWidth,
+          width: width,
           height: 56,
           child: AnimatedBuilder(
             animation: animation,
@@ -145,7 +157,8 @@ class FortuneBar extends HookWidget implements FortuneWidget {
                         animationProgress: animation.value,
                         // put selected item in center
                         itemIndex: (i + 1) % items.length,
-                        width: constraints.maxWidth,
+                        width: width,
+                        offset: offsetX,
                       ),
                       child: _FortuneBarItem(
                         item: items[i],
