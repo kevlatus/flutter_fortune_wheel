@@ -188,5 +188,6 @@ abstract class FortuneWidget implements Widget {
     VoidCallback onAnimationStart,
     VoidCallback onAnimationEnd,
     double height,
+    bool fullWidth,
   }) = FortuneBar;
 }
