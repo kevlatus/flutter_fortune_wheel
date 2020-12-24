@@ -1,5 +1,20 @@
 part of 'wheel.dart';
 
+Color _getDefaultFillColor(BuildContext context, int index, int length) {
+  final color = Theme.of(context).primaryColor;
+  final background = Theme.of(context).backgroundColor;
+  final opacity = length % 2 == 1 && index == 0
+      ? 0.7
+      : index % 2 == 0
+          ? 0.5
+          : 1.0;
+
+  return Color.alphaBlend(
+    color.withOpacity(opacity),
+    background,
+  );
+}
+
 class _SlicedCircle extends StatelessWidget {
   final List<FortuneItem> items;
 
@@ -21,11 +36,12 @@ class _SlicedCircle extends StatelessWidget {
         child: Stack(
           children: items.asMap().keys.map((index) {
             final theme = Theme.of(context);
-            final fillColor = items[index].color ??
-                (Color.alphaBlend(
-                  theme.primaryColor.withOpacity(index % 2 == 0 ? 0.5 : 1),
-                  theme.colorScheme.background,
-                ));
+            Color fillColor = items[index].color ??
+                _getDefaultFillColor(
+                  context,
+                  index,
+                  items.length,
+                );
             final strokeColor = items[index].borderColor ?? theme.primaryColor;
             final strokeWidth = items[index].borderWidth ?? 1;
 
