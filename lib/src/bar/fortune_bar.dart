@@ -57,6 +57,9 @@ class FortuneBar extends HookWidget implements FortuneWidget {
   /// This is disabled by default.
   final bool fullWidth;
 
+  /// {@macro flutter_fortune_wheel.FortuneWidget.animateFirst}
+  final bool animateFirst;
+
   Offset _itemOffset({
     int itemIndex,
     double animationProgress,
@@ -100,6 +103,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
     this.indicators = kDefaultIndicators,
     this.fullWidth = false,
     this.styleStrategy = kDefaultStyleStrategy,
+    this.animateFirst = true,
   }) : super(key: key);
 
   @override
@@ -128,7 +132,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
     }
 
     useEffect(() {
-      animate();
+      if (animateFirst) animate();
       return null;
     }, []);
 
@@ -169,7 +173,8 @@ class FortuneBar extends HookWidget implements FortuneWidget {
                         child: _FortuneBarItem(
                           child: items[i].child,
                           style: items[i].style ??
-                              styleStrategy.getItemStyle(theme, i, items.length),
+                              styleStrategy.getItemStyle(
+                                  theme, i, items.length),
                           width: itemWidth,
                           height: height,
                         ),

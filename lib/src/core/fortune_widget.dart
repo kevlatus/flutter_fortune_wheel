@@ -70,6 +70,16 @@ abstract class FortuneWidget implements Widget {
   /// {@endtemplate}
   StyleStrategy get styleStrategy;
 
+  /// {@template flutter_fortune_wheel.FortuneWidget.animateFirst}
+  /// Determines if this widget animates during its first build.
+  ///
+  /// The [onAnimationStart] and [onAnimationEnd] callbacks will not be called
+  /// during the first build and no animation occurs, if this is set to false.
+  ///
+  /// Defaults to true.
+  /// {@endtemplate}
+  bool get animateFirst;
+
   /// Creates a new [FortuneWheel] if the number of [items] is even or a
   /// [FortuneBar] if it is odd.
   ///
@@ -95,6 +105,7 @@ abstract class FortuneWidget implements Widget {
     FortuneAnimation animationType = FortuneAnimation.Spin,
     List<FortuneIndicator> indicators,
     StyleStrategy styleStrategy,
+    bool animateFirst = true,
     VoidCallback onAnimationStart,
     VoidCallback onAnimationEnd,
   }) {
@@ -108,6 +119,7 @@ abstract class FortuneWidget implements Widget {
         animationType: animationType,
         indicators: indicators ?? FortuneWheel.kDefaultIndicators,
         styleStrategy: styleStrategy ?? FortuneWheel.kDefaultStyleStrategy,
+        animateFirst: animateFirst,
         onAnimationStart: onAnimationStart,
         onAnimationEnd: onAnimationEnd,
       );
@@ -121,6 +133,7 @@ abstract class FortuneWidget implements Widget {
         animationType: animationType,
         indicators: indicators ?? FortuneBar.kDefaultIndicators,
         styleStrategy: styleStrategy ?? FortuneBar.kDefaultStyleStrategy,
+        animateFirst: animateFirst,
         onAnimationStart: onAnimationStart,
         onAnimationEnd: onAnimationEnd,
       );
@@ -136,6 +149,7 @@ abstract class FortuneWidget implements Widget {
     Duration duration,
     FortuneAnimation animationType,
     List<FortuneIndicator> indicators,
+    bool animateFirst,
     VoidCallback onAnimationStart,
     VoidCallback onAnimationEnd,
     StyleStrategy styleStrategy,
@@ -152,6 +166,7 @@ abstract class FortuneWidget implements Widget {
     List<FortuneIndicator> indicators,
     VoidCallback onAnimationStart,
     VoidCallback onAnimationEnd,
+    bool animateFirst,
     double height,
     bool fullWidth,
     StyleStrategy styleStrategy,

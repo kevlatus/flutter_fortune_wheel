@@ -52,6 +52,9 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   /// {@macro flutter_fortune_wheel.FortuneWidget.styleStrategy}
   final StyleStrategy styleStrategy;
 
+  /// {@macro flutter_fortune_wheel.FortuneWidget.animateFirst}
+  final bool animateFirst;
+
   double _getAngle(double progress) {
     return 2 * Math.pi * rotationCount * progress;
   }
@@ -74,6 +77,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     this.animationType = FortuneAnimation.Spin,
     this.indicators = kDefaultIndicators,
     this.styleStrategy = kDefaultStyleStrategy,
+    this.animateFirst = true,
     this.onAnimationStart,
     this.onAnimationEnd,
   })  : assert(items != null && items.length > 1),
@@ -107,7 +111,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     }
 
     useEffect(() {
-      animate();
+      if (animateFirst) animate();
       return null;
     }, []);
 
