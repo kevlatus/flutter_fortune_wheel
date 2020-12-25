@@ -94,6 +94,7 @@ abstract class FortuneWidget implements Widget {
     Duration duration = kDefaultDuration,
     FortuneAnimation animationType = FortuneAnimation.Spin,
     List<FortuneIndicator> indicators,
+    StyleStrategy styleStrategy,
     VoidCallback onAnimationStart,
     VoidCallback onAnimationEnd,
   }) {
@@ -106,6 +107,7 @@ abstract class FortuneWidget implements Widget {
         duration: duration,
         animationType: animationType,
         indicators: indicators ?? FortuneWheel.kDefaultIndicators,
+        styleStrategy: styleStrategy ?? FortuneWheel.kDefaultStyleStrategy,
         onAnimationStart: onAnimationStart,
         onAnimationEnd: onAnimationEnd,
       );
@@ -118,6 +120,7 @@ abstract class FortuneWidget implements Widget {
         duration: duration,
         animationType: animationType,
         indicators: indicators ?? FortuneBar.kDefaultIndicators,
+        styleStrategy: styleStrategy ?? FortuneBar.kDefaultStyleStrategy,
         onAnimationStart: onAnimationStart,
         onAnimationEnd: onAnimationEnd,
       );
@@ -135,6 +138,7 @@ abstract class FortuneWidget implements Widget {
     List<FortuneIndicator> indicators,
     VoidCallback onAnimationStart,
     VoidCallback onAnimationEnd,
+    StyleStrategy styleStrategy,
   }) = FortuneWheel;
 
   /// {@macro flutter_fortune_wheel.FortuneBar}.
@@ -150,5 +154,6 @@ abstract class FortuneWidget implements Widget {
     VoidCallback onAnimationEnd,
     double height,
     bool fullWidth,
+    StyleStrategy styleStrategy,
   }) = FortuneBar;
 }

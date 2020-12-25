@@ -22,7 +22,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     ),
   ];
 
-  static const StyleStrategy kDefaultStyleBuilder =
+  static const StyleStrategy kDefaultStyleStrategy =
       const StyleStrategy.alternating();
 
   /// {@macro flutter_fortune_wheel.FortuneWidget.items}
@@ -73,7 +73,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     this.duration = FortuneWidget.kDefaultDuration,
     this.animationType = FortuneAnimation.Spin,
     this.indicators = kDefaultIndicators,
-    this.styleStrategy = kDefaultStyleBuilder,
+    this.styleStrategy = kDefaultStyleStrategy,
     this.onAnimationStart,
     this.onAnimationEnd,
   })  : assert(items != null && items.length > 1),

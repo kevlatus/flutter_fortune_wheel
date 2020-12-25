@@ -18,7 +18,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
     ),
   ];
 
-  static const StyleStrategy kDefaultStyleBuilder =
+  static const StyleStrategy kDefaultStyleStrategy =
       const StyleStrategy.uniform(borderWidth: 4);
 
   /// Requires this widget to have exactly this height.
@@ -99,7 +99,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
     this.items,
     this.indicators = kDefaultIndicators,
     this.fullWidth = false,
-    this.styleStrategy = kDefaultStyleBuilder,
+    this.styleStrategy = kDefaultStyleStrategy,
   }) : super(key: key);
 
   @override
