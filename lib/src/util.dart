@@ -2,7 +2,7 @@ import 'dart:math' as Math;
 
 import 'package:flutter/widgets.dart';
 
-import 'fortune_widget.dart' show FortuneWidget;
+import 'core/core.dart' show FortuneWidget;
 
 /// Static methods for common tasks when working with [FortuneWidget]s.
 abstract class Fortune {

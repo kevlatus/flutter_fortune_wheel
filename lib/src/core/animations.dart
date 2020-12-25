@@ -1,6 +1,4 @@
-import 'package:flutter/animation.dart';
-
-import 'fortune_widget.dart' show FortuneWidget;
+part of 'core.dart';
 
 /// The type of animation, which is used when the value of
 /// [FortuneWidget.selected] changes.

@@ -1,37 +1,4 @@
-import 'package:flutter/widgets.dart';
-import 'package:flutter_fortune_wheel/src/styling/styling.dart';
-import 'package:quiver/core.dart';
-
-import 'animations.dart';
-import 'indicators/indicators.dart';
-import 'bar/bar.dart';
-import 'wheel/wheel.dart';
-
-/// A [FortuneItem] represents a value, which is chosen during a selection
-/// process and displayed within a [FortuneWidget].
-///
-/// See also:
-///  * [FortuneWidget]
-@immutable
-class FortuneItem {
-  final FortuneItemStyle style;
-
-  /// A widget to be rendered within this item.
-  final Widget child;
-
-  const FortuneItem({
-    this.style,
-    @required this.child,
-  }) : assert(child != null);
-
-  @override
-  int get hashCode => hash2(child, style);
-
-  @override
-  bool operator ==(Object other) {
-    return other is FortuneItem && style == other.style && child == other.child;
-  }
-}
+part of 'core.dart';
 
 /// A [FortuneWidget] visualizes (random) selection processes by iterating over
 /// a list of items before settling on a selected item.
