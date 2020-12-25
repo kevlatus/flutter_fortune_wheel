@@ -18,6 +18,9 @@ class FortuneBar extends HookWidget implements FortuneWidget {
     ),
   ];
 
+  static const StyleStrategy kDefaultStyleBuilder =
+      const StyleStrategy.uniform(borderWidth: 4);
+
   /// Requires this widget to have exactly this height.
   final double height;
 
@@ -44,6 +47,9 @@ class FortuneBar extends HookWidget implements FortuneWidget {
 
   /// {@macro flutter_fortune_wheel.FortuneWidget.onAnimationEnd}
   final VoidCallback onAnimationEnd;
+
+  /// {@macro flutter_fortune_wheel.FortuneWidget.styleStrategy}
+  final StyleStrategy styleStrategy;
 
   /// If this value is true, this widget expands to the screen width and ignores
   /// width constraints imposed by parent widgets.
@@ -93,6 +99,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
     this.items,
     this.indicators = kDefaultIndicators,
     this.fullWidth = false,
+    this.styleStrategy = kDefaultStyleBuilder,
   }) : super(key: key);
 
   @override
@@ -131,6 +138,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
+        final theme = Theme.of(context);
         final visibleItemCount = Math.min(3, items.length);
         final screenSize = MediaQuery.of(context).size;
         final width = fullWidth ? screenSize.width : constraints.maxWidth;
@@ -159,7 +167,9 @@ class FortuneBar extends HookWidget implements FortuneWidget {
                           itemWidth: itemWidth,
                         ),
                         child: _FortuneBarItem(
-                          item: items[i],
+                          child: items[i].child,
+                          style: items[i].style ??
+                              styleStrategy.getItemStyle(theme, i, items.length),
                           width: itemWidth,
                           height: height,
                         ),

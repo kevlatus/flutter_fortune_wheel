@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_fortune_wheel/src/styling/styling.dart';
 import 'package:quiver/core.dart';
 
 import 'animations.dart';
@@ -13,35 +14,22 @@ import 'wheel/wheel.dart';
 ///  * [FortuneWidget]
 @immutable
 class FortuneItem {
-  /// The color used for filling the background of this item.
-  final Color color;
-
-  /// The color used for painting the border of this item.
-  final Color borderColor;
-
-  /// The border width of this item.
-  final double borderWidth;
+  final FortuneItemStyle style;
 
   /// A widget to be rendered within this item.
   final Widget child;
 
   const FortuneItem({
-    this.color,
-    this.borderColor,
-    this.borderWidth,
+    this.style,
     @required this.child,
   }) : assert(child != null);
 
   @override
-  int get hashCode => hash4(color, borderColor, borderWidth, child);
+  int get hashCode => hash2(child, style);
 
   @override
   bool operator ==(Object other) {
-    return other is FortuneItem &&
-        color == other.color &&
-        borderColor == other.borderColor &&
-        borderWidth == other.borderWidth &&
-        child == other.child;
+    return other is FortuneItem && style == other.style && child == other.child;
   }
 }
 
@@ -108,6 +96,12 @@ abstract class FortuneWidget implements Widget {
   /// [selected] item.
   /// {@endtemplate}
   List<FortuneIndicator> get indicators;
+
+  /// {@template flutter_fortune_wheel.FortuneWidget.styleStrategy}
+  /// The strategy to use for styling individual [items] when they have no
+  /// dedicated [FortuneItem.style].
+  /// {@endtemplate}
+  StyleStrategy get styleStrategy;
 
   /// Creates a new [FortuneWheel] if the number of [items] is even or a
   /// [FortuneBar] if it is odd.

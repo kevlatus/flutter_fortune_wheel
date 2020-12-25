@@ -22,6 +22,9 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     ),
   ];
 
+  static const StyleStrategy kDefaultStyleBuilder =
+      const StyleStrategy.alternating();
+
   /// {@macro flutter_fortune_wheel.FortuneWidget.items}
   final List<FortuneItem> items;
 
@@ -46,6 +49,9 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   /// {@macro flutter_fortune_wheel.FortuneWidget.onAnimationEnd}
   final VoidCallback onAnimationEnd;
 
+  /// {@macro flutter_fortune_wheel.FortuneWidget.styleStrategy}
+  final StyleStrategy styleStrategy;
+
   double _getAngle(double progress) {
     return 2 * Math.pi * rotationCount * progress;
   }
@@ -67,6 +73,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     this.duration = FortuneWidget.kDefaultDuration,
     this.animationType = FortuneAnimation.Spin,
     this.indicators = kDefaultIndicators,
+    this.styleStrategy = kDefaultStyleBuilder,
     this.onAnimationStart,
     this.onAnimationEnd,
   })  : assert(items != null && items.length > 1),
@@ -118,6 +125,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
             child: SizedBox.expand(
               child: _SlicedCircle(
                 items: items,
+                styleStrategy: styleStrategy,
               ),
             ),
           ),
