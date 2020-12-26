@@ -115,19 +115,20 @@ class FortuneBar extends HookWidget implements FortuneWidget {
     );
     final AnimationFunc animFunc = getAnimationFunc(animationType);
 
+    // TODO: refactor: implement shared fortune animation hook
     Future<void> animate() async {
       if (animationCtrl.isAnimating) {
         return;
       }
 
       if (onAnimationStart != null) {
-        await Future.delayed(Duration.zero, onAnimationStart);
+        await Future.microtask(onAnimationStart);
       }
 
       await animFunc(animationCtrl);
 
       if (onAnimationEnd != null) {
-        await Future.delayed(Duration.zero, onAnimationEnd);
+        await Future.microtask(onAnimationEnd);
       }
     }
 
@@ -136,8 +137,8 @@ class FortuneBar extends HookWidget implements FortuneWidget {
       return null;
     }, []);
 
-    useValueChanged(selected, (_, __) {
-      animate();
+    useValueChanged(selected, (_, __) async {
+      await animate();
     });
 
     return LayoutBuilder(

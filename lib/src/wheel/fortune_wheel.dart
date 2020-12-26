@@ -100,13 +100,13 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
       }
 
       if (onAnimationStart != null) {
-        await Future.delayed(Duration.zero, onAnimationStart);
+        await Future.microtask(onAnimationStart);
       }
 
       await animFunc(animationCtrl);
 
       if (onAnimationEnd != null) {
-        await Future.delayed(Duration.zero, onAnimationEnd);
+        await Future.microtask(onAnimationEnd);
       }
     }
 
@@ -115,8 +115,8 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
       return null;
     }, []);
 
-    useValueChanged(selected, (_, __) {
-      animate();
+    useValueChanged(selected, (_, __) async {
+      await animate();
     });
 
     final wheel = AnimatedBuilder(
