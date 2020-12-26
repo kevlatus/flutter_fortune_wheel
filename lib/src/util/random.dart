@@ -1,8 +1,4 @@
-import 'dart:math' as Math;
-
-import 'package:flutter/widgets.dart';
-
-import 'fortune_widget.dart' show FortuneWidget;
+part of 'util.dart';
 
 /// Static methods for common tasks when working with [FortuneWidget]s.
 abstract class Fortune {
@@ -54,23 +50,4 @@ abstract class Fortune {
       randomInt(0, iterable.length, random),
     );
   }
-}
-
-Math.Point<double> rotateVector(Math.Point<double> vector, double angle) {
-  return Math.Point(
-    Math.cos(angle) * vector.x - Math.sin(angle) * vector.x,
-    Math.sin(angle) * vector.y + Math.cos(angle) * vector.y,
-  );
-}
-
-double getSmallerSide(BoxConstraints constraints) {
-  return Math.min(constraints.maxWidth, constraints.maxHeight);
-}
-
-Offset getCenteredMargins(BoxConstraints constraints) {
-  final smallerSide = getSmallerSide(constraints);
-  return Offset(
-    (constraints.maxWidth - smallerSide) / 2,
-    (constraints.maxHeight - smallerSide) / 2,
-  );
 }

@@ -1,49 +1,4 @@
-import 'package:flutter/widgets.dart';
-import 'package:quiver/core.dart';
-
-import 'animations.dart';
-import 'indicators/indicators.dart';
-import 'bar/bar.dart';
-import 'wheel/wheel.dart';
-
-/// A [FortuneItem] represents a value, which is chosen during a selection
-/// process and displayed within a [FortuneWidget].
-///
-/// See also:
-///  * [FortuneWidget]
-@immutable
-class FortuneItem {
-  /// The color used for filling the background of this item.
-  final Color color;
-
-  /// The color used for painting the border of this item.
-  final Color borderColor;
-
-  /// The border width of this item.
-  final double borderWidth;
-
-  /// A widget to be rendered within this item.
-  final Widget child;
-
-  const FortuneItem({
-    this.color,
-    this.borderColor,
-    this.borderWidth,
-    @required this.child,
-  }) : assert(child != null);
-
-  @override
-  int get hashCode => hash4(color, borderColor, borderWidth, child);
-
-  @override
-  bool operator ==(Object other) {
-    return other is FortuneItem &&
-        color == other.color &&
-        borderColor == other.borderColor &&
-        borderWidth == other.borderWidth &&
-        child == other.child;
-  }
-}
+part of 'core.dart';
 
 /// A [FortuneWidget] visualizes (random) selection processes by iterating over
 /// a list of items before settling on a selected item.
@@ -109,59 +64,21 @@ abstract class FortuneWidget implements Widget {
   /// {@endtemplate}
   List<FortuneIndicator> get indicators;
 
-  /// Creates a new [FortuneWheel] if the number of [items] is even or a
-  /// [FortuneBar] if it is odd.
-  ///
-  /// {@template flutter_fortune_wheel.FortuneWidget.ctorArgs}
-  /// The type of animation to be used when [selected] changes is determined
-  /// by [animationType]. If it is set to [FortuneAnimation.Spin],
-  /// [rotationCount] determines the number of rotations around all items before
-  /// settling on the selected value during the animation [duration].
-  /// The callbacks [onAnimationStart] and [onAnimationEnd] are called whenever
-  /// this widget starts and ends an animation respectively. This applies to all
-  /// values of [animationType].
+  /// {@template flutter_fortune_wheel.FortuneWidget.styleStrategy}
+  /// The strategy to use for styling individual [items] when they have no
+  /// dedicated [FortuneItem.style].
   /// {@endtemplate}
+  StyleStrategy get styleStrategy;
+
+  /// {@template flutter_fortune_wheel.FortuneWidget.animateFirst}
+  /// Determines if this widget animates during its first build.
   ///
-  /// See also:
-  ///  * [FortuneWidget.bar()]
-  ///  * [FortuneWidget.wheel()]
-  factory FortuneWidget({
-    Key key,
-    @required List<FortuneItem> items,
-    @required int selected,
-    int rotationCount = kDefaultRotationCount,
-    Duration duration = kDefaultDuration,
-    FortuneAnimation animationType = FortuneAnimation.Spin,
-    List<FortuneIndicator> indicators,
-    VoidCallback onAnimationStart,
-    VoidCallback onAnimationEnd,
-  }) {
-    if (items.length % 2 == 0) {
-      return FortuneWidget.wheel(
-        key: key,
-        items: items,
-        selected: selected,
-        rotationCount: rotationCount,
-        duration: duration,
-        animationType: animationType,
-        indicators: indicators ?? FortuneWheel.kDefaultIndicators,
-        onAnimationStart: onAnimationStart,
-        onAnimationEnd: onAnimationEnd,
-      );
-    } else {
-      return FortuneWidget.bar(
-        key: key,
-        items: items,
-        selected: selected,
-        rotationCount: rotationCount,
-        duration: duration,
-        animationType: animationType,
-        indicators: indicators ?? FortuneBar.kDefaultIndicators,
-        onAnimationStart: onAnimationStart,
-        onAnimationEnd: onAnimationEnd,
-      );
-    }
-  }
+  /// The [onAnimationStart] and [onAnimationEnd] callbacks will not be called
+  /// during the first build and no animation occurs, if this is set to false.
+  ///
+  /// Defaults to true.
+  /// {@endtemplate}
+  bool get animateFirst;
 
   /// {@macro flutter_fortune_wheel.FortuneWheel}.
   const factory FortuneWidget.wheel({
@@ -172,8 +89,10 @@ abstract class FortuneWidget implements Widget {
     Duration duration,
     FortuneAnimation animationType,
     List<FortuneIndicator> indicators,
+    bool animateFirst,
     VoidCallback onAnimationStart,
     VoidCallback onAnimationEnd,
+    StyleStrategy styleStrategy,
   }) = FortuneWheel;
 
   /// {@macro flutter_fortune_wheel.FortuneBar}.
@@ -187,7 +106,9 @@ abstract class FortuneWidget implements Widget {
     List<FortuneIndicator> indicators,
     VoidCallback onAnimationStart,
     VoidCallback onAnimationEnd,
+    bool animateFirst,
     double height,
     bool fullWidth,
+    StyleStrategy styleStrategy,
   }) = FortuneBar;
 }
