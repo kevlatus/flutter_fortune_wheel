@@ -1,3 +1,7 @@
+## [0.2.0] - 2020-12-26
+
+feat: add styling strategies for individual items
+
 ## [0.1.1] - 2020-12-20
 
 docs: add basic dartdoc and README documentation
