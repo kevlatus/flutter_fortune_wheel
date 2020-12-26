@@ -1,53 +1,182 @@
 import 'dart:math';
+import 'dart:ui' as ui;
 
-import 'package:flutter_fortune_wheel/src/util.dart';
+import 'package:flutter/animation.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
+import 'package:flutter_fortune_wheel/src/util/util.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-bool equalsNumWithPrecision(num a, num b, double epsilon) {
-  final diff = (a - b).abs();
-  if (a == b) {
-    return true;
-  } else {
-    return diff / min((a.abs() + b.abs()), double.maxFinite) < epsilon;
+void repeatFor(VoidCallback func, [int iterations = 1000]) {
+  for (int i = 0; i < 10e6; i++) {
+    func();
   }
 }
 
-bool equalsPointWithPrecision(Point<num> a, Point<num> b, double precision) {
-  return equalsNumWithPrecision(a.x, b.x, precision) &&
-      equalsNumWithPrecision(a.y, b.y, precision);
+void tick(Duration duration) {
+  SchedulerBinding.instance.handleBeginFrame(duration);
+  SchedulerBinding.instance.handleDrawFrame();
 }
 
 void main() {
-  group('rotateVector', () {
-    test('returns the same vector for 0 angle.', () {
-      final inputVector = Point(14.0, 14.0);
-      final angle = 0.0;
-      final rotatedVector = rotateVector(inputVector, angle);
-      expect(
-          equalsPointWithPrecision(inputVector, rotatedVector, 0.00001), true);
-    });
-
-    test('returns the same vector for 2 * pi angle.', () {
-      final inputVector = Point(14.0, 14.0);
-      final angle = pi * 2;
-      final rotatedVector = rotateVector(inputVector, angle);
-      expect(
-          equalsPointWithPrecision(inputVector, rotatedVector, 0.00001), true);
-    });
+  setUp(() {
+    WidgetsFlutterBinding.ensureInitialized();
+    WidgetsBinding.instance.resetEpoch();
+    ui.window.onBeginFrame = null;
+    ui.window.onDrawFrame = null;
   });
 
   group('Fortune.randomInt', () {
-    test('returns all values within the given range after a million runs', () {
-      final min = 10;
-      final max = 100;
-      for (int i = 0; i < 10e6; i++) {
+    test('returns values within the required range.', () {
+      final random = Random();
+      repeatFor(() {
+        final min = random.nextInt(10000);
+        final max = min + random.nextInt(10000);
         final rnd = Fortune.randomInt(min, max);
-        expect(rnd >= min && rnd < max, true);
-      }
+
+        if (min == max) {
+          expect(rnd, equals(min));
+          expect(rnd, equals(max));
+        } else {
+          expect(rnd, greaterThanOrEqualTo(min));
+          expect(rnd, lessThan(max));
+        }
+      });
     });
   });
 
-  group('rangedRandomDuration', () {});
+  group('Fortune.randomDuration', () {
+    test('returns durations within the required range.', () {
+      final random = Random();
+      repeatFor(() {
+        final min = Duration(seconds: random.nextInt(10000));
+        final max = min + Duration(seconds: random.nextInt(10000));
+        final rnd = Fortune.randomDuration(min, max);
 
-  group('getSmallerSide', () {});
+        if (min == max) {
+          expect(rnd, equals(min));
+          expect(rnd, equals(max));
+        } else {
+          expect(rnd, greaterThanOrEqualTo(min));
+          expect(rnd, lessThan(max));
+        }
+      });
+    });
+  });
+
+  group('Fortune.randomItem', () {
+    test('returns only items from the given array', () {
+      final random = Random();
+      repeatFor(() {
+        final itemCount = random.nextInt(100) + 1;
+        final items = <int>[for (var i = 0; i < itemCount; i++) i];
+        final rnd = Fortune.randomItem(items);
+        expect(items, contains(rnd));
+      });
+    });
+  });
+
+  group('getAnimationFunc', () {
+    group('for spin animation', () {
+      test('animates to 1 starting from 0', () async {
+        AnimationFunc func = getAnimationFunc(FortuneAnimation.Spin);
+        AnimationController controller = AnimationController(
+          duration: Duration(seconds: 4),
+          vsync: TestVSync(),
+        );
+
+        expect(controller.value, moreOrLessEquals(0));
+        func(controller);
+        tick(Duration(seconds: 0));
+        tick(Duration(seconds: 2));
+        expect(controller.value, moreOrLessEquals(0.5));
+        tick(Duration(seconds: 4));
+        expect(controller.value, moreOrLessEquals(1.0));
+      });
+    });
+
+    group('for no animation', () {
+      test('immediately sets progress to 0', () {
+        AnimationFunc func = getAnimationFunc(FortuneAnimation.None);
+        AnimationController controller = AnimationController(
+            duration: Duration(seconds: 4), vsync: TestVSync(), value: 1);
+
+        expect(controller.value, moreOrLessEquals(1.0));
+        func(controller);
+        tick(Duration(seconds: 0));
+        expect(controller.value, moreOrLessEquals(0.0));
+        tick(Duration(seconds: 2));
+        expect(controller.value, moreOrLessEquals(0.0));
+        tick(Duration(seconds: 4));
+        expect(controller.value, moreOrLessEquals(0.0));
+      });
+    });
+  });
+
+  group('rotateVector', () {
+    test('returns the same vector for angle of 0 radians', () {
+      final inputVector = Point(14.0, 14.0);
+      final angle = 0.0;
+      final rotatedVector = rotateVector(inputVector, angle);
+      expect(rotatedVector.x, moreOrLessEquals(inputVector.x));
+      expect(rotatedVector.y, moreOrLessEquals(inputVector.y));
+    });
+
+    test('returns the same vector for angle of 2 * pi radians', () {
+      final inputVector = Point(14.0, 14.0);
+      final angle = pi * 2;
+      final rotatedVector = rotateVector(inputVector, angle);
+      expect(rotatedVector.x, moreOrLessEquals(inputVector.x));
+      expect(rotatedVector.y, moreOrLessEquals(inputVector.y));
+    });
+  });
+
+  group('getSmallerSide', () {
+    test('always returns the size of the smallest constrained side', () {
+      final equalSides = BoxConstraints(
+        maxWidth: 100,
+        maxHeight: 100,
+      );
+      expect(getSmallerSide(equalSides), moreOrLessEquals(100));
+
+      final smallHeight = BoxConstraints(
+        maxWidth: 200,
+        maxHeight: 50,
+      );
+      expect(getSmallerSide(smallHeight), moreOrLessEquals(50));
+
+      final smallWidth = BoxConstraints(
+        maxWidth: 10,
+        maxHeight: 200,
+      );
+      expect(getSmallerSide(smallWidth), moreOrLessEquals(10));
+    });
+  });
+
+  group('getCenteredMargins', () {
+    test('returns correct offset', () {
+      Offset offset = getCenteredMargins(BoxConstraints(
+        maxWidth: 200,
+        maxHeight: 100,
+      ));
+      expect(offset.dx, moreOrLessEquals(50));
+      expect(offset.dy, moreOrLessEquals(0));
+
+      offset = getCenteredMargins(BoxConstraints(
+        maxWidth: 100,
+        maxHeight: 300,
+      ));
+      expect(offset.dx, moreOrLessEquals(0));
+      expect(offset.dy, moreOrLessEquals(100));
+
+      offset = getCenteredMargins(BoxConstraints(
+        maxWidth: 50,
+        maxHeight: 50,
+      ));
+      expect(offset.dx, moreOrLessEquals(0));
+      expect(offset.dy, moreOrLessEquals(0));
+    });
+  });
 }

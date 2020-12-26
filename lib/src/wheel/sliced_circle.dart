@@ -2,10 +2,12 @@ part of 'wheel.dart';
 
 class _SlicedCircle extends StatelessWidget {
   final List<FortuneItem> items;
+  final StyleStrategy styleStrategy;
 
   const _SlicedCircle({
     Key key,
     @required this.items,
+    this.styleStrategy,
   })  : assert(items != null && items.length > 1),
         super(key: key);
 
@@ -21,32 +23,28 @@ class _SlicedCircle extends StatelessWidget {
         child: Stack(
           children: items.asMap().keys.map((index) {
             final theme = Theme.of(context);
-            final fillColor = items[index].color ??
-                (Color.alphaBlend(
-                  theme.primaryColor.withOpacity(index % 2 == 0 ? 0.5 : 1),
-                  theme.colorScheme.background,
-                ));
-            final strokeColor = items[index].borderColor ?? theme.primaryColor;
-            final strokeWidth = items[index].borderWidth ?? 1;
+            final style = items[index].style ??
+                styleStrategy.getItemStyle(theme, index, items.length);
 
             final childAngle = anglePerChild * index;
             // first slice starts at 90 degrees, if 0 degrees is at the top.
             // The angle offset puts the center of the first slice at the top.
-            final angleOffset = -1 * (Math.pi / 2 + anglePerChild / 2);
+            final angleOffset = -(Math.pi / 2 + anglePerChild / 2);
 
             return Transform.rotate(
               alignment: Alignment.topLeft,
               angle: childAngle + angleOffset,
               child: _CircleSlice(
                 child: DefaultTextStyle(
-                  style: TextStyle(color: theme.colorScheme.onPrimary),
+                  textAlign: style.textAlign,
+                  style: style.textStyle,
                   child: items[index].child,
                 ),
                 radius: smallerSide / 2,
                 angle: 2 * Math.pi / items.length,
-                fillColor: fillColor,
-                strokeColor: strokeColor,
-                strokeWidth: strokeWidth,
+                fillColor: style.color,
+                strokeColor: style.borderColor,
+                strokeWidth: style.borderWidth,
               ),
             );
           }).toList(),

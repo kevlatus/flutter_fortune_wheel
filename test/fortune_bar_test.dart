@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'test_helpers.dart';
 
 void main() {
-  group('FortuneWheel', () {
+  group('FortuneBar', () {
     group('animation callbacks', () {
       testWidgets(
         'are not called on first build when animateFirst is false',
@@ -22,7 +22,7 @@ void main() {
 
           await pumpFortuneWidget(
             tester,
-            FortuneWheel(
+            FortuneBar(
               animateFirst: false,
               selected: 0,
               onAnimationStart: onStart,
@@ -54,7 +54,7 @@ void main() {
 
           await pumpFortuneWidget(
             tester,
-            FortuneWheel(
+            FortuneBar(
               animateFirst: true,
               selected: 0,
               onAnimationStart: onStart,
@@ -88,7 +88,7 @@ void main() {
 
           await pumpFortuneWidget(
             tester,
-            FortuneWheel(
+            FortuneBar(
               animateFirst: false,
               selected: 0,
               items: testItems,
@@ -104,7 +104,7 @@ void main() {
 
           await pumpFortuneWidget(
             tester,
-            FortuneWheel(
+            FortuneBar(
               animateFirst: false,
               selected: 1,
               items: testItems,

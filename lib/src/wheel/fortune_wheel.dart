@@ -22,6 +22,9 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     ),
   ];
 
+  static const StyleStrategy kDefaultStyleStrategy =
+      const StyleStrategy.alternating();
+
   /// {@macro flutter_fortune_wheel.FortuneWidget.items}
   final List<FortuneItem> items;
 
@@ -46,6 +49,12 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   /// {@macro flutter_fortune_wheel.FortuneWidget.onAnimationEnd}
   final VoidCallback onAnimationEnd;
 
+  /// {@macro flutter_fortune_wheel.FortuneWidget.styleStrategy}
+  final StyleStrategy styleStrategy;
+
+  /// {@macro flutter_fortune_wheel.FortuneWidget.animateFirst}
+  final bool animateFirst;
+
   double _getAngle(double progress) {
     return 2 * Math.pi * rotationCount * progress;
   }
@@ -67,6 +76,8 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     this.duration = FortuneWidget.kDefaultDuration,
     this.animationType = FortuneAnimation.Spin,
     this.indicators = kDefaultIndicators,
+    this.styleStrategy = kDefaultStyleStrategy,
+    this.animateFirst = true,
     this.onAnimationStart,
     this.onAnimationEnd,
   })  : assert(items != null && items.length > 1),
@@ -89,23 +100,23 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
       }
 
       if (onAnimationStart != null) {
-        await Future.delayed(Duration.zero, onAnimationStart);
+        await Future.microtask(onAnimationStart);
       }
 
       await animFunc(animationCtrl);
 
       if (onAnimationEnd != null) {
-        await Future.delayed(Duration.zero, onAnimationEnd);
+        await Future.microtask(onAnimationEnd);
       }
     }
 
     useEffect(() {
-      animate();
+      if (animateFirst) animate();
       return null;
     }, []);
 
-    useValueChanged(selected, (_, __) {
-      animate();
+    useValueChanged(selected, (_, __) async {
+      await animate();
     });
 
     final wheel = AnimatedBuilder(
@@ -118,6 +129,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
             child: SizedBox.expand(
               child: _SlicedCircle(
                 items: items,
+                styleStrategy: styleStrategy,
               ),
             ),
           ),

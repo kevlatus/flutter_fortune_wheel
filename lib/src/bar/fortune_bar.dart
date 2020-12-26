@@ -18,6 +18,9 @@ class FortuneBar extends HookWidget implements FortuneWidget {
     ),
   ];
 
+  static const StyleStrategy kDefaultStyleStrategy =
+      const StyleStrategy.uniform(borderWidth: 4);
+
   /// Requires this widget to have exactly this height.
   final double height;
 
@@ -45,11 +48,17 @@ class FortuneBar extends HookWidget implements FortuneWidget {
   /// {@macro flutter_fortune_wheel.FortuneWidget.onAnimationEnd}
   final VoidCallback onAnimationEnd;
 
+  /// {@macro flutter_fortune_wheel.FortuneWidget.styleStrategy}
+  final StyleStrategy styleStrategy;
+
   /// If this value is true, this widget expands to the screen width and ignores
   /// width constraints imposed by parent widgets.
   ///
   /// This is disabled by default.
   final bool fullWidth;
+
+  /// {@macro flutter_fortune_wheel.FortuneWidget.animateFirst}
+  final bool animateFirst;
 
   Offset _itemOffset({
     int itemIndex,
@@ -93,6 +102,8 @@ class FortuneBar extends HookWidget implements FortuneWidget {
     this.items,
     this.indicators = kDefaultIndicators,
     this.fullWidth = false,
+    this.styleStrategy = kDefaultStyleStrategy,
+    this.animateFirst = true,
   }) : super(key: key);
 
   @override
@@ -104,33 +115,35 @@ class FortuneBar extends HookWidget implements FortuneWidget {
     );
     final AnimationFunc animFunc = getAnimationFunc(animationType);
 
+    // TODO: refactor: implement shared fortune animation hook
     Future<void> animate() async {
       if (animationCtrl.isAnimating) {
         return;
       }
 
       if (onAnimationStart != null) {
-        await Future.delayed(Duration.zero, onAnimationStart);
+        await Future.microtask(onAnimationStart);
       }
 
       await animFunc(animationCtrl);
 
       if (onAnimationEnd != null) {
-        await Future.delayed(Duration.zero, onAnimationEnd);
+        await Future.microtask(onAnimationEnd);
       }
     }
 
     useEffect(() {
-      animate();
+      if (animateFirst) animate();
       return null;
     }, []);
 
-    useValueChanged(selected, (_, __) {
-      animate();
+    useValueChanged(selected, (_, __) async {
+      await animate();
     });
 
     return LayoutBuilder(
       builder: (context, constraints) {
+        final theme = Theme.of(context);
         final visibleItemCount = Math.min(3, items.length);
         final screenSize = MediaQuery.of(context).size;
         final width = fullWidth ? screenSize.width : constraints.maxWidth;
@@ -159,7 +172,10 @@ class FortuneBar extends HookWidget implements FortuneWidget {
                           itemWidth: itemWidth,
                         ),
                         child: _FortuneBarItem(
-                          item: items[i],
+                          child: items[i].child,
+                          style: items[i].style ??
+                              styleStrategy.getItemStyle(
+                                  theme, i, items.length),
                           width: itemWidth,
                           height: height,
                         ),

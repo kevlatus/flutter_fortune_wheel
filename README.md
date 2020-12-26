@@ -19,7 +19,7 @@ Then import and use the [FortuneWidget](https://pub.dev/documentation/flutter_fo
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 
-FortuneWidget(
+FortuneWidget.wheel(
   selected: 0,
   items: [
     FortuneItem(child: Text('Han Solo')),
@@ -37,27 +37,10 @@ The wheel of fortune is the most iconic visualization.
   <img src="https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/img-wheel-anim.gif">
 </p>
 
-Unfortunately, its alternating slice colors are only suitable, when there is an even number of items to be displayed.
-Furthermore, it is not the best solution when vertical screen space is scarse. Therefore the FortuneWidget example above automatically switches between the fortune wheel and
-fortune bar depending on the number of items and available space.
+Unfortunately, it is not the best solution when available vertical screen space is small.
 
-You can still use a fortune wheel under those conditions by instantiating it directly:
-
-```dart
-import 'package:flutter/material.dart';
-import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
-
-FortuneWidget.wheel(
-  selected: 0,
-  items: [
-    FortuneItem(child: Text('Han Solo')),
-    FortuneItem(child: Text('Yoda')),
-    FortuneItem(child: Text('Obi-Wan Kenobi')),
-  ],
-)
-```
-
-The fortune bar is an alternative visualization, which is smaller in the vertical direction, but is supposed to take the full screen width. See below for an example:
+The fortune bar is an alternative visualization, which is smaller in the vertical direction, 
+but is supposed to take the full screen width. See below for an example:
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/img-bar-anim.gif">
@@ -81,5 +64,7 @@ FortuneWidget.bar(
 
 Contributions are much appreciated.
 
-If you have any ideas for alternative visualizations, feel free to [open a pull request](https://github.com/kevlatus/flutter_fortune_wheel/pulls) or
-[raise an issue](https://github.com/kevlatus/flutter_fortune_wheel/issues). The same holds for any requests regarding existing widgets.
+If you have any ideas for alternative visualizations, feel free to 
+[open a pull request](https://github.com/kevlatus/flutter_fortune_wheel/pulls) or
+[raise an issue](https://github.com/kevlatus/flutter_fortune_wheel/issues).
+The same holds for any requests regarding existing widgets.
