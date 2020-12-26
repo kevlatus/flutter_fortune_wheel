@@ -1,20 +1,7 @@
-import 'package:flutter/widgets.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-Future pumpWheel(WidgetTester tester, FortuneWheel wheel) async {
-  await tester.pumpWidget(
-    Directionality(
-      textDirection: TextDirection.ltr,
-      child: wheel,
-    ),
-  );
-}
-
-const List<FortuneItem> testItems = const <FortuneItem>[
-  FortuneItem(child: Text('1')),
-  FortuneItem(child: Text('2')),
-];
+import 'test_helpers.dart';
 
 void main() {
   group('FortuneWheel', () {
@@ -33,7 +20,7 @@ void main() {
             didCallEnd = true;
           }
 
-          await pumpWheel(
+          await pumpFortuneWidget(
             tester,
             FortuneWheel(
               animateFirst: false,
@@ -65,7 +52,7 @@ void main() {
             endLog.add(true);
           }
 
-          await pumpWheel(
+          await pumpFortuneWidget(
             tester,
             FortuneWheel(
               animateFirst: true,
@@ -99,7 +86,7 @@ void main() {
             endLog.add(true);
           }
 
-          await pumpWheel(
+          await pumpFortuneWidget(
             tester,
             FortuneWheel(
               animateFirst: false,
@@ -115,7 +102,7 @@ void main() {
           expect(startLog, isEmpty);
           expect(endLog, isEmpty);
 
-          await pumpWheel(
+          await pumpFortuneWidget(
             tester,
             FortuneWheel(
               animateFirst: false,

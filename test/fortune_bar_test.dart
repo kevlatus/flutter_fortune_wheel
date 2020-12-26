@@ -1,20 +1,7 @@
-import 'package:flutter/widgets.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-Future pumpBar(WidgetTester tester, FortuneBar bar) async {
-  await tester.pumpWidget(
-    Directionality(
-      textDirection: TextDirection.ltr,
-      child: bar,
-    ),
-  );
-}
-
-const List<FortuneItem> testItems = const <FortuneItem>[
-  FortuneItem(child: Text('1')),
-  FortuneItem(child: Text('2')),
-];
+import 'test_helpers.dart';
 
 void main() {
   group('FortuneBar', () {
@@ -33,7 +20,7 @@ void main() {
             didCallEnd = true;
           }
 
-          await pumpBar(
+          await pumpFortuneWidget(
             tester,
             FortuneBar(
               animateFirst: false,
@@ -65,7 +52,7 @@ void main() {
             endLog.add(true);
           }
 
-          await pumpBar(
+          await pumpFortuneWidget(
             tester,
             FortuneBar(
               animateFirst: true,
@@ -99,7 +86,7 @@ void main() {
             endLog.add(true);
           }
 
-          await pumpBar(
+          await pumpFortuneWidget(
             tester,
             FortuneBar(
               animateFirst: false,
@@ -115,7 +102,7 @@ void main() {
           expect(startLog, isEmpty);
           expect(endLog, isEmpty);
 
-          await pumpBar(
+          await pumpFortuneWidget(
             tester,
             FortuneBar(
               animateFirst: false,
