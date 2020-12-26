@@ -80,66 +80,6 @@ abstract class FortuneWidget implements Widget {
   /// {@endtemplate}
   bool get animateFirst;
 
-  /// Creates a new [FortuneWheel] if the number of [items] is even or a
-  /// [FortuneBar] if it is odd.
-  ///
-  /// {@template flutter_fortune_wheel.FortuneWidget.ctorArgs}
-  /// The type of animation to be used when [selected] changes is determined
-  /// by [animationType]. If it is set to [FortuneAnimation.Spin],
-  /// [rotationCount] determines the number of rotations around all items before
-  /// settling on the selected value during the animation [duration].
-  /// The callbacks [onAnimationStart] and [onAnimationEnd] are called whenever
-  /// this widget starts and ends an animation respectively. This applies to all
-  /// values of [animationType].
-  /// {@endtemplate}
-  ///
-  /// See also:
-  ///  * [FortuneWidget.bar()]
-  ///  * [FortuneWidget.wheel()]
-  factory FortuneWidget({
-    Key key,
-    @required List<FortuneItem> items,
-    @required int selected,
-    int rotationCount = kDefaultRotationCount,
-    Duration duration = kDefaultDuration,
-    FortuneAnimation animationType = FortuneAnimation.Spin,
-    List<FortuneIndicator> indicators,
-    StyleStrategy styleStrategy,
-    bool animateFirst = true,
-    VoidCallback onAnimationStart,
-    VoidCallback onAnimationEnd,
-  }) {
-    if (items.length % 2 == 0) {
-      return FortuneWidget.wheel(
-        key: key,
-        items: items,
-        selected: selected,
-        rotationCount: rotationCount,
-        duration: duration,
-        animationType: animationType,
-        indicators: indicators ?? FortuneWheel.kDefaultIndicators,
-        styleStrategy: styleStrategy ?? FortuneWheel.kDefaultStyleStrategy,
-        animateFirst: animateFirst,
-        onAnimationStart: onAnimationStart,
-        onAnimationEnd: onAnimationEnd,
-      );
-    } else {
-      return FortuneWidget.bar(
-        key: key,
-        items: items,
-        selected: selected,
-        rotationCount: rotationCount,
-        duration: duration,
-        animationType: animationType,
-        indicators: indicators ?? FortuneBar.kDefaultIndicators,
-        styleStrategy: styleStrategy ?? FortuneBar.kDefaultStyleStrategy,
-        animateFirst: animateFirst,
-        onAnimationStart: onAnimationStart,
-        onAnimationEnd: onAnimationEnd,
-      );
-    }
-  }
-
   /// {@macro flutter_fortune_wheel.FortuneWheel}.
   const factory FortuneWidget.wheel({
     Key key,
