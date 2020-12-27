@@ -23,7 +23,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   ];
 
   static const StyleStrategy kDefaultStyleStrategy =
-      const StyleStrategy.alternating();
+      const AlternatingStyleStrategy();
 
   /// {@macro flutter_fortune_wheel.FortuneWidget.items}
   final List<FortuneItem> items;

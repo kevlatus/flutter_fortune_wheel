@@ -13,13 +13,13 @@ They are highly customizable and work across mobile, desktop and the web.
 ## Quick Start
 
 First install the package via [pub.dev](https://pub.dev/packages/flutter_fortune_wheel/install).
-Then import and use the [FortuneWidget](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/FortuneWidget-class.html):
+Then import and use the [FortuneWheel](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/FortuneWheel-class.html):
 
 ```dart
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 
-FortuneWidget.wheel(
+FortuneWheel(
   selected: 0,
   items: [
     FortuneItem(child: Text('Han Solo')),
@@ -50,7 +50,7 @@ but is supposed to take the full screen width. See below for an example:
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 
-FortuneWidget.bar(
+FortuneBar(
   selected: 0,
   items: [
     FortuneItem(child: Text('Han Solo')),
