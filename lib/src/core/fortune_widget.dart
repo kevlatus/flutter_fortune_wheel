@@ -79,36 +79,4 @@ abstract class FortuneWidget implements Widget {
   /// Defaults to true.
   /// {@endtemplate}
   bool get animateFirst;
-
-  /// {@macro flutter_fortune_wheel.FortuneWheel}.
-  const factory FortuneWidget.wheel({
-    Key key,
-    @required int selected,
-    @required List<FortuneItem> items,
-    int rotationCount,
-    Duration duration,
-    FortuneAnimation animationType,
-    List<FortuneIndicator> indicators,
-    bool animateFirst,
-    VoidCallback onAnimationStart,
-    VoidCallback onAnimationEnd,
-    StyleStrategy styleStrategy,
-  }) = FortuneWheel;
-
-  /// {@macro flutter_fortune_wheel.FortuneBar}.
-  const factory FortuneWidget.bar({
-    Key key,
-    @required List<FortuneItem> items,
-    @required int selected,
-    int rotationCount,
-    Duration duration,
-    FortuneAnimation animationType,
-    List<FortuneIndicator> indicators,
-    VoidCallback onAnimationStart,
-    VoidCallback onAnimationEnd,
-    bool animateFirst,
-    double height,
-    bool fullWidth,
-    StyleStrategy styleStrategy,
-  }) = FortuneBar;
 }
