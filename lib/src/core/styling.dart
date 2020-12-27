@@ -51,25 +51,16 @@ abstract class StyleStrategy {
     int index,
     int itemCount,
   );
-
-  const factory StyleStrategy.alternating() = _AlternatingStyleStrategy;
-
-  const factory StyleStrategy.uniform({
-    Color color,
-    Color borderColor,
-    double borderWidth,
-    TextStyle textStyle,
-  }) = _UniformStyleStrategy;
 }
 
-class _UniformStyleStrategy implements StyleStrategy {
+class UniformStyleStrategy implements StyleStrategy {
   final Color color;
   final Color borderColor;
   final double borderWidth;
   final TextAlign textAlign;
   final TextStyle textStyle;
 
-  const _UniformStyleStrategy({
+  const UniformStyleStrategy({
     this.color,
     this.borderColor,
     this.borderWidth,
@@ -93,7 +84,7 @@ class _UniformStyleStrategy implements StyleStrategy {
   }
 }
 
-class _AlternatingStyleStrategy implements StyleStrategy {
+class AlternatingStyleStrategy implements StyleStrategy {
   Color _getFillColor(ThemeData theme, int index, int itemCount) {
     final color = theme.primaryColor;
     final background = theme.backgroundColor;
@@ -109,7 +100,7 @@ class _AlternatingStyleStrategy implements StyleStrategy {
     );
   }
 
-  const _AlternatingStyleStrategy();
+  const AlternatingStyleStrategy();
 
   @override
   FortuneItemStyle getItemStyle(ThemeData theme, int index, int itemCount) {
