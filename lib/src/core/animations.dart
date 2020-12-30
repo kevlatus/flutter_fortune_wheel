@@ -1,11 +1,11 @@
 part of 'core.dart';
 
-/// The type of animation, which is used when the value of
+/// A selection of commonly used curves for animating when the value of
 /// [FortuneWidget.selected] changes.
-enum FortuneAnimation {
-  /// Animate to the [FortuneWidget.selected] item using a spinning animation.
-  Spin,
-  // TODO: Move,
-  /// Directly show the [FortuneWidget.selected] item without animating.
-  None,
+class FortuneCurve {
+  const FortuneCurve._();
+
+  static const Curve spin = Cubic(0, 1.0, 0, 1.0);
+
+  static const Curve none = Threshold(0.0);
 }

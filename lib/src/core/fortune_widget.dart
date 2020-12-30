@@ -32,18 +32,18 @@ abstract class FortuneWidget implements Widget {
   int get rotationCount;
 
   /// {@template flutter_fortune_wheel.FortuneWidget.duration}
-  /// The animation duration used for [FortuneAnimation.Spin]
+  /// The animation duration used for [FortuneCurve.Spin]
   /// within [FortuneWidget] instances.
   /// {@endtemplate}
   Duration get duration;
 
   /// {@template flutter_fortune_wheel.FortuneWidget.animationType}
-  /// The type of animation to be used when [selected] changes.
+  /// The type of curve to use for easing the animation when [selected] changes.
   ///
   /// See also:
-  ///  * [FortuneAnimation]
+  ///  * [FortuneCurve], which defines commonly used curves
   /// {@endtemplate}
-  FortuneAnimation get animationType;
+  Curve get curve;
 
   /// {@template flutter_fortune_wheel.FortuneWidget.onAnimationStart}
   /// Called when this widget starts an animation.
