@@ -51,7 +51,7 @@ class _ExamplePageState extends State<ExamplePage> {
         child: Column(
           children: [
             Expanded(
-              child: FortuneWidget(
+              child: FortuneWheel(
                 selected: selected,
                 items: [
                   for (var it in items) FortuneItem(child: Text(it)),

@@ -1,5 +1,16 @@
 part of 'wheel.dart';
 
+/// A fortune wheel visualizes a (random) selection process as a spinning wheel
+/// divided into uniformly sized slices, which correspond to the number of
+/// [items].
+///
+/// ![](https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/img-wheel-256.png?sanitize=true)
+///
+/// See also:
+///  * [FortuneBar], which provides an alternative visualization
+///  * [FortuneWidget()], which automatically chooses a fitting widget
+///  * [Fortune.randomItem], which helps selecting random items from a list
+///  * [Fortune.randomDuration], which helps choosing a random duration
 class FortuneWheel extends HookWidget implements FortuneWidget {
   /// The default value for [indicators] on a [FortuneWheel].
   /// Currently uses a single [TriangleIndicator] on [Alignment.topCenter].
@@ -10,6 +21,9 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
       child: const TriangleIndicator(),
     ),
   ];
+
+  static const StyleStrategy kDefaultStyleStrategy =
+      const AlternatingStyleStrategy();
 
   /// {@macro flutter_fortune_wheel.FortuneWidget.items}
   final List<FortuneItem> items;
@@ -27,7 +41,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   final List<FortuneIndicator> indicators;
 
   /// {@macro flutter_fortune_wheel.FortuneWidget.animationType}
-  final FortuneAnimation animationType;
+  final Curve curve;
 
   /// {@macro flutter_fortune_wheel.FortuneWidget.onAnimationStart}
   final VoidCallback onAnimationStart;
@@ -35,40 +49,46 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   /// {@macro flutter_fortune_wheel.FortuneWidget.onAnimationEnd}
   final VoidCallback onAnimationEnd;
 
+  /// {@macro flutter_fortune_wheel.FortuneWidget.styleStrategy}
+  final StyleStrategy styleStrategy;
+
+  /// {@macro flutter_fortune_wheel.FortuneWidget.animateFirst}
+  final bool animateFirst;
+
   double _getAngle(double progress) {
     return 2 * Math.pi * rotationCount * progress;
   }
 
-  /// Creates a new [FortuneWheel] with the given [items] and centered on the
-  /// [selected] value.
+  /// {@template flutter_fortune_wheel.FortuneWheel}
+  /// Creates a new [FortuneWheel] with the given [items], which is centered
+  /// on the [selected] value.
   ///
-  /// {@macro flutter_fortune_wheel.FortuneWidget.ctor_args}.
+  /// {@macro flutter_fortune_wheel.FortuneWidget.ctorArgs}.
   ///
   /// See also:
   ///  * [FortuneBar], which provides an alternative visualization.
+  /// {@endtemplate}
   const FortuneWheel({
     Key key,
     @required this.items,
     this.rotationCount = FortuneWidget.kDefaultRotationCount,
     this.selected = 0,
     this.duration = FortuneWidget.kDefaultDuration,
-    this.animationType = FortuneAnimation.Roll,
+    this.curve = FortuneCurve.spin,
     this.indicators = kDefaultIndicators,
+    this.styleStrategy = kDefaultStyleStrategy,
+    this.animateFirst = true,
     this.onAnimationStart,
     this.onAnimationEnd,
   })  : assert(items != null && items.length > 1),
         assert(selected >= 0 && selected < items.length),
-        assert(animationType != null),
+        assert(curve != null),
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final animationCtrl = useAnimationController(duration: duration);
-    final animation = CurvedAnimation(
-      parent: animationCtrl,
-      curve: Cubic(0, 1.0, 0, 1.0),
-    );
-    final AnimationFunc animFunc = getAnimationFunc(animationType);
+    final animation = CurvedAnimation(parent: animationCtrl, curve: curve);
 
     Future<void> animate() async {
       if (animationCtrl.isAnimating) {
@@ -76,23 +96,23 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
       }
 
       if (onAnimationStart != null) {
-        await Future.delayed(Duration.zero, onAnimationStart);
+        await Future.microtask(onAnimationStart);
       }
 
-      await animFunc(animationCtrl);
+      await animationCtrl.forward(from: 0);
 
       if (onAnimationEnd != null) {
-        await Future.delayed(Duration.zero, onAnimationEnd);
+        await Future.microtask(onAnimationEnd);
       }
     }
 
     useEffect(() {
-      animate();
+      if (animateFirst) animate();
       return null;
     }, []);
 
-    useValueChanged(selected, (_, __) {
-      animate();
+    useValueChanged(selected, (_, __) async {
+      await animate();
     });
 
     final wheel = AnimatedBuilder(
@@ -105,6 +125,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
             child: SizedBox.expand(
               child: _SlicedCircle(
                 items: items,
+                styleStrategy: styleStrategy,
               ),
             ),
           ),

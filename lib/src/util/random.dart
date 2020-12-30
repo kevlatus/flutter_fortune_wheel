@@ -1,8 +1,4 @@
-import 'dart:math' as Math;
-
-import 'package:flutter/widgets.dart';
-
-import 'fortune_widget.dart' show FortuneWidget;
+part of 'util.dart';
 
 /// Static methods for common tasks when working with [FortuneWidget]s.
 abstract class Fortune {
@@ -41,23 +37,17 @@ abstract class Fortune {
       milliseconds: randomInt(min.inMilliseconds, max.inMilliseconds, random),
     );
   }
-}
 
-Math.Point<double> rotateVector(Math.Point<double> vector, double angle) {
-  return Math.Point(
-    Math.cos(angle) * vector.x - Math.sin(angle) * vector.x,
-    Math.sin(angle) * vector.y + Math.cos(angle) * vector.y,
-  );
-}
-
-double getSmallerSide(BoxConstraints constraints) {
-  return Math.min(constraints.maxWidth, constraints.maxHeight);
-}
-
-Offset getCenteredMargins(BoxConstraints constraints) {
-  final smallerSide = getSmallerSide(constraints);
-  return Offset(
-    (constraints.maxWidth - smallerSide) / 2,
-    (constraints.maxHeight - smallerSide) / 2,
-  );
+  /// Picks a random item from [iterable] and returns it.
+  ///
+  /// Uses [randomInt] internally to select an item index.
+  ///
+  /// An instance of [Math.Random] can optionally be passed to customize the
+  /// random sample distribution.
+  static T randomItem<T>(Iterable<T> iterable, [Math.Random random]) {
+    random = random ?? Math.Random();
+    return iterable.elementAt(
+      randomInt(0, iterable.length, random),
+    );
+  }
 }
