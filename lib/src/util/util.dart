@@ -5,8 +5,6 @@ import 'package:flutter_fortune_wheel/src/core/core.dart';
 
 import '../core/core.dart' show FortuneWidget;
 
-part 'animations.dart';
-
 part 'random.dart';
 
 Math.Point<double> rotateVector(Math.Point<double> vector, double angle) {

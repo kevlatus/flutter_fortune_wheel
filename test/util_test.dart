@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'dart:ui' as ui;
 
-import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
@@ -74,43 +73,6 @@ void main() {
         final items = <int>[for (var i = 0; i < itemCount; i++) i];
         final rnd = Fortune.randomItem(items);
         expect(items, contains(rnd));
-      });
-    });
-  });
-
-  group('getAnimationFunc', () {
-    group('for spin animation', () {
-      test('animates to 1 starting from 0', () async {
-        AnimationFunc func = getAnimationFunc(FortuneAnimation.Spin);
-        AnimationController controller = AnimationController(
-          duration: Duration(seconds: 4),
-          vsync: TestVSync(),
-        );
-
-        expect(controller.value, moreOrLessEquals(0));
-        func(controller);
-        tick(Duration(seconds: 0));
-        tick(Duration(seconds: 2));
-        expect(controller.value, moreOrLessEquals(0.5));
-        tick(Duration(seconds: 4));
-        expect(controller.value, moreOrLessEquals(1.0));
-      });
-    });
-
-    group('for no animation', () {
-      test('immediately sets progress to 0', () {
-        AnimationFunc func = getAnimationFunc(FortuneAnimation.None);
-        AnimationController controller = AnimationController(
-            duration: Duration(seconds: 4), vsync: TestVSync(), value: 1);
-
-        expect(controller.value, moreOrLessEquals(1.0));
-        func(controller);
-        tick(Duration(seconds: 0));
-        expect(controller.value, moreOrLessEquals(0.0));
-        tick(Duration(seconds: 2));
-        expect(controller.value, moreOrLessEquals(0.0));
-        tick(Duration(seconds: 4));
-        expect(controller.value, moreOrLessEquals(0.0));
       });
     });
   });
