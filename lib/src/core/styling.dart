@@ -25,6 +25,16 @@ class FortuneItemStyle {
         assert(borderColor != null),
         assert(borderWidth != null);
 
+  FortuneItemStyle.disabled(ThemeData theme, {double opacity = 0.0})
+      : this(
+          color: Color.alphaBlend(
+            theme.disabledColor.withOpacity(opacity),
+            theme.disabledColor,
+          ),
+          borderWidth: 0.0,
+          textStyle: TextStyle(color: theme.colorScheme.onPrimary),
+        );
+
   @override
   int get hashCode => hashObjects([
         borderColor,
@@ -47,18 +57,41 @@ class FortuneItemStyle {
 
 abstract class StyleStrategy {
   FortuneItemStyle getItemStyle(
-    ThemeData data,
+    ThemeData theme,
     int index,
     int itemCount,
   );
 }
 
-class UniformStyleStrategy implements StyleStrategy {
+abstract class DisableAwareStyleStrategy implements StyleStrategy {
+  List<int> get disabledIndices;
+
+  bool isIndexDisabled(int index) {
+    return disabledIndices.contains(index);
+  }
+
+  @override
+  FortuneItemStyle getItemStyle(ThemeData theme, int index, int itemCount) {
+    if (isIndexDisabled(index)) {
+      return FortuneItemStyle.disabled(
+        theme,
+        opacity: index % 2 == 0 ? 0.2 : 0.0,
+      );
+    } else {
+      return null;
+    }
+  }
+}
+
+class UniformStyleStrategy
+    with DisableAwareStyleStrategy
+    implements StyleStrategy {
   final Color color;
   final Color borderColor;
   final double borderWidth;
   final TextAlign textAlign;
   final TextStyle textStyle;
+  final List<int> disabledIndices;
 
   const UniformStyleStrategy({
     this.color,
@@ -66,25 +99,31 @@ class UniformStyleStrategy implements StyleStrategy {
     this.borderWidth,
     this.textAlign,
     this.textStyle,
+    this.disabledIndices = const <int>[],
   });
 
   @override
   FortuneItemStyle getItemStyle(ThemeData theme, int index, int itemCount) {
-    return FortuneItemStyle(
-      color: color ??
-          Color.alphaBlend(
-            theme.primaryColor.withOpacity(0.3),
-            theme.colorScheme.surface,
-          ),
-      borderColor: borderColor ?? theme.primaryColor,
-      borderWidth: borderWidth ?? 1.0,
-      textStyle: textStyle ?? TextStyle(color: theme.colorScheme.onSurface),
-      textAlign: textAlign ?? TextAlign.center,
-    );
+    return super.getItemStyle(theme, index, itemCount) ??
+        FortuneItemStyle(
+          color: color ??
+              Color.alphaBlend(
+                theme.primaryColor.withOpacity(0.3),
+                theme.colorScheme.surface,
+              ),
+          borderColor: borderColor ?? theme.primaryColor,
+          borderWidth: borderWidth ?? 1.0,
+          textStyle: textStyle ?? TextStyle(color: theme.colorScheme.onSurface),
+          textAlign: textAlign ?? TextAlign.center,
+        );
   }
 }
 
-class AlternatingStyleStrategy implements StyleStrategy {
+class AlternatingStyleStrategy
+    with DisableAwareStyleStrategy
+    implements StyleStrategy {
+  final List<int> disabledIndices;
+
   Color _getFillColor(ThemeData theme, int index, int itemCount) {
     final color = theme.primaryColor;
     final background = theme.backgroundColor;
@@ -100,16 +139,19 @@ class AlternatingStyleStrategy implements StyleStrategy {
     );
   }
 
-  const AlternatingStyleStrategy();
+  const AlternatingStyleStrategy({
+    this.disabledIndices = const <int>[],
+  });
 
   @override
   FortuneItemStyle getItemStyle(ThemeData theme, int index, int itemCount) {
-    return FortuneItemStyle(
-      color: _getFillColor(theme, index, itemCount),
-      borderColor: theme.primaryColor,
-      borderWidth: 1.0,
-      textAlign: TextAlign.start,
-      textStyle: TextStyle(color: theme.colorScheme.onPrimary),
-    );
+    return super.getItemStyle(theme, index, itemCount) ??
+        FortuneItemStyle(
+          color: _getFillColor(theme, index, itemCount),
+          borderColor: theme.primaryColor,
+          borderWidth: 0.0,
+          textAlign: TextAlign.start,
+          textStyle: TextStyle(color: theme.colorScheme.onPrimary),
+        );
   }
 }
