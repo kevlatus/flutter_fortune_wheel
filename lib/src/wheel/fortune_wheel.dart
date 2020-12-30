@@ -41,7 +41,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   final List<FortuneIndicator> indicators;
 
   /// {@macro flutter_fortune_wheel.FortuneWidget.animationType}
-  final FortuneAnimation animationType;
+  final Curve curve;
 
   /// {@macro flutter_fortune_wheel.FortuneWidget.onAnimationStart}
   final VoidCallback onAnimationStart;
@@ -74,7 +74,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     this.rotationCount = FortuneWidget.kDefaultRotationCount,
     this.selected = 0,
     this.duration = FortuneWidget.kDefaultDuration,
-    this.animationType = FortuneAnimation.Spin,
+    this.curve = FortuneCurve.spin,
     this.indicators = kDefaultIndicators,
     this.styleStrategy = kDefaultStyleStrategy,
     this.animateFirst = true,
@@ -82,17 +82,13 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     this.onAnimationEnd,
   })  : assert(items != null && items.length > 1),
         assert(selected >= 0 && selected < items.length),
-        assert(animationType != null),
+        assert(curve != null),
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final animationCtrl = useAnimationController(duration: duration);
-    final animation = CurvedAnimation(
-      parent: animationCtrl,
-      curve: Cubic(0, 1.0, 0, 1.0),
-    );
-    final AnimationFunc animFunc = getAnimationFunc(animationType);
+    final animation = CurvedAnimation(parent: animationCtrl, curve: curve);
 
     Future<void> animate() async {
       if (animationCtrl.isAnimating) {
@@ -103,7 +99,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
         await Future.microtask(onAnimationStart);
       }
 
-      await animFunc(animationCtrl);
+      await animationCtrl.forward(from: 0);
 
       if (onAnimationEnd != null) {
         await Future.microtask(onAnimationEnd);

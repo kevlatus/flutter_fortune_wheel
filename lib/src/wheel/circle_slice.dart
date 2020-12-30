@@ -42,6 +42,7 @@ class _CircleSlicePainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final diameter = Math.min(size.width, size.height);
     final path = _buildSlicePath(diameter, angle);
+
     // fill slice area
     canvas.drawPath(
       path,
@@ -51,21 +52,23 @@ class _CircleSlicePainter extends CustomPainter {
     );
 
     // draw slice border
-    canvas.drawPath(
-      path,
-      Paint()
-        ..color = strokeColor
-        ..strokeWidth = strokeWidth
-        ..style = PaintingStyle.stroke,
-    );
+    if (strokeWidth > 0) {
+      canvas.drawPath(
+        path,
+        Paint()
+          ..color = strokeColor
+          ..strokeWidth = strokeWidth
+          ..style = PaintingStyle.stroke,
+      );
 
-    canvas.drawPath(
-      Path()..addSliceArc(diameter, angle),
-      Paint()
-        ..color = strokeColor
-        ..strokeWidth = strokeWidth * 2
-        ..style = PaintingStyle.stroke,
-    );
+      canvas.drawPath(
+        Path()..addSliceArc(diameter, angle),
+        Paint()
+          ..color = strokeColor
+          ..strokeWidth = strokeWidth * 2
+          ..style = PaintingStyle.stroke,
+      );
+    }
   }
 
   @override
@@ -200,6 +203,7 @@ class _CircleSlice extends StatelessWidget {
                   angle: angle,
                   fillColor: fillColor,
                   strokeColor: strokeColor,
+                  strokeWidth: strokeWidth,
                 ),
               ),
             ),
