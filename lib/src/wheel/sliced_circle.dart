@@ -34,17 +34,19 @@ class _SlicedCircle extends StatelessWidget {
             return Transform.rotate(
               alignment: Alignment.topLeft,
               angle: childAngle + angleOffset,
-              child: _CircleSlice(
+              child: _CircleSliceLayout(
                 child: DefaultTextStyle(
                   textAlign: style.textAlign,
                   style: style.textStyle,
                   child: items[index].child,
                 ),
-                radius: smallerSide / 2,
-                angle: 2 * Math.pi / items.length,
-                fillColor: style.color,
-                strokeColor: style.borderColor,
-                strokeWidth: style.borderWidth,
+                slice: _CircleSlice(
+                  radius: smallerSide / 2,
+                  angle: 2 * Math.pi / items.length,
+                  fillColor: style.color,
+                  strokeColor: style.borderColor,
+                  strokeWidth: style.borderWidth,
+                ),
               ),
             );
           }).toList(),
