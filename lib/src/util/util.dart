@@ -7,10 +7,14 @@ import '../core/core.dart' show FortuneWidget;
 
 part 'random.dart';
 
+/// Rotates a [vector] by [angle] radians around the origin.
+///
+/// See also:
+///  * [Mathemical proof](https://matthew-brett.github.io/teaching/rotation_2d.html), for a detailed explanation
 Math.Point<double> rotateVector(Math.Point<double> vector, double angle) {
   return Math.Point(
-    Math.cos(angle) * vector.x - Math.sin(angle) * vector.x,
-    Math.sin(angle) * vector.y + Math.cos(angle) * vector.y,
+    Math.cos(angle) * vector.x - Math.sin(angle) * vector.y,
+    Math.sin(angle) * vector.x + Math.cos(angle) * vector.y,
   );
 }
 
