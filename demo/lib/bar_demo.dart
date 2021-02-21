@@ -25,8 +25,11 @@ class BarDemo extends HookWidget {
           items: items,
           onPressed: isAnimating.value
               ? null
-              : (value) {
-                  selected.value = value;
+              : () {
+                  selected.value = roll(
+                    items.length,
+                    lastValue: selected.value,
+                  );
                 },
         ),
         SizedBox(height: 8),

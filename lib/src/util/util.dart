@@ -2,8 +2,12 @@ import 'dart:math' as Math;
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_fortune_wheel/src/core/core.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:quiver/core.dart';
 
 import '../core/core.dart' show FortuneWidget;
+
+part 'pan_detector.dart';
 
 part 'random.dart';
 
@@ -28,4 +32,14 @@ Offset getCenteredMargins(BoxConstraints constraints) {
     (constraints.maxWidth - smallerSide) / 2,
     (constraints.maxHeight - smallerSide) / 2,
   );
+}
+
+double convertRange(
+  double value,
+  double minA,
+  double maxA,
+  double minB,
+  double maxB,
+) {
+  return (((value - minA) * (maxB - minB)) / (maxA - minA)) + minB;
 }

@@ -49,6 +49,7 @@ class DemoPage extends StatelessWidget {
           ),
         ),
         body: TabBarView(
+          physics: NeverScrollableScrollPhysics(),
           children: [
             WheelDemo(items: items),
             BarDemo(items: items),

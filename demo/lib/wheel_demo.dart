@@ -24,6 +24,13 @@ class WheelDemo extends HookWidget {
       onChanged: (v) => alignment.value = v,
     );
 
+    void handleRoll() {
+      selected.value = roll(
+        items.length,
+        lastValue: selected.value,
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -33,7 +40,7 @@ class WheelDemo extends HookWidget {
           RollButtonWithPreview(
             selected: selected.value,
             items: items,
-            onPressed: isAnimating.value ? null : (v) => selected.value = v,
+            onPressed: isAnimating.value ? null : handleRoll,
           ),
           SizedBox(height: 8),
           Expanded(
@@ -41,6 +48,9 @@ class WheelDemo extends HookWidget {
               selected: selected.value,
               onAnimationStart: () => isAnimating.value = true,
               onAnimationEnd: () => isAnimating.value = false,
+              onFling: () {
+                handleRoll();
+              },
               indicators: [
                 FortuneIndicator(
                   alignment: alignment.value,
