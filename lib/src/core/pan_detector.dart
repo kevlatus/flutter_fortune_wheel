@@ -45,16 +45,16 @@ class PanState {
 }
 
 abstract class PanPhysics extends ValueNotifier<PanState> {
-  static const Duration _kDefaultDuration = Duration(milliseconds: 300);
+  static const Duration kDefaultDuration = Duration(milliseconds: 300);
+  static const Curve kDefaultCurve = Curves.linear;
 
   Size size = Size(0.0, 0.0);
 
-  final Duration duration;
+  Duration get duration;
 
-  PanPhysics({
-    this.duration = Duration.zero,
-  })  : assert(duration != null),
-        super(PanState());
+  Curve get curve;
+
+  PanPhysics() : super(PanState());
 
   void handlePanStart(DragStartDetails details);
 
@@ -64,6 +64,9 @@ abstract class PanPhysics extends ValueNotifier<PanState> {
 }
 
 class NoPanPhysics extends PanPhysics {
+  final Duration duration = Duration.zero;
+  final Curve curve = PanPhysics.kDefaultCurve;
+
   @override
   void handlePanEnd(DragEndDetails details) {}
 
@@ -76,9 +79,14 @@ class NoPanPhysics extends PanPhysics {
 
 // implementation inspired by https://fireship.io/snippets/circular-drag-flutter/
 class CircularPanPhysics extends PanPhysics {
+  final Duration duration;
+  final Curve curve;
+
   CircularPanPhysics({
-    Duration duration = PanPhysics._kDefaultDuration,
-  }) : super(duration: duration);
+    this.duration = PanPhysics.kDefaultDuration,
+    this.curve = PanPhysics.kDefaultCurve,
+  })  : assert(duration != null),
+        assert(curve != null);
 
   void handlePanStart(DragStartDetails details) {
     value = PanState(isPanning: true);
@@ -142,6 +150,10 @@ class PanAwareBuilder extends HookWidget {
   Widget build(BuildContext context) {
     PanState panState = useValueListenable(physics);
     final returnAnimCtrl = useAnimationController(duration: physics.duration);
+    final returnAnim = CurvedAnimation(
+      parent: returnAnimCtrl,
+      curve: physics.curve,
+    );
 
     useValueChanged(panState.isPanning, (oldValue, oldResult) {
       if (!oldValue) {
@@ -163,13 +175,14 @@ class PanAwareBuilder extends HookWidget {
       onPanUpdate: physics.handlePanUpdate,
       onPanEnd: physics.handlePanEnd,
       child: AnimatedBuilder(
-          animation: returnAnimCtrl,
+          animation: returnAnim,
           builder: (context, _) {
             final mustApplyEasing = returnAnimCtrl.isAnimating ||
                 returnAnimCtrl.status == AnimationStatus.completed;
+
             if (mustApplyEasing) {
               panState = panState.copyWith(
-                distance: panState.distance * (1 - returnAnimCtrl.value),
+                distance: panState.distance * (1 - returnAnim.value),
               );
             }
 
