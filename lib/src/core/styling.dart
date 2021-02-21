@@ -1,18 +1,24 @@
 part of 'core.dart';
 
+/// Represents the style of a single [FortuneItem].
+///
+/// See also:
+///  * [StyleStrategy], which allows for styling a list of [FortuneItem]s
 @immutable
 class FortuneItemStyle {
-  /// The color used for filling the background of a fortune item.
+  /// The color used for filling the background of a [FortuneItem].
   final Color color;
 
-  /// The color used for painting the border of a fortune item.
+  /// The color used for painting the border of a [FortuneItem].
   final Color borderColor;
 
-  /// The border width of a fortune item.
+  /// The border width of a [FortuneItem].
   final double borderWidth;
 
+  /// The alignment of text within a [FortuneItem]
   final TextAlign textAlign;
 
+  /// The text style to use within a [FortuneItem]
   final TextStyle textStyle;
 
   const FortuneItemStyle({
@@ -25,6 +31,7 @@ class FortuneItemStyle {
         assert(borderColor != null),
         assert(borderWidth != null);
 
+  /// Creates an opinionated disabled style based on the current [ThemeData].
   FortuneItemStyle.disabled(ThemeData theme, {double opacity = 0.0})
       : this(
           color: Color.alphaBlend(
@@ -55,7 +62,12 @@ class FortuneItemStyle {
   }
 }
 
+/// Interface for providing common styling to a list of [FortuneItem]s.
 abstract class StyleStrategy {
+  /// {@template flutter_fortune_wheel.StyleStrategy.getItemStyle}
+  /// Creates an [FortuneItemStyle] based on the passed [theme] while considering
+  /// an item's [index] with respect to the overall [itemCount].
+  /// {@endtemplate}
   FortuneItemStyle getItemStyle(
     ThemeData theme,
     int index,
@@ -63,6 +75,17 @@ abstract class StyleStrategy {
   );
 }
 
+/// Mixin to allow style strategies to have a common style for disabled items.
+///
+/// Strategies using this mixin, should first call [DisableAwareStyleStrategy.getItemStyle]
+/// and then provide an alternative, if it returns null.
+///
+/// Example:
+/// ```dart
+/// FortuneItemStyle getItemStyle(ThemeData theme, int index, int itemCount) {
+///   return super.getItemStyle(theme, index, itemCount) ?? FortuneItemStyle(...);
+/// }
+/// ```
 abstract class DisableAwareStyleStrategy implements StyleStrategy {
   List<int> get disabledIndices;
 
@@ -70,6 +93,7 @@ abstract class DisableAwareStyleStrategy implements StyleStrategy {
     return disabledIndices.contains(index);
   }
 
+  /// {@macro flutter_fortune_wheel.StyleStrategy.getItemStyle}
   @override
   FortuneItemStyle getItemStyle(ThemeData theme, int index, int itemCount) {
     if (isIndexDisabled(index)) {
@@ -83,6 +107,10 @@ abstract class DisableAwareStyleStrategy implements StyleStrategy {
   }
 }
 
+/// This strategy renders all items using the same style based on the current [ThemeData].
+///
+/// The [ThemeData.primaryColor] is used as the border color and the background is
+/// drawn using the same color at 0.3 opacity.
 class UniformStyleStrategy
     with DisableAwareStyleStrategy
     implements StyleStrategy {
@@ -102,6 +130,7 @@ class UniformStyleStrategy
     this.disabledIndices = const <int>[],
   });
 
+  /// {@macro flutter_fortune_wheel.StyleStrategy.getItemStyle}
   @override
   FortuneItemStyle getItemStyle(ThemeData theme, int index, int itemCount) {
     return super.getItemStyle(theme, index, itemCount) ??
@@ -119,6 +148,11 @@ class UniformStyleStrategy
   }
 }
 
+/// This strategy renders items in alternating variations of the [ThemeData.primaryColor].
+///
+/// It renders even items with 0.5 opacity and odd items using the original color.
+/// If the item count is odd, the first item is rendered with 0.7 opacity to
+/// prevent a non-uniform style.
 class AlternatingStyleStrategy
     with DisableAwareStyleStrategy
     implements StyleStrategy {
@@ -128,7 +162,7 @@ class AlternatingStyleStrategy
     final color = theme.primaryColor;
     final background = theme.backgroundColor;
     final opacity = itemCount % 2 == 1 && index == 0
-        ? 0.7
+        ? 0.7 // TODO: make 0.75
         : index % 2 == 0
             ? 0.5
             : 1.0;
@@ -143,6 +177,7 @@ class AlternatingStyleStrategy
     this.disabledIndices = const <int>[],
   });
 
+  /// {@macro flutter_fortune_wheel.StyleStrategy.getItemStyle}
   @override
   FortuneItemStyle getItemStyle(ThemeData theme, int index, int itemCount) {
     return super.getItemStyle(theme, index, itemCount) ??
