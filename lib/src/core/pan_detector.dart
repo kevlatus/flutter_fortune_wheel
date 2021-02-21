@@ -85,8 +85,12 @@ class CircularPanPhysics extends PanPhysics {
   }
 
   void handlePanUpdate(DragUpdateDetails details) {
-    bool onTop = details.localPosition.dy <= size.width / 2;
-    bool onLeftSide = details.localPosition.dx <= size.width / 2;
+    final center = Offset(
+      size.width / 2,
+      Math.min(size.width, size.height) / 2,
+    );
+    bool onTop = details.localPosition.dy <= center.dy;
+    bool onLeftSide = details.localPosition.dx <= center.dx;
     bool onRightSide = !onLeftSide;
     bool onBottom = !onTop;
 
