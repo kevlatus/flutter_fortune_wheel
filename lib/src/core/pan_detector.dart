@@ -1,4 +1,4 @@
-part of 'util.dart';
+part of 'core.dart';
 
 class PanState {
   final bool isPanning;
@@ -128,10 +128,11 @@ class PanAwareBuilder extends HookWidget {
 
   PanAwareBuilder({
     @required this.builder,
-    PanPhysics physics,
+    @required this.physics,
     this.behavior,
     this.onFling,
-  }) : physics = physics ?? NoPanPhysics();
+  })  : assert(builder != null),
+        assert(physics != null);
 
   @override
   Widget build(BuildContext context) {

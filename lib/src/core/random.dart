@@ -1,4 +1,4 @@
-part of 'util.dart';
+part of 'core.dart';
 
 /// Static methods for common tasks when working with [FortuneWidget]s.
 abstract class Fortune {

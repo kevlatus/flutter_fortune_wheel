@@ -6,7 +6,7 @@ import 'package:flutter_fortune_wheel/src/core/core.dart';
 import 'package:flutter_fortune_wheel/src/indicators/indicators.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
-import '../util/util.dart';
+import '../util.dart';
 
 part 'fortune_wheel.dart';
 

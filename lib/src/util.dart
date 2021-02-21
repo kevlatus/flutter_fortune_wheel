@@ -1,15 +1,6 @@
 import 'dart:math' as Math;
 
 import 'package:flutter/widgets.dart';
-import 'package:flutter_fortune_wheel/src/core/core.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:quiver/core.dart';
-
-import '../core/core.dart' show FortuneWidget;
-
-part 'pan_detector.dart';
-
-part 'random.dart';
 
 /// Rotates a [vector] by [angle] radians around the origin.
 ///
