@@ -55,6 +55,10 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   /// {@macro flutter_fortune_wheel.FortuneWidget.animateFirst}
   final bool animateFirst;
 
+  final PanPhysics physics;
+
+  final VoidCallback onFling;
+
   double _getAngle(double progress) {
     return 2 * Math.pi * rotationCount * progress;
   }
@@ -68,7 +72,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   /// See also:
   ///  * [FortuneBar], which provides an alternative visualization.
   /// {@endtemplate}
-  const FortuneWheel({
+  FortuneWheel({
     Key key,
     @required this.items,
     this.rotationCount = FortuneWidget.kDefaultRotationCount,
@@ -80,18 +84,21 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     this.animateFirst = true,
     this.onAnimationStart,
     this.onAnimationEnd,
-  })  : assert(items != null && items.length > 1),
+    PanPhysics physics,
+    this.onFling,
+  })  : physics = physics ?? CircularPanPhysics(),
+        assert(items != null && items.length > 1),
         assert(selected >= 0 && selected < items.length),
         assert(curve != null),
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final animationCtrl = useAnimationController(duration: duration);
-    final animation = CurvedAnimation(parent: animationCtrl, curve: curve);
+    final rotateAnimCtrl = useAnimationController(duration: duration);
+    final rotateAnim = CurvedAnimation(parent: rotateAnimCtrl, curve: curve);
 
     Future<void> animate() async {
-      if (animationCtrl.isAnimating) {
+      if (rotateAnimCtrl.isAnimating) {
         return;
       }
 
@@ -99,7 +106,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
         await Future.microtask(onAnimationStart);
       }
 
-      await animationCtrl.forward(from: 0);
+      await rotateAnimCtrl.forward(from: 0);
 
       if (onAnimationEnd != null) {
         await Future.microtask(onAnimationEnd);
@@ -115,29 +122,39 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
       await animate();
     });
 
-    final wheel = AnimatedBuilder(
-      animation: animation,
-      builder: (context, _) {
-        return Transform.rotate(
-          angle: -2 * Math.pi * (selected / items.length),
-          child: Transform.rotate(
-            angle: _getAngle(animation.value),
-            child: SizedBox.expand(
-              child: _SlicedCircle(
-                items: items,
-                styleStrategy: styleStrategy,
-              ),
+    return PanAwareBuilder(
+      behavior: HitTestBehavior.translucent,
+      physics: physics,
+      onFling: onFling,
+      builder: (context, panState) {
+        return Stack(
+          children: [
+            AnimatedBuilder(
+              animation: rotateAnim,
+              builder: (context, _) {
+                final size = MediaQuery.of(context).size;
+                final meanSize = (size.width + size.height) / 2;
+                final panFactor = 6 / meanSize;
+
+                return Transform.rotate(
+                  angle: -2 * Math.pi * (selected / items.length) +
+                      panState.distance * panFactor,
+                  child: Transform.rotate(
+                    angle: _getAngle(rotateAnim.value),
+                    child: SizedBox.expand(
+                      child: _SlicedCircle(
+                        items: items,
+                        styleStrategy: styleStrategy,
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
-          ),
+            for (var it in indicators) _WheelIndicator(indicator: it),
+          ],
         );
       },
-    );
-
-    return Stack(
-      children: [
-        wheel,
-        for (var it in indicators) _WheelIndicator(indicator: it),
-      ],
     );
   }
 }

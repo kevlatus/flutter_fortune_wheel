@@ -3,12 +3,14 @@
 
 # Flutter Fortune Wheel
 
-Wheel of fortune widgets for Flutter, which allow you to visualize random selection processes.
+This Flutter package includes wheel of fortune widgets, which allow you to visualize random selection processes.
 They are highly customizable and work across mobile, desktop and the web.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/img-wheel-256.png">
 </p>
+
+You can learn more about the wheel's implementation [in this article](https://www.kevlatus.de/blog/making-of-flutter-fortune-wheel).
 
 ## Quick Start
 
@@ -34,13 +36,11 @@ FortuneWheel(
 The wheel of fortune is the most iconic visualization.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/img-wheel-anim.gif">
+  <img src="https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/wheel-spin.gif">
 </p>
 
-Unfortunately, it is not the best solution when available vertical screen space is small.
-
-The fortune bar is an alternative visualization, which is smaller in the vertical direction, 
-but is supposed to take the full screen width. See below for an example:
+Unfortunately, a circular shape is not the best solution when vertical screen space is scarce. Therefore,
+the fortune bar, which is smaller in the vertical direction, is provided as an alternative. See below for an example:
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/img-bar-anim.gif">
@@ -59,6 +59,27 @@ FortuneBar(
   ],
 )
 ```
+
+## Customization
+
+### Drag Behavior
+
+By default, the fortune widgets react to touch and drag behavior and slowly return to their initial state
+upon release. This behavior can be customized using the `physics` property, which expects an implementation
+of the [`PanPhysics`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/PanPhysics-class.html) class.
+If you want to disable dragging, simply pass an instance of [`NoPanPhysics`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/NoPanPhysics-class.html).
+
+For the FortuneWheel, [`CircularPanPhysics`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/CircularPanPhysics-class.html)
+is recommended, while the FortuneBar uses [`DirectionalPanPhysics.horizontal`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/DirectionalPanPhysics/DirectionalPanPhysics.horizontal.html)
+by default. If none of the available implementations, suit your needs, you can always implement a subclass of [`PanPhysics`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/PanPhysics-class.html).
+
+### Item Styling
+
+FortuneItems can be styled individually using their `style` property. Styling a FortuneWidget's
+items according to a common logic is achieved by passing a [`StyleStrategy`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/StyleStrategy-class.html).
+By default, the FortuneWheel uses the [`AlternatingStyleStrategy`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/AlternatingStyleStrategy-class.html)
+and the FortuneBar uses the [`UniformStyleStrategy`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/UniformStyleStrategy-class.html).
+As with drag behavior, you can pass custom implementations to the `styleStrategy` property
 
 ## Contributions
 

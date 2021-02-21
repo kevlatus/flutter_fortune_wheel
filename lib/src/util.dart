@@ -1,11 +1,6 @@
 import 'dart:math' as Math;
 
 import 'package:flutter/widgets.dart';
-import 'package:flutter_fortune_wheel/src/core/core.dart';
-
-import '../core/core.dart' show FortuneWidget;
-
-part 'random.dart';
 
 /// Rotates a [vector] by [angle] radians around the origin.
 ///
@@ -28,4 +23,14 @@ Offset getCenteredMargins(BoxConstraints constraints) {
     (constraints.maxWidth - smallerSide) / 2,
     (constraints.maxHeight - smallerSide) / 2,
   );
+}
+
+double convertRange(
+  double value,
+  double minA,
+  double maxA,
+  double minB,
+  double maxB,
+) {
+  return (((value - minA) * (maxB - minB)) / (maxA - minA)) + minB;
 }
