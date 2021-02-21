@@ -135,9 +135,13 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
               AnimatedBuilder(
                 animation: rotateAnim,
                 builder: (context, _) {
+                  final size = MediaQuery.of(context).size;
+                  final meanSize = (size.width + size.height) / 2;
+                  final panFactor = 6 / meanSize;
+
                   return Transform.rotate(
                     angle: -2 * Math.pi * (selected / items.length) +
-                        panState.distance * 0.01,
+                        panState.distance * panFactor,
                     child: Transform.rotate(
                       angle: _getAngle(rotateAnim.value),
                       child: SizedBox.expand(
