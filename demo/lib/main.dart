@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fortune_wheel_demo/theme.dart';
 
 import 'bar_demo.dart';
 import 'wheel_demo.dart';
@@ -10,14 +11,16 @@ void main() {
 class DemoApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Fortune Wheel Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        accentColor: Colors.orangeAccent,
-        visualDensity: VisualDensity.comfortable,
-      ),
-      home: DemoPage(),
+    return ThemeModeProvider(
+      builder: (context, themeMode) {
+        return MaterialApp(
+          title: 'Fortune Wheel Demo',
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          themeMode: themeMode,
+          home: DemoPage(),
+        );
+      },
     );
   }
 }
