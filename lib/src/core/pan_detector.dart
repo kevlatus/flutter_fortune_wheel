@@ -169,27 +169,31 @@ class PanAwareBuilder extends HookWidget {
       }
     });
 
-    return GestureDetector(
-      behavior: behavior,
-      onPanStart: physics.handlePanStart,
-      onPanUpdate: physics.handlePanUpdate,
-      onPanEnd: physics.handlePanEnd,
-      child: AnimatedBuilder(
-          animation: returnAnim,
-          builder: (context, _) {
-            final mustApplyEasing = returnAnimCtrl.isAnimating ||
-                returnAnimCtrl.status == AnimationStatus.completed;
+    return LayoutBuilder(builder: (context, constraints) {
+      physics.size = Size(constraints.maxWidth, constraints.maxHeight);
 
-            if (mustApplyEasing) {
-              panState = panState.copyWith(
-                distance: panState.distance * (1 - returnAnim.value),
+      return GestureDetector(
+        behavior: behavior,
+        onPanStart: physics.handlePanStart,
+        onPanUpdate: physics.handlePanUpdate,
+        onPanEnd: physics.handlePanEnd,
+        child: AnimatedBuilder(
+            animation: returnAnim,
+            builder: (context, _) {
+              final mustApplyEasing = returnAnimCtrl.isAnimating ||
+                  returnAnimCtrl.status == AnimationStatus.completed;
+
+              if (mustApplyEasing) {
+                panState = panState.copyWith(
+                  distance: panState.distance * (1 - returnAnim.value),
+                );
+              }
+
+              return Builder(
+                builder: (context) => builder(context, panState),
               );
-            }
-
-            return Builder(
-              builder: (context) => builder(context, panState),
-            );
-          }),
-    );
+            }),
+      );
+    });
   }
 }

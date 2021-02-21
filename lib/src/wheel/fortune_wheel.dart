@@ -122,43 +122,39 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
       await animate();
     });
 
-    return LayoutBuilder(builder: (context, constraints) {
-      physics.size = Size(constraints.maxWidth, constraints.maxHeight);
+    return PanAwareBuilder(
+      behavior: HitTestBehavior.translucent,
+      physics: physics,
+      onFling: onFling,
+      builder: (context, panState) {
+        return Stack(
+          children: [
+            AnimatedBuilder(
+              animation: rotateAnim,
+              builder: (context, _) {
+                final size = MediaQuery.of(context).size;
+                final meanSize = (size.width + size.height) / 2;
+                final panFactor = 6 / meanSize;
 
-      return PanAwareBuilder(
-        behavior: HitTestBehavior.translucent,
-        physics: physics,
-        onFling: onFling,
-        builder: (context, panState) {
-          return Stack(
-            children: [
-              AnimatedBuilder(
-                animation: rotateAnim,
-                builder: (context, _) {
-                  final size = MediaQuery.of(context).size;
-                  final meanSize = (size.width + size.height) / 2;
-                  final panFactor = 6 / meanSize;
-
-                  return Transform.rotate(
-                    angle: -2 * Math.pi * (selected / items.length) +
-                        panState.distance * panFactor,
-                    child: Transform.rotate(
-                      angle: _getAngle(rotateAnim.value),
-                      child: SizedBox.expand(
-                        child: _SlicedCircle(
-                          items: items,
-                          styleStrategy: styleStrategy,
-                        ),
+                return Transform.rotate(
+                  angle: -2 * Math.pi * (selected / items.length) +
+                      panState.distance * panFactor,
+                  child: Transform.rotate(
+                    angle: _getAngle(rotateAnim.value),
+                    child: SizedBox.expand(
+                      child: _SlicedCircle(
+                        items: items,
+                        styleStrategy: styleStrategy,
                       ),
                     ),
-                  );
-                },
-              ),
-              for (var it in indicators) _WheelIndicator(indicator: it),
-            ],
-          );
-        },
-      );
-    });
+                  ),
+                );
+              },
+            ),
+            for (var it in indicators) _WheelIndicator(indicator: it),
+          ],
+        );
+      },
+    );
   }
 }
