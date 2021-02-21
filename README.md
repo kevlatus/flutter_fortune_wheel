@@ -36,7 +36,7 @@ FortuneWheel(
 The wheel of fortune is the most iconic visualization.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/img-wheel-anim.gif">
+  <img src="https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/wheel-spin.gif">
 </p>
 
 Unfortunately, a circular shape is not the best solution when vertical screen space is scarce. Therefore,
