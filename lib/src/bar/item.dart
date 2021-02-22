@@ -5,8 +5,8 @@ class _FortuneBarItem extends StatelessWidget {
   final FortuneItemStyle style;
 
   const _FortuneBarItem({
-    Key key,
-    @required this.child,
+    Key? key,
+    required this.child,
     this.style = const FortuneItemStyle(),
   })  : assert(child != null),
         assert(style != null),
@@ -31,7 +31,7 @@ class _FortuneBarItem extends StatelessWidget {
       child: Center(
         child: DefaultTextStyle(
           textAlign: style.textAlign,
-          style: style?.textStyle ?? TextStyle(),
+          style: style.textStyle,
           child: child,
         ),
       ),

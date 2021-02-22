@@ -8,9 +8,9 @@ class _Rectangle extends StatelessWidget {
   final Color color;
 
   const _Rectangle({
-    Key key,
-    @required this.width,
-    @required this.height,
+    Key? key,
+    required this.width,
+    required this.height,
     this.borderWidth = 2,
     this.borderColor = Colors.black,
     this.color = Colors.transparent,

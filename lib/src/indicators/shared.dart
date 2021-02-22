@@ -7,7 +7,7 @@ class FortuneIndicator {
 
   const FortuneIndicator({
     this.alignment = Alignment.center,
-    @required this.child,
+    required this.child,
   }) : assert(child != null);
 
   @override

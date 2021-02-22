@@ -45,17 +45,17 @@ class FortuneBar extends HookWidget implements FortuneWidget {
   final Curve curve;
 
   /// {@macro flutter_fortune_wheel.FortuneWidget.onAnimationStart}
-  final VoidCallback onAnimationStart;
+  final VoidCallback? onAnimationStart;
 
   /// {@macro flutter_fortune_wheel.FortuneWidget.onAnimationEnd}
-  final VoidCallback onAnimationEnd;
+  final VoidCallback? onAnimationEnd;
 
   /// {@macro flutter_fortune_wheel.FortuneWidget.styleStrategy}
   final StyleStrategy styleStrategy;
 
   final PanPhysics physics;
 
-  final VoidCallback onFling;
+  final VoidCallback? onFling;
 
   /// If this value is true, this widget expands to the screen width and ignores
   /// width constraints imposed by parent widgets.
@@ -78,22 +78,22 @@ class FortuneBar extends HookWidget implements FortuneWidget {
   ///  * [FortuneWheel], which provides an alternative visualization.
   /// {@endtemplate}
   FortuneBar({
-    Key key,
+    Key? key,
     this.height = 56.0,
     this.duration = FortuneWidget.kDefaultDuration,
     this.onAnimationStart,
     this.onAnimationEnd,
     this.curve = FortuneCurve.spin,
-    @required this.selected,
+    required this.selected,
     this.rotationCount = FortuneWidget.kDefaultRotationCount,
-    @required this.items,
+    required this.items,
     this.indicators = kDefaultIndicators,
     this.fullWidth = false,
     this.styleStrategy = kDefaultStyleStrategy,
     this.animateFirst = true,
     this.visibleItemCount = kDefaultVisibleItemCount,
     this.onFling,
-    PanPhysics physics,
+    PanPhysics? physics,
   })  : physics = physics ?? DirectionalPanPhysics.horizontal(),
         super(key: key);
 
@@ -118,7 +118,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
       return null;
     }, []);
 
-    useValueChanged(selected, (int _, Future<void> __) async {
+    useValueChanged(selected, (int _, Future<void>? __) async {
       await animate();
     });
 

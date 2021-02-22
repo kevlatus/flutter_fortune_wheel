@@ -109,11 +109,11 @@ mixin DisableAwareStyleStrategy {
 class UniformStyleStrategy
     with DisableAwareStyleStrategy
     implements StyleStrategy {
-  final Color color;
-  final Color borderColor;
-  final double borderWidth;
-  final TextAlign textAlign;
-  final TextStyle textStyle;
+  final Color? color;
+  final Color? borderColor;
+  final double? borderWidth;
+  final TextAlign? textAlign;
+  final TextStyle? textStyle;
   final List<int> disabledIndices;
 
   const UniformStyleStrategy({

@@ -2,11 +2,11 @@ part of 'indicators.dart';
 
 class RectangleIndicator extends StatelessWidget {
   final double borderWidth;
-  final Color borderColor;
+  final Color? borderColor;
   final Color color;
 
   const RectangleIndicator({
-    Key key,
+    Key? key,
     this.borderWidth = 2,
     this.borderColor,
     this.color = Colors.transparent,

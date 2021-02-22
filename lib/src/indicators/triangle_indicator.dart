@@ -1,10 +1,10 @@
 part of 'indicators.dart';
 
 class TriangleIndicator extends StatelessWidget {
-  final Color color;
+  final Color? color;
 
   const TriangleIndicator({
-    Key key,
+    Key? key,
     this.color,
   }) : super(key: key);
 

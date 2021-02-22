@@ -10,7 +10,7 @@ abstract class Fortune {
   ///
   /// An instance of [Math.Random] can optionally be passed to customize the
   /// random sample distribution.
-  static int randomInt(int min, int max, [Math.Random random]) {
+  static int randomInt(int min, int max, [Math.Random? random]) {
     random = random ?? Math.Random();
     if (min == max) {
       return min;
@@ -30,7 +30,7 @@ abstract class Fortune {
   static Duration randomDuration(
     Duration min,
     Duration max, [
-    Math.Random random,
+    Math.Random? random,
   ]) {
     random = random ?? Math.Random();
     return Duration(
@@ -44,7 +44,7 @@ abstract class Fortune {
   ///
   /// An instance of [Math.Random] can optionally be passed to customize the
   /// random sample distribution.
-  static T randomItem<T>(Iterable<T> iterable, [Math.Random random]) {
+  static T randomItem<T>(Iterable<T> iterable, [Math.Random? random]) {
     random = random ?? Math.Random();
     return iterable.elementAt(
       randomInt(0, iterable.length, random),
