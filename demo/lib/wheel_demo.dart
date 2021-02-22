@@ -48,9 +48,7 @@ class WheelDemo extends HookWidget {
               selected: selected.value,
               onAnimationStart: () => isAnimating.value = true,
               onAnimationEnd: () => isAnimating.value = false,
-              onFling: () {
-                handleRoll();
-              },
+              onFling: handleRoll,
               indicators: [
                 FortuneIndicator(
                   alignment: alignment.value,

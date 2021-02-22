@@ -1,7 +1,7 @@
 name: flutter_fortune_wheel
 description: Visualize (random) selection processes with widgets like a spinning wheel of fortune or a fortune bar.
 repository: https://github.com/kevlatus/flutter_fortune_wheel
-version: 0.3.0
+version: 0.3.1
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -10,8 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
 
-  flutter_hooks: ^0.15.0
-  quiver: ^2.1.5
+  flutter_hooks: ^0.16.0
+  quiver: ^3.0.0
 
 dev_dependencies:
   flutter_test:
