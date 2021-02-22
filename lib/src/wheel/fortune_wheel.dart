@@ -44,10 +44,10 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   final Curve curve;
 
   /// {@macro flutter_fortune_wheel.FortuneWidget.onAnimationStart}
-  final VoidCallback onAnimationStart;
+  final VoidCallback? onAnimationStart;
 
   /// {@macro flutter_fortune_wheel.FortuneWidget.onAnimationEnd}
-  final VoidCallback onAnimationEnd;
+  final VoidCallback? onAnimationEnd;
 
   /// {@macro flutter_fortune_wheel.FortuneWidget.styleStrategy}
   final StyleStrategy styleStrategy;
@@ -57,7 +57,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
 
   final PanPhysics physics;
 
-  final VoidCallback onFling;
+  final VoidCallback? onFling;
 
   double _getAngle(double progress) {
     return 2 * Math.pi * rotationCount * progress;
@@ -73,8 +73,8 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   ///  * [FortuneBar], which provides an alternative visualization.
   /// {@endtemplate}
   FortuneWheel({
-    Key key,
-    @required this.items,
+    Key? key,
+    required this.items,
     this.rotationCount = FortuneWidget.kDefaultRotationCount,
     this.selected = 0,
     this.duration = FortuneWidget.kDefaultDuration,
@@ -84,7 +84,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     this.animateFirst = true,
     this.onAnimationStart,
     this.onAnimationEnd,
-    PanPhysics physics,
+    PanPhysics? physics,
     this.onFling,
   })  : physics = physics ?? CircularPanPhysics(),
         assert(items != null && items.length > 1),
@@ -102,15 +102,9 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
         return;
       }
 
-      if (onAnimationStart != null) {
-        await Future.microtask(onAnimationStart);
-      }
-
+      await Future.microtask(() => onAnimationStart?.call());
       await rotateAnimCtrl.forward(from: 0);
-
-      if (onAnimationEnd != null) {
-        await Future.microtask(onAnimationEnd);
-      }
+      await Future.microtask(() => onAnimationEnd?.call());
     }
 
     useEffect(() {
@@ -118,7 +112,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
       return null;
     }, []);
 
-    useValueChanged(selected, (_, __) async {
+    useValueChanged(selected, (int _, Future<void>? __) async {
       await animate();
     });
 

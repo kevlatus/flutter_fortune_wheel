@@ -26,8 +26,9 @@ class FortuneItemStyle {
     this.borderColor = Colors.black,
     this.borderWidth = 1.0,
     this.textAlign = TextAlign.start,
-    this.textStyle,
+    this.textStyle = const TextStyle(),
   })  : assert(color != null),
+        assert(textStyle != null),
         assert(borderColor != null),
         assert(borderWidth != null);
 
@@ -76,33 +77,27 @@ abstract class StyleStrategy {
 }
 
 /// Mixin to allow style strategies to have a common style for disabled items.
-///
-/// Strategies using this mixin, should first call [DisableAwareStyleStrategy.getItemStyle]
-/// and then provide an alternative, if it returns null.
-///
-/// Example:
-/// ```dart
-/// FortuneItemStyle getItemStyle(ThemeData theme, int index, int itemCount) {
-///   return super.getItemStyle(theme, index, itemCount) ?? FortuneItemStyle(...);
-/// }
 /// ```
-abstract class DisableAwareStyleStrategy implements StyleStrategy {
+mixin DisableAwareStyleStrategy {
   List<int> get disabledIndices;
 
-  bool isIndexDisabled(int index) {
+  bool _isIndexDisabled(int index) {
     return disabledIndices.contains(index);
   }
 
-  /// {@macro flutter_fortune_wheel.StyleStrategy.getItemStyle}
-  @override
-  FortuneItemStyle getItemStyle(ThemeData theme, int index, int itemCount) {
-    if (isIndexDisabled(index)) {
+  FortuneItemStyle getDisabledItemStyle(
+    ThemeData theme,
+    int index,
+    int itemCount,
+    FortuneItemStyle Function() orElse,
+  ) {
+    if (_isIndexDisabled(index)) {
       return FortuneItemStyle.disabled(
         theme,
         opacity: index % 2 == 0 ? 0.2 : 0.0,
       );
     } else {
-      return null;
+      return orElse();
     }
   }
 }
@@ -114,11 +109,11 @@ abstract class DisableAwareStyleStrategy implements StyleStrategy {
 class UniformStyleStrategy
     with DisableAwareStyleStrategy
     implements StyleStrategy {
-  final Color color;
-  final Color borderColor;
-  final double borderWidth;
-  final TextAlign textAlign;
-  final TextStyle textStyle;
+  final Color? color;
+  final Color? borderColor;
+  final double? borderWidth;
+  final TextAlign? textAlign;
+  final TextStyle? textStyle;
   final List<int> disabledIndices;
 
   const UniformStyleStrategy({
@@ -133,18 +128,22 @@ class UniformStyleStrategy
   /// {@macro flutter_fortune_wheel.StyleStrategy.getItemStyle}
   @override
   FortuneItemStyle getItemStyle(ThemeData theme, int index, int itemCount) {
-    return super.getItemStyle(theme, index, itemCount) ??
-        FortuneItemStyle(
-          color: color ??
-              Color.alphaBlend(
-                theme.primaryColor.withOpacity(0.3),
-                theme.colorScheme.surface,
-              ),
-          borderColor: borderColor ?? theme.primaryColor,
-          borderWidth: borderWidth ?? 1.0,
-          textStyle: textStyle ?? TextStyle(color: theme.colorScheme.onSurface),
-          textAlign: textAlign ?? TextAlign.center,
-        );
+    return getDisabledItemStyle(
+      theme,
+      index,
+      itemCount,
+      () => FortuneItemStyle(
+        color: color ??
+            Color.alphaBlend(
+              theme.primaryColor.withOpacity(0.3),
+              theme.colorScheme.surface,
+            ),
+        borderColor: borderColor ?? theme.primaryColor,
+        borderWidth: borderWidth ?? 1.0,
+        textStyle: textStyle ?? TextStyle(color: theme.colorScheme.onSurface),
+        textAlign: textAlign ?? TextAlign.center,
+      ),
+    );
   }
 }
 
@@ -180,13 +179,17 @@ class AlternatingStyleStrategy
   /// {@macro flutter_fortune_wheel.StyleStrategy.getItemStyle}
   @override
   FortuneItemStyle getItemStyle(ThemeData theme, int index, int itemCount) {
-    return super.getItemStyle(theme, index, itemCount) ??
-        FortuneItemStyle(
-          color: _getFillColor(theme, index, itemCount),
-          borderColor: theme.primaryColor,
-          borderWidth: 0.0,
-          textAlign: TextAlign.start,
-          textStyle: TextStyle(color: theme.colorScheme.onPrimary),
-        );
+    return getDisabledItemStyle(
+      theme,
+      index,
+      itemCount,
+      () => FortuneItemStyle(
+        color: _getFillColor(theme, index, itemCount),
+        borderColor: theme.primaryColor,
+        borderWidth: 0.0,
+        textAlign: TextAlign.start,
+        textStyle: TextStyle(color: theme.colorScheme.onPrimary),
+      ),
+    );
   }
 }

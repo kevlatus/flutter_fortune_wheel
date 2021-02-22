@@ -12,7 +12,7 @@ class _CircleSliceLayoutDelegate extends MultiChildLayoutDelegate {
 
   @override
   void performLayout(Size size) {
-    Size sliceSize;
+    late Size sliceSize;
     Size childSize;
 
     if (hasChild(_SliceSlot.Slice)) {

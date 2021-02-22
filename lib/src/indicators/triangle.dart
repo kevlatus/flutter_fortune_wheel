@@ -2,12 +2,12 @@ part of 'indicators.dart';
 
 class _TrianglePainter extends CustomPainter {
   final Color fillColor;
-  final Color strokeColor;
+  final Color? strokeColor;
   final double strokeWidth;
   final double elevation;
 
   const _TrianglePainter({
-    @required this.fillColor,
+    required this.fillColor,
     this.strokeColor,
     this.strokeWidth = 1,
     this.elevation = 0,
@@ -46,12 +46,12 @@ class _TrianglePainter extends CustomPainter {
 
 class _Triangle extends StatelessWidget {
   final Color color;
-  final Color borderColor;
+  final Color? borderColor;
   final double borderWidth;
   final double elevation;
 
   const _Triangle({
-    @required this.color,
+    required this.color,
     this.borderColor,
     this.borderWidth = 1,
     this.elevation = 0,
