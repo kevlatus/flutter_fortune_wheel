@@ -10,6 +10,8 @@ part of 'bar.dart';
 ///  * [Fortune.randomItem], which helps selecting random items from a list
 ///  * [Fortune.randomDuration], which helps choosing a random duration
 class FortuneBar extends HookWidget implements FortuneWidget {
+  static const int kDefaultVisibleItemCount = 3;
+
   static const List<FortuneIndicator> kDefaultIndicators =
       const <FortuneIndicator>[
     FortuneIndicator(
@@ -194,17 +196,4 @@ class FortuneBar extends HookWidget implements FortuneWidget {
       },
     );
   }
-}
-
-class _RectClipper extends CustomClipper<Rect> {
-  final Rect rect;
-
-  _RectClipper(this.rect);
-
-  @override
-  Rect getClip(Size size) => rect;
-
-  @override
-  bool shouldReclip(covariant _RectClipper oldClipper) =>
-      rect != oldClipper.rect;
 }
