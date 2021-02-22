@@ -53,8 +53,10 @@ class FortuneBar extends HookWidget implements FortuneWidget {
   /// {@macro flutter_fortune_wheel.FortuneWidget.styleStrategy}
   final StyleStrategy styleStrategy;
 
+  /// {@macro flutter_fortune_wheel.FortuneWidget.physics}
   final PanPhysics physics;
 
+  /// {@macro flutter_fortune_wheel.FortuneWidget.onFling}
   final VoidCallback? onFling;
 
   /// If this value is true, this widget expands to the screen width and ignores
