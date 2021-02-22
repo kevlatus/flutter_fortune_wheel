@@ -102,15 +102,9 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
         return;
       }
 
-      if (onAnimationStart != null) {
-        await Future.microtask(onAnimationStart);
-      }
-
+      await Future.microtask(() => onAnimationStart?.call());
       await rotateAnimCtrl.forward(from: 0);
-
-      if (onAnimationEnd != null) {
-        await Future.microtask(onAnimationEnd);
-      }
+      await Future.microtask(() => onAnimationEnd?.call());
     }
 
     useEffect(() {
@@ -118,7 +112,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
       return null;
     }, []);
 
-    useValueChanged(selected, (_, __) async {
+    useValueChanged(selected, (int _, Future<void> __) async {
       await animate();
     });
 

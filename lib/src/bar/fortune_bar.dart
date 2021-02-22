@@ -86,7 +86,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
     this.curve = FortuneCurve.spin,
     @required this.selected,
     this.rotationCount = FortuneWidget.kDefaultRotationCount,
-    this.items,
+    @required this.items,
     this.indicators = kDefaultIndicators,
     this.fullWidth = false,
     this.styleStrategy = kDefaultStyleStrategy,
@@ -108,15 +108,9 @@ class FortuneBar extends HookWidget implements FortuneWidget {
         return;
       }
 
-      if (onAnimationStart != null) {
-        await Future.microtask(onAnimationStart);
-      }
-
+      await Future.microtask(() => onAnimationStart?.call());
       await animationCtrl.forward(from: 0);
-
-      if (onAnimationEnd != null) {
-        await Future.microtask(onAnimationEnd);
-      }
+      await Future.microtask(() => onAnimationEnd?.call());
     }
 
     useEffect(() {
@@ -124,7 +118,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
       return null;
     }, []);
 
-    useValueChanged(selected, (_, __) async {
+    useValueChanged(selected, (int _, Future<void> __) async {
       await animate();
     });
 
@@ -137,7 +131,9 @@ class FortuneBar extends HookWidget implements FortuneWidget {
         builder: (context, panState) {
           return LayoutBuilder(builder: (context, constraints) {
             final size = Size(
-              fullWidth ? MediaQuery.of(context).size : constraints.maxWidth,
+              fullWidth
+                  ? MediaQuery.of(context).size.width
+                  : constraints.maxWidth,
               height,
             );
 
