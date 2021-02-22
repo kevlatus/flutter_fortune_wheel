@@ -17,20 +17,20 @@ class BarDemo extends HookWidget {
     final selected = useState(0);
     final isAnimating = useState(false);
 
+    void handleRoll() {
+      selected.value = roll(
+        items.length,
+        lastValue: selected.value,
+      );
+    }
+
     return Column(
       children: [
         SizedBox(height: 8),
         RollButtonWithPreview(
           selected: selected.value,
           items: items,
-          onPressed: isAnimating.value
-              ? null
-              : () {
-                  selected.value = roll(
-                    items.length,
-                    lastValue: selected.value,
-                  );
-                },
+          onPressed: isAnimating.value ? null : handleRoll,
         ),
         SizedBox(height: 8),
         Expanded(
@@ -38,6 +38,7 @@ class BarDemo extends HookWidget {
             child: FortuneBar(
               selected: selected.value,
               items: [for (var it in items) FortuneItem(child: Text(it))],
+              onFling: handleRoll,
               onAnimationStart: () {
                 isAnimating.value = true;
               },

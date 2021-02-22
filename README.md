@@ -73,6 +73,29 @@ For the FortuneWheel, [`CircularPanPhysics`](https://pub.dev/documentation/flutt
 is recommended, while the FortuneBar uses [`DirectionalPanPhysics.horizontal`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/DirectionalPanPhysics/DirectionalPanPhysics.horizontal.html)
 by default. If none of the available implementations, suit your needs, you can always implement a subclass of [`PanPhysics`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/PanPhysics-class.html).
 
+The callback passed to `onFling` is called when the pan physics detects a fling gesture. This gives
+you the opportunity to select a new random item.
+
+```dart
+int selected = 0;
+FortuneWheel(
+  // changing the return animation when the user stops dragging
+  physics: CircularPanPhysics(
+    duration: Duration(seconds: 1),
+    curve: Curves.decelerate,
+  ),
+  onFling: () {
+    selected = 1;
+  }
+  selected: selected,
+  items: [
+    FortuneItem(child: Text('Han Solo')),
+    FortuneItem(child: Text('Yoda')),
+    FortuneItem(child: Text('Obi-Wan Kenobi')),
+  ],
+)
+```
+
 ### Item Styling
 
 FortuneItems can be styled individually using their `style` property. Styling a FortuneWidget's
@@ -80,6 +103,19 @@ items according to a common logic is achieved by passing a [`StyleStrategy`](htt
 By default, the FortuneWheel uses the [`AlternatingStyleStrategy`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/AlternatingStyleStrategy-class.html)
 and the FortuneBar uses the [`UniformStyleStrategy`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/UniformStyleStrategy-class.html).
 As with drag behavior, you can pass custom implementations to the `styleStrategy` property
+
+```dart
+FortuneBar(
+  // using alternating item styles on a fortune bar
+  styleStrategy: AlternatingStyleStrategy(),
+  selected: 0,
+  items: [
+    FortuneItem(child: Text('Han Solo')),
+    FortuneItem(child: Text('Yoda')),
+    FortuneItem(child: Text('Obi-Wan Kenobi')),
+  ],
+)
+```
 
 ## Contributions
 
