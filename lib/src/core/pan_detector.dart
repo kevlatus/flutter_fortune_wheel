@@ -1,8 +1,18 @@
 part of 'core.dart';
 
+/// A class representing the current state of a [PanAwareBuilder].
+///
+/// See also:
+///  * [PanPhysics], a base class for implementing pan behavior
+@immutable
 class PanState {
+  /// Is set to true if a user is currently panning on the screen.
   final bool isPanning;
+
+  /// The distance traveled in pixels since panning started.
   final double distance;
+
+  /// Is set to true if panning resulted in a fling gesture.
   final bool wasFlung;
 
   const PanState({
@@ -11,6 +21,7 @@ class PanState {
     this.wasFlung = false,
   });
 
+  /// Returns a copy of this [PanState] instance updated with the given values.
   PanState copyWith({
     bool? isPanning,
     double? distance,
@@ -44,6 +55,8 @@ class PanState {
   }
 }
 
+/// Base class for handling pan events and translating them to travelled
+/// distances.
 abstract class PanPhysics extends ValueNotifier<PanState> {
   static const Duration kDefaultDuration = Duration(milliseconds: 300);
   static const Curve kDefaultCurve = Curves.linear;

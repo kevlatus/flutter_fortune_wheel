@@ -79,4 +79,20 @@ abstract class FortuneWidget implements Widget {
   /// Defaults to true.
   /// {@endtemplate}
   bool get animateFirst;
+
+  /// {@template flutter_fortune_wheel.FortuneWidget.physics}
+  /// The behavior used for handling pan events on this widget.
+  ///
+  /// See also:
+  ///  * [PanPhysics] as the base class for implementing custom behavior
+  ///  * [NoPanPhysics], which disables panning
+  ///  * [DirectionalPanPhysics], which handles one directional panning
+  ///  * [CircularPanPhysics], which handles panning on circular shapes
+  /// {@endtemplate}
+  PanPhysics get physics;
+
+  /// {@template flutter_fortune_wheel.FortuneWidget.onFling}
+  /// Called when a fling gesture is detected by the active [physics].
+  /// {@endtemplate}
+  VoidCallback? get onFling;
 }
