@@ -11,7 +11,7 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.1
-  flutter_hooks: ^0.15.0
+  flutter_hooks: ^0.16.0
   flutter_fortune_wheel:
     path: ../
 

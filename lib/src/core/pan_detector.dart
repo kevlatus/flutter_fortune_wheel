@@ -132,6 +132,64 @@ class CircularPanPhysics extends PanPhysics {
   }
 }
 
+class DirectionalPanPhysics extends PanPhysics {
+  final double _direction;
+
+  double _startPosition = 0.0;
+
+  final Curve curve;
+  final Duration duration;
+
+  double _getOffset(Offset offset) => _direction < 0 ? offset.dy : offset.dx;
+
+  DirectionalPanPhysics._({
+    this.curve,
+    double direction,
+    this.duration,
+  })  : _direction = direction,
+        assert(curve != null),
+        assert(direction != null),
+        assert(duration != null);
+
+  DirectionalPanPhysics.horizontal({
+    Curve curve = PanPhysics.kDefaultCurve,
+    Duration duration = PanPhysics.kDefaultDuration,
+  }) : this._(
+          curve: curve,
+          direction: 1.0,
+          duration: duration,
+        );
+
+  DirectionalPanPhysics.vertical({
+    Curve curve = PanPhysics.kDefaultCurve,
+    Duration duration = PanPhysics.kDefaultDuration,
+  }) : this._(
+          curve: curve,
+          direction: -1.0,
+          duration: duration,
+        );
+
+  void handlePanStart(DragStartDetails details) {
+    _startPosition = _getOffset(details.globalPosition);
+    value = PanState(isPanning: true);
+  }
+
+  void handlePanUpdate(DragUpdateDetails details) {
+    final currentPosition = _getOffset(details.globalPosition);
+    final distance = currentPosition - _startPosition;
+    value = value.copyWith(distance: distance);
+  }
+
+  void handlePanEnd(DragEndDetails details) {
+    final velocity = _getOffset(details.velocity.pixelsPerSecond);
+    if (value.distance.abs() > 100 && velocity.abs() > 300) {
+      value = value.copyWith(isPanning: false, wasFlung: true);
+    } else {
+      value = value.copyWith(isPanning: false);
+    }
+  }
+}
+
 class PanAwareBuilder extends HookWidget {
   final Widget Function(BuildContext, PanState) builder;
   final PanPhysics physics;
