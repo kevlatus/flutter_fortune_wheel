@@ -12,9 +12,9 @@ class PanState {
   });
 
   PanState copyWith({
-    bool isPanning,
-    double distance,
-    bool wasFlung,
+    bool? isPanning,
+    double? distance,
+    bool? wasFlung,
   }) =>
       PanState(
         distance: distance ?? this.distance,
@@ -143,10 +143,10 @@ class DirectionalPanPhysics extends PanPhysics {
   double _getOffset(Offset offset) => _direction < 0 ? offset.dy : offset.dx;
 
   DirectionalPanPhysics._({
-    this.curve,
-    double direction,
-    this.duration,
-  })  : _direction = direction,
+    required this.curve,
+    required double direction,
+    required this.duration,
+  })   : _direction = direction,
         assert(curve != null),
         assert(direction != null),
         assert(duration != null);
@@ -193,12 +193,12 @@ class DirectionalPanPhysics extends PanPhysics {
 class PanAwareBuilder extends HookWidget {
   final Widget Function(BuildContext, PanState) builder;
   final PanPhysics physics;
-  final HitTestBehavior behavior;
-  final VoidCallback onFling;
+  final HitTestBehavior? behavior;
+  final VoidCallback? onFling;
 
   PanAwareBuilder({
-    @required this.builder,
-    @required this.physics,
+    required this.builder,
+    required this.physics,
     this.behavior,
     this.onFling,
   })  : assert(builder != null),
@@ -213,15 +213,15 @@ class PanAwareBuilder extends HookWidget {
       curve: physics.curve,
     );
 
-    useValueChanged(panState.isPanning, (oldValue, oldResult) {
+    useValueChanged(panState.isPanning, (bool oldValue, Future<void>? _) async {
       if (!oldValue) {
         returnAnimCtrl.reset();
       } else {
-        returnAnimCtrl.forward(from: 0.0);
+        await returnAnimCtrl.forward(from: 0.0);
       }
     });
 
-    useValueChanged(panState.wasFlung, (oldValue, _) async {
+    useValueChanged(panState.wasFlung, (bool oldValue, Future<void>? _) async {
       if (panState.wasFlung) {
         await Future.microtask(() => onFling?.call());
       }

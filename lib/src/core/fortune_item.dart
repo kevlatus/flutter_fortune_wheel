@@ -7,14 +7,14 @@ part of 'core.dart';
 ///  * [FortuneWidget]
 @immutable
 class FortuneItem {
-  final FortuneItemStyle style;
+  final FortuneItemStyle? style;
 
   /// A widget to be rendered within this item.
   final Widget child;
 
   const FortuneItem({
     this.style,
-    @required this.child,
+    required this.child,
   }) : assert(child != null);
 
   @override

@@ -23,12 +23,12 @@ class _CircleSlice extends StatelessWidget {
   final double strokeWidth;
 
   const _CircleSlice({
-    Key key,
-    @required this.radius,
-    @required this.fillColor,
-    @required this.strokeColor,
+    Key? key,
+    required this.radius,
+    required this.fillColor,
+    required this.strokeColor,
     this.strokeWidth = 1,
-    @required this.angle,
+    required this.angle,
   })  : assert(radius > 0),
         assert(fillColor != null),
         assert(strokeColor != null),
@@ -53,12 +53,12 @@ class _CircleSlice extends StatelessWidget {
 }
 
 class _CircleSliceLayout extends StatelessWidget {
-  final Widget child;
+  final Widget? child;
   final _CircleSlice slice;
 
   const _CircleSliceLayout({
-    Key key,
-    @required this.slice,
+    Key? key,
+    required this.slice,
     this.child,
   }) : super(key: key);
 
