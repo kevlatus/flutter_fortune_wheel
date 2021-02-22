@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
-import 'package:flutter_fortune_wheel/src/util/util.dart';
+import 'package:flutter_fortune_wheel/src/util.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void repeatFor(VoidCallback func, [int iterations = 1000]) {

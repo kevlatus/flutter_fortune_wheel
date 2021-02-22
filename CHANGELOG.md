@@ -1,3 +1,7 @@
+## [0.3.0] - 2021-02-21
+
+feat: implement drag behavior for FortuneWheel
+
 ## [0.2.0] - 2020-12-26
 
 feat: add styling strategies for individual items
