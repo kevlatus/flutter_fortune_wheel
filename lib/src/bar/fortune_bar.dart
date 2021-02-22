@@ -53,6 +53,10 @@ class FortuneBar extends HookWidget implements FortuneWidget {
   /// {@macro flutter_fortune_wheel.FortuneWidget.styleStrategy}
   final StyleStrategy styleStrategy;
 
+  final PanPhysics physics;
+
+  final VoidCallback onFling;
+
   /// If this value is true, this widget expands to the screen width and ignores
   /// width constraints imposed by parent widgets.
   ///
@@ -62,26 +66,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
   /// {@macro flutter_fortune_wheel.FortuneWidget.animateFirst}
   final bool animateFirst;
 
-  Offset _itemOffset({
-    int itemIndex,
-    double animationProgress,
-    double offset = 0,
-    double itemWidth,
-  }) {
-    itemIndex = (itemIndex - selected) % items.length;
-    final rotationWidth = itemWidth * items.length;
-
-    final norm = 1 / rotationCount;
-    final rotation = (animationProgress / norm).floor();
-    final rotationProgress = animationProgress / norm - rotation;
-    final animationValue = rotationProgress * rotationWidth;
-
-    double x = itemWidth * itemIndex - animationValue - offset;
-    if (itemWidth * (itemIndex + 1) < animationValue) {
-      x += rotationWidth;
-    }
-    return Offset(x, 0);
-  }
+  final int visibleItemCount;
 
   /// {@template flutter_fortune_wheel.FortuneBar}
   /// Creates a new [FortuneBar] with the given [items], which is centered
@@ -92,7 +77,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
   /// See also:
   ///  * [FortuneWheel], which provides an alternative visualization.
   /// {@endtemplate}
-  const FortuneBar({
+  FortuneBar({
     Key key,
     this.height = 56.0,
     this.duration = FortuneWidget.kDefaultDuration,
@@ -106,7 +91,11 @@ class FortuneBar extends HookWidget implements FortuneWidget {
     this.fullWidth = false,
     this.styleStrategy = kDefaultStyleStrategy,
     this.animateFirst = true,
-  }) : super(key: key);
+    this.visibleItemCount = kDefaultVisibleItemCount,
+    this.onFling,
+    PanPhysics physics,
+  })  : physics = physics ?? DirectionalPanPhysics.horizontal(),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -139,61 +128,61 @@ class FortuneBar extends HookWidget implements FortuneWidget {
       await animate();
     });
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final theme = Theme.of(context);
-        final visibleItemCount = Math.min(3, items.length);
-        final screenSize = MediaQuery.of(context).size;
-        final width = fullWidth ? screenSize.width : constraints.maxWidth;
-        final offsetX = fullWidth && visibleItemCount > 1
-            ? (screenSize.width - constraints.maxWidth) / 2
-            : 0.0;
-        final itemWidth = width / visibleItemCount;
+    final theme = Theme.of(context);
 
-        return ClipRect(
-          clipper: _RectClipper(Rect.fromLTWH(-offsetX, 0, width, height)),
-          child: SizedBox(
-            width: width,
-            height: height,
-            child: AnimatedBuilder(
-              animation: animation,
-              builder: (context, _) {
-                return Stack(
-                  children: [
-                    for (var i = 0; i < items.length; i++)
-                      Transform.translate(
-                        offset: _itemOffset(
-                          animationProgress: animation.value,
-                          // put selected item in center
-                          itemIndex: (i + 1) % items.length,
-                          offset: offsetX,
-                          itemWidth: itemWidth,
-                        ),
-                        child: _FortuneBarItem(
-                          child: items[i].child,
-                          style: items[i].style ??
-                              styleStrategy.getItemStyle(
-                                  theme, i, items.length),
-                          width: itemWidth,
-                          height: height,
-                        ),
-                      ),
-                    for (var it in indicators)
-                      Align(
-                        alignment: it.alignment,
-                        child: SizedBox(
-                          width: itemWidth,
-                          height: height,
-                          child: it.child,
-                        ),
-                      ),
-                  ],
-                );
-              },
-            ),
-          ),
-        );
-      },
-    );
+    return PanAwareBuilder(
+        behavior: HitTestBehavior.translucent,
+        physics: physics,
+        onFling: onFling,
+        builder: (context, panState) {
+          return LayoutBuilder(builder: (context, constraints) {
+            final size = Size(
+              fullWidth ? MediaQuery.of(context).size : constraints.maxWidth,
+              height,
+            );
+
+            return Stack(
+              children: [
+                AnimatedBuilder(
+                    animation: animation,
+                    builder: (context, _) {
+                      final itemPosition =
+                          (items.length * rotationCount + selected);
+                      final panFactor = 2 / size.width;
+                      final panOffset = -panState.distance * panFactor;
+                      final position =
+                          animation.value * itemPosition + panOffset;
+
+                      return _InfiniteBar(
+                        centerPosition: 1,
+                        visibleItemCount: visibleItemCount,
+                        size: size,
+                        position: position,
+                        children: [
+                          for (int i = 0; i < items.length; i++)
+                            _FortuneBarItem(
+                              child: items[i].child,
+                              style: styleStrategy.getItemStyle(
+                                theme,
+                                i,
+                                items.length,
+                              ),
+                            )
+                        ],
+                      );
+                    }),
+                for (var it in indicators)
+                  Align(
+                    alignment: it.alignment,
+                    child: SizedBox(
+                      width: size.width / visibleItemCount,
+                      height: height,
+                      child: it.child,
+                    ),
+                  ),
+              ],
+            );
+          });
+        });
   }
 }
