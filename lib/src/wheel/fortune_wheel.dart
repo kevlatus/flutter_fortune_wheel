@@ -55,8 +55,10 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   /// {@macro flutter_fortune_wheel.FortuneWidget.animateFirst}
   final bool animateFirst;
 
+  /// {@macro flutter_fortune_wheel.FortuneWidget.physics}
   final PanPhysics physics;
 
+  /// {@macro flutter_fortune_wheel.FortuneWidget.onFling}
   final VoidCallback? onFling;
 
   double _getAngle(double progress) {
