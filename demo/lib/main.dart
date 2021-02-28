@@ -1,64 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:fortune_wheel_demo/router.gr.dart';
 import 'package:fortune_wheel_demo/theme.dart';
-
-import 'bar_demo.dart';
-import 'wheel_demo.dart';
+import 'util/configure_non_web.dart'
+    if (dart.library.html) 'util/configure_web.dart';
 
 void main() {
+  configureApp();
   runApp(DemoApp());
 }
 
-class DemoApp extends StatelessWidget {
+class DemoApp extends StatefulWidget {
+  @override
+  _DemoAppState createState() => _DemoAppState();
+}
+
+class _DemoAppState extends State<DemoApp> {
+  final _appRouter = AppRouter();
+
   @override
   Widget build(BuildContext context) {
     return ThemeModeProvider(
       builder: (context, themeMode) {
-        return MaterialApp(
+        return MaterialApp.router(
           title: 'Fortune Wheel Demo',
           theme: lightTheme,
           darkTheme: darkTheme,
           themeMode: themeMode,
-          home: DemoPage(),
+          routerDelegate: _appRouter.delegate(),
+          routeInformationParser: _appRouter.defaultRouteParser(),
         );
       },
-    );
-  }
-}
-
-class DemoPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final items = <String>[
-      'Grogu',
-      'Mace Windu',
-      'Obi-Wan Kenobi',
-      'Han Solo',
-      'Luke Skywalker',
-      'Darth Vader',
-      'Yoda',
-      'Ahsoka Tano',
-    ];
-
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Flutter Fortune Wheel'),
-          bottom: TabBar(
-            tabs: [
-              Tab(text: 'Wheel'),
-              Tab(text: 'Bar'),
-            ],
-          ),
-        ),
-        body: TabBarView(
-          physics: NeverScrollableScrollPhysics(),
-          children: [
-            WheelDemo(items: items),
-            BarDemo(items: items),
-          ],
-        ),
-      ),
     );
   }
 }
