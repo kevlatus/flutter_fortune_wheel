@@ -4,12 +4,12 @@ part of 'wheel.dart';
 /// and moves clockwise as far as specified by angle.
 class _CircleSlicePainter extends CustomPainter {
   final Color fillColor;
-  final Color strokeColor;
+  final Color? strokeColor;
   final double strokeWidth;
   final double angle;
 
   const _CircleSlicePainter({
-    @required this.fillColor,
+    required this.fillColor,
     this.strokeColor,
     this.strokeWidth = 1,
     this.angle = Math.pi / 2,
@@ -34,7 +34,7 @@ class _CircleSlicePainter extends CustomPainter {
       canvas.drawPath(
         path,
         Paint()
-          ..color = strokeColor
+          ..color = strokeColor!
           ..strokeWidth = strokeWidth
           ..style = PaintingStyle.stroke,
       );
@@ -50,7 +50,7 @@ class _CircleSlicePainter extends CustomPainter {
               angle,
               false),
         Paint()
-          ..color = strokeColor
+          ..color = strokeColor!
           ..strokeWidth = strokeWidth * 2
           ..style = PaintingStyle.stroke,
       );

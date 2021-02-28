@@ -21,9 +21,9 @@ class _InfiniteBar extends StatelessWidget {
   final Size size;
 
   const _InfiniteBar({
-    Key key,
-    @required this.children,
-    @required this.size,
+    Key? key,
+    required this.children,
+    required this.size,
     this.visibleItemCount = 3,
     this.position = -1,
     this.centerPosition = 0,

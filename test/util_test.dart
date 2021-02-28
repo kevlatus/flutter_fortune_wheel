@@ -15,14 +15,14 @@ void repeatFor(VoidCallback func, [int iterations = 1000]) {
 }
 
 void tick(Duration duration) {
-  SchedulerBinding.instance.handleBeginFrame(duration);
-  SchedulerBinding.instance.handleDrawFrame();
+  SchedulerBinding.instance!.handleBeginFrame(duration);
+  SchedulerBinding.instance!.handleDrawFrame();
 }
 
 void main() {
   setUp(() {
     WidgetsFlutterBinding.ensureInitialized();
-    WidgetsBinding.instance.resetEpoch();
+    WidgetsBinding.instance!.resetEpoch();
     ui.window.onBeginFrame = null;
     ui.window.onDrawFrame = null;
   });

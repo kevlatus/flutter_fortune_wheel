@@ -32,7 +32,7 @@ abstract class FortuneWidget implements Widget {
   int get rotationCount;
 
   /// {@template flutter_fortune_wheel.FortuneWidget.duration}
-  /// The animation duration used for [FortuneCurve.Spin]
+  /// The animation duration used for [FortuneCurve.spin]
   /// within [FortuneWidget] instances.
   /// {@endtemplate}
   Duration get duration;
@@ -49,13 +49,13 @@ abstract class FortuneWidget implements Widget {
   /// Called when this widget starts an animation.
   /// Useful for disabling other widgets during the animation.
   /// {@endtemplate}
-  VoidCallback get onAnimationStart;
+  VoidCallback? get onAnimationStart;
 
   /// {@template flutter_fortune_wheel.FortuneWidget.onAnimationEnd}
   /// Called when this widget's animation ends.
   /// Useful for enabling other widgets after the animation ends.
   /// {@endtemplate}
-  VoidCallback get onAnimationEnd;
+  VoidCallback? get onAnimationEnd;
 
   /// {@template flutter_fortune_wheel.FortuneWidget.indicators}
   /// The list of [indicators] is rendered on top of the underlying
@@ -79,4 +79,20 @@ abstract class FortuneWidget implements Widget {
   /// Defaults to true.
   /// {@endtemplate}
   bool get animateFirst;
+
+  /// {@template flutter_fortune_wheel.FortuneWidget.physics}
+  /// The behavior used for handling pan events on this widget.
+  ///
+  /// See also:
+  ///  * [PanPhysics] as the base class for implementing custom behavior
+  ///  * [NoPanPhysics], which disables panning
+  ///  * [DirectionalPanPhysics], which handles one directional panning
+  ///  * [CircularPanPhysics], which handles panning on circular shapes
+  /// {@endtemplate}
+  PanPhysics get physics;
+
+  /// {@template flutter_fortune_wheel.FortuneWidget.onFling}
+  /// Called when a fling gesture is detected by the active [physics].
+  /// {@endtemplate}
+  VoidCallback? get onFling;
 }

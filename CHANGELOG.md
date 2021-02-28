@@ -1,3 +1,31 @@
+## [0.4.1] - 2021-02-23
+
+improve documentation for pan physics
+
+## [0.4.0] - 2021-02-22
+
+provide support for null-safety
+
+## [0.3.6] - 2021-02-23
+
+improve documentation for pan physics
+
+## [0.3.5] - 2021-02-23
+
+fix pub.dev scoring by downgrading flutter_hooks dependency...
+
+## [0.3.4] - 2021-02-23
+
+fix pub.dev scoring by downgrading quiver dependency
+
+## [0.3.3] - 2021-02-22
+
+docs: add docs for pan behavior
+
+## [0.3.1] - 2021-02-22
+
+feat: implement drag behavior for FortuneBar
+
 ## [0.3.0] - 2021-02-21
 
 feat: implement drag behavior for FortuneWheel
