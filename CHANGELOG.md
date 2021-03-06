@@ -1,3 +1,7 @@
+## [0.4.2] - 2021-03-06
+
+fix wheel positioning for right-to-left locales
+
 ## [0.4.1] - 2021-02-23
 
 improve documentation for pan physics
