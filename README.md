@@ -10,7 +10,8 @@ They are highly customizable and work across mobile, desktop and the web.
   <img src="https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/img-wheel-256.png">
 </p>
 
-You can learn more about the wheel's implementation [in this article](https://www.kevlatus.de/blog/making-of-flutter-fortune-wheel).
+You can learn more about the wheel's implementation [in this article](https://www.kevlatus.de/blog/making-of-flutter-fortune-wheel)
+and try an [interactive demo here](https://kevlatus.github.io/flutter_fortune_wheel).
 
 ## Quick Start
 
@@ -64,8 +65,7 @@ FortuneBar(
 
 ### Drag Behavior
 
-By default, the fortune widgets react to touch and drag behavior and slowly return to their initial state
-upon release. This behavior can be customized using the `physics` property, which expects an implementation
+By default, the fortune widgets react to touch and drag input. This behavior can be customized using the `physics` property, which expects an implementation
 of the [`PanPhysics`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/PanPhysics-class.html) class.
 If you want to disable dragging, simply pass an instance of [`NoPanPhysics`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/NoPanPhysics-class.html).
 
