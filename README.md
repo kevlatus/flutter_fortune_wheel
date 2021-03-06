@@ -105,6 +105,23 @@ and the FortuneBar uses the [`UniformStyleStrategy`](https://pub.dev/documentati
 As with drag behavior, you can pass custom implementations to the `styleStrategy` property
 
 ```dart
+// styling FortuneItems individually
+FortuneWheel(
+  selected: 0,
+  items: [
+    FortuneItem(
+      child: Text('A'),
+      style: FortuneItemStyle(
+        color: Colors.red, // <-- custom circle slice fill color
+        borderColor: Colors.green, // <-- custom circle slice stroke color
+        borderWidth: 3, // <-- custom circle slice stroke width
+      ),
+    ),
+    FortuneItem(child: Text('B')),
+  ],
+)
+
+// common styling for all items of a FortuneWidget
 FortuneBar(
   // using alternating item styles on a fortune bar
   styleStrategy: AlternatingStyleStrategy(),
