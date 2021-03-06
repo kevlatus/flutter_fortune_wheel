@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+part of 'common.dart';
 
 typedef AlignmentCallback = void Function(Alignment);
 

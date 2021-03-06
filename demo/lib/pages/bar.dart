@@ -1,17 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:fortune_wheel_demo/common/common.dart';
 
-import 'roll_button.dart';
-
-class BarDemo extends HookWidget {
-  final List<String> items;
-
-  const BarDemo({
-    Key key,
-    this.items,
-  }) : super(key: key);
-
+class FortuneBarPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final selected = useState(0);
@@ -19,7 +11,7 @@ class BarDemo extends HookWidget {
 
     void handleRoll() {
       selected.value = roll(
-        items.length,
+        fortuneValues.length,
         lastValue: selected.value,
       );
     }
@@ -29,7 +21,7 @@ class BarDemo extends HookWidget {
         SizedBox(height: 8),
         RollButtonWithPreview(
           selected: selected.value,
-          items: items,
+          items: fortuneValues,
           onPressed: isAnimating.value ? null : handleRoll,
         ),
         SizedBox(height: 8),
@@ -37,7 +29,9 @@ class BarDemo extends HookWidget {
           child: Center(
             child: FortuneBar(
               selected: selected.value,
-              items: [for (var it in items) FortuneItem(child: Text(it))],
+              items: [
+                for (var it in fortuneValues) FortuneItem(child: Text(it))
+              ],
               onFling: handleRoll,
               onAnimationStart: () {
                 isAnimating.value = true;

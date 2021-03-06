@@ -1,18 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:fortune_wheel_demo/common/common.dart';
 
-import 'alignment_selector.dart';
-import 'roll_button.dart';
-
-class WheelDemo extends HookWidget {
-  final List<String> items;
-
-  const WheelDemo({
-    Key key,
-    this.items,
-  }) : super(key: key);
-
+class FortuneWheelPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final alignment = useState(Alignment.topCenter);
@@ -26,7 +17,7 @@ class WheelDemo extends HookWidget {
 
     void handleRoll() {
       selected.value = roll(
-        items.length,
+        fortuneValues.length,
         lastValue: selected.value,
       );
     }
@@ -39,7 +30,7 @@ class WheelDemo extends HookWidget {
           SizedBox(height: 8),
           RollButtonWithPreview(
             selected: selected.value,
-            items: items,
+            items: fortuneValues,
             onPressed: isAnimating.value ? null : handleRoll,
           ),
           SizedBox(height: 8),
@@ -55,7 +46,9 @@ class WheelDemo extends HookWidget {
                   child: TriangleIndicator(),
                 ),
               ],
-              items: [for (var it in items) FortuneItem(child: Text(it))],
+              items: [
+                for (var it in fortuneValues) FortuneItem(child: Text(it))
+              ],
             ),
           ),
         ],

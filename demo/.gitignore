@@ -1,3 +1,6 @@
+# ignore generated files
+*.gr.dart
+
 # Miscellaneous
 *.class
 *.log

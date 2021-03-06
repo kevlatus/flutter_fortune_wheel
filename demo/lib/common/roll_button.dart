@@ -1,6 +1,4 @@
-import 'dart:math';
-
-import 'package:flutter/material.dart';
+part of 'common.dart';
 
 int roll(int itemCount, {int lastValue}) {
   if (lastValue == null) {

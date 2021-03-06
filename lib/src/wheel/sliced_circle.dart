@@ -17,9 +17,12 @@ class _SlicedCircle extends StatelessWidget {
 
     return LayoutBuilder(builder: (context, constraints) {
       final smallerSide = getSmallerSide(constraints);
+      final offsetX = Directionality.of(context) == TextDirection.ltr
+          ? constraints.maxWidth / 2
+          : 0.0;
 
       return Transform.translate(
-        offset: Offset(constraints.maxWidth / 2, constraints.maxHeight / 2),
+        offset: Offset(offsetX, constraints.maxHeight / 2),
         child: Stack(
           children: items.asMap().keys.map((index) {
             final theme = Theme.of(context);

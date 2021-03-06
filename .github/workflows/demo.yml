@@ -12,16 +12,20 @@ jobs:
       - uses: actions/checkout@master
       - uses: actions/setup-java@master
         with:
-          java-version: '12.x'
+          java-version: "12.x"
       - uses: subosito/flutter-action@v1
         with:
-          channel: 'beta'
+          channel: "beta"
 
       - run: flutter config --enable-web
 
       - run: flutter pub get
       - run: flutter test
 
+      - run: flutter pub get
+        working-directory: ./demo
+      - run: flutter packages pub run build_runner build
+        working-directory: ./demo
       - name: build demo
         working-directory: ./demo
         run: flutter build web --web-renderer auto

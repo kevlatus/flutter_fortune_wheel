@@ -32,7 +32,7 @@ abstract class FortuneWidget implements Widget {
   int get rotationCount;
 
   /// {@template flutter_fortune_wheel.FortuneWidget.duration}
-  /// The animation duration used for [FortuneCurve.Spin]
+  /// The animation duration used for [FortuneCurve.spin]
   /// within [FortuneWidget] instances.
   /// {@endtemplate}
   Duration get duration;

@@ -1,7 +1,7 @@
 name: fortune_wheel_demo
 version: 1.0.0
 
-publish_to: 'none'
+publish_to: "none"
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -9,8 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
 
-  cupertino_icons: ^1.0.1
+  auto_route: ^1.0.0-beta.10
   flutter_hooks: ^0.16.0
   flutter_fortune_wheel:
     path: ../
@@ -20,6 +22,9 @@ dev_dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
+
+  auto_route_generator: 1.0.0-beta.11
+  build_runner: 1.11.1
 
 flutter:
   uses-material-design: true
