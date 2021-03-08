@@ -21,9 +21,9 @@ Then import and use the [FortuneWheel](https://pub.dev/documentation/flutter_for
 ```dart
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
-
+StreamController<int> controller = StreamController<int>();
 FortuneWheel(
-  selected: 0,
+  selected: controller.stream,
   items: [
     FortuneItem(child: Text('Han Solo')),
     FortuneItem(child: Text('Yoda')),
@@ -51,8 +51,9 @@ the fortune bar, which is smaller in the vertical direction, is provided as an a
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 
+StreamController<int> controller = StreamController<int>();
 FortuneBar(
-  selected: 0,
+  selected: controller.stream,
   items: [
     FortuneItem(child: Text('Han Solo')),
     FortuneItem(child: Text('Yoda')),
@@ -77,7 +78,7 @@ The callback passed to `onFling` is called when the pan physics detects a fling 
 you the opportunity to select a new random item.
 
 ```dart
-int selected = 0;
+StreamController<int> controller = StreamController<int>();
 FortuneWheel(
   // changing the return animation when the user stops dragging
   physics: CircularPanPhysics(
@@ -85,9 +86,9 @@ FortuneWheel(
     curve: Curves.decelerate,
   ),
   onFling: () {
-    selected = 1;
+    controller.add(1);
   }
-  selected: selected,
+  selected: controller.stream,
   items: [
     FortuneItem(child: Text('Han Solo')),
     FortuneItem(child: Text('Yoda')),
@@ -107,7 +108,7 @@ As with drag behavior, you can pass custom implementations to the `styleStrategy
 ```dart
 // styling FortuneItems individually
 FortuneWheel(
-  selected: 0,
+  selected: Stream.value(0),
   items: [
     FortuneItem(
       child: Text('A'),
@@ -125,7 +126,7 @@ FortuneWheel(
 FortuneBar(
   // using alternating item styles on a fortune bar
   styleStrategy: AlternatingStyleStrategy(),
-  selected: 0,
+  selected: Stream.value(0),
   items: [
     FortuneItem(child: Text('Han Solo')),
     FortuneItem(child: Text('Yoda')),

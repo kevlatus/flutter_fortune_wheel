@@ -24,7 +24,7 @@ void main() {
             tester,
             FortuneBar(
               animateFirst: false,
-              selected: 0,
+              selected: Stream.value(0),
               onAnimationStart: onStart,
               onAnimationEnd: onEnd,
               items: testItems,
@@ -56,7 +56,7 @@ void main() {
             tester,
             FortuneBar(
               animateFirst: true,
-              selected: 0,
+              selected: Stream.value(0),
               onAnimationStart: onStart,
               onAnimationEnd: onEnd,
               items: testItems,
@@ -90,7 +90,8 @@ void main() {
             tester,
             FortuneBar(
               animateFirst: false,
-              selected: 0,
+              // TODO: refactor this to use a single stream controller for updates
+              selected: Stream.value(0),
               items: testItems,
               onAnimationStart: onStart,
               onAnimationEnd: onEnd,
@@ -106,7 +107,7 @@ void main() {
             tester,
             FortuneBar(
               animateFirst: false,
-              selected: 1,
+              selected: Stream.value(1),
               items: testItems,
               onAnimationStart: onStart,
               onAnimationEnd: onEnd,
