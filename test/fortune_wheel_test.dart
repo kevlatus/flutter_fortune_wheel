@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -24,7 +26,7 @@ void main() {
             tester,
             FortuneWheel(
               animateFirst: false,
-              selected: Stream.value(0),
+              selected: Stream.empty(),
               onAnimationStart: onStart,
               onAnimationEnd: onEnd,
               items: testItems,
@@ -56,7 +58,7 @@ void main() {
             tester,
             FortuneWheel(
               animateFirst: true,
-              selected: Stream.value(0),
+              selected: Stream.empty(),
               onAnimationStart: onStart,
               onAnimationEnd: onEnd,
               items: testItems,
@@ -86,11 +88,13 @@ void main() {
             endLog.add(true);
           }
 
+          final controller = StreamController<int>();
+
           await pumpFortuneWidget(
             tester,
             FortuneWheel(
               animateFirst: false,
-              selected: Stream.value(0),
+              selected: controller.stream,
               items: testItems,
               onAnimationStart: onStart,
               onAnimationEnd: onEnd,
@@ -102,23 +106,15 @@ void main() {
           expect(startLog, isEmpty);
           expect(endLog, isEmpty);
 
-          await pumpFortuneWidget(
-            tester,
-            FortuneWheel(
-              animateFirst: false,
-              selected: Stream.value(1),
-              items: testItems,
-              onAnimationStart: onStart,
-              onAnimationEnd: onEnd,
-            ),
-          );
-
+          controller.add(1);
           await tester.pumpAndSettle();
 
           expect(startLog, hasLength(1));
           expect(startLog, contains(true));
           expect(endLog, hasLength(1));
           expect(endLog, contains(true));
+
+          controller.close();
         },
       );
     });
