@@ -1,29 +1,17 @@
 part of 'common.dart';
 
-int roll(int itemCount, {int lastValue}) {
-  if (lastValue == null) {
-    return Random().nextInt(itemCount);
-  } else {
-    int val = lastValue;
-    while (val == lastValue) {
-      val = Random().nextInt(itemCount);
-    }
-    return val;
-  }
+int roll(int itemCount) {
+  return Random().nextInt(itemCount);
 }
 
 typedef IntCallback = void Function(int);
 
 class RollButton extends StatelessWidget {
-  final int lastValue;
   final VoidCallback onPressed;
-  final int itemCount;
 
   const RollButton({
     Key key,
     this.onPressed,
-    this.itemCount,
-    this.lastValue,
   }) : super(key: key);
 
   @override
@@ -54,11 +42,7 @@ class RollButtonWithPreview extends StatelessWidget {
       crossAxisAlignment: WrapCrossAlignment.center,
       direction: Axis.vertical,
       children: [
-        RollButton(
-          itemCount: items.length,
-          onPressed: onPressed,
-          lastValue: selected,
-        ),
+        RollButton(onPressed: onPressed),
         Text('Rolled Value: ${items[selected]}'),
       ],
     );

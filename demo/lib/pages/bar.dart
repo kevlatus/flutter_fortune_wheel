@@ -6,13 +6,13 @@ import 'package:fortune_wheel_demo/common/common.dart';
 class FortuneBarPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
-    final selected = useState(0);
+    final selected = useStreamController<int>();
+    final selectedIndex = useStream(selected.stream, initialData: 0).data ?? 0;
     final isAnimating = useState(false);
 
     void handleRoll() {
-      selected.value = roll(
-        fortuneValues.length,
-        lastValue: selected.value,
+      selected.add(
+        roll(fortuneValues.length),
       );
     }
 
@@ -20,7 +20,7 @@ class FortuneBarPage extends HookWidget {
       children: [
         SizedBox(height: 8),
         RollButtonWithPreview(
-          selected: selected.value,
+          selected: selectedIndex,
           items: fortuneValues,
           onPressed: isAnimating.value ? null : handleRoll,
         ),
@@ -28,7 +28,7 @@ class FortuneBarPage extends HookWidget {
         Expanded(
           child: Center(
             child: FortuneBar(
-              selected: selected.value,
+              selected: selected.stream,
               items: [
                 for (var it in fortuneValues) FortuneItem(child: Text(it))
               ],
