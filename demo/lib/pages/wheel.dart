@@ -7,51 +7,54 @@ class FortuneWheelPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final alignment = useState(Alignment.topCenter);
-    final selected = useState(0);
+    final selected = useStreamController<int>();
+    final selectedIndex = useStream(selected.stream, initialData: 0).data ?? 0;
     final isAnimating = useState(false);
 
     final alignmentSelector = AlignmentSelector(
       selected: alignment.value,
-      onChanged: (v) => alignment.value = v,
+      onChanged: (v) => alignment.value = v!,
     );
 
     void handleRoll() {
-      selected.value = roll(
-        fortuneValues.length,
-        lastValue: selected.value,
+      selected.add(
+        roll(Constants.fortuneValues.length),
       );
     }
 
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          alignmentSelector,
-          SizedBox(height: 8),
-          RollButtonWithPreview(
-            selected: selected.value,
-            items: fortuneValues,
-            onPressed: isAnimating.value ? null : handleRoll,
-          ),
-          SizedBox(height: 8),
-          Expanded(
-            child: FortuneWheel(
-              selected: selected.value,
-              onAnimationStart: () => isAnimating.value = true,
-              onAnimationEnd: () => isAnimating.value = false,
-              onFling: handleRoll,
-              indicators: [
-                FortuneIndicator(
-                  alignment: alignment.value,
-                  child: TriangleIndicator(),
-                ),
-              ],
-              items: [
-                for (var it in fortuneValues) FortuneItem(child: Text(it))
-              ],
+    return AppLayout(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            alignmentSelector,
+            SizedBox(height: 8),
+            RollButtonWithPreview(
+              selected: selectedIndex,
+              items: Constants.fortuneValues,
+              onPressed: isAnimating.value ? null : handleRoll,
             ),
-          ),
-        ],
+            SizedBox(height: 8),
+            Expanded(
+              child: FortuneWheel(
+                selected: selected.stream,
+                onAnimationStart: () => isAnimating.value = true,
+                onAnimationEnd: () => isAnimating.value = false,
+                onFling: handleRoll,
+                indicators: [
+                  FortuneIndicator(
+                    alignment: alignment.value,
+                    child: TriangleIndicator(),
+                  ),
+                ],
+                items: [
+                  for (var it in Constants.fortuneValues)
+                    FortuneItem(child: Text(it))
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

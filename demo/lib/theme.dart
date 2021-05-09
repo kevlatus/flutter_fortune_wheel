@@ -113,7 +113,7 @@ class ThemeModeProvider extends StatefulWidget {
   final ThemedBuilder builder;
 
   ThemeModeProvider({
-    @required this.builder,
+    required this.builder,
   });
 
   @override

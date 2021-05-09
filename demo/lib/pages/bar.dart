@@ -6,43 +6,45 @@ import 'package:fortune_wheel_demo/common/common.dart';
 class FortuneBarPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
-    final selected = useState(0);
+    final selected = useStreamController<int>();
+    final selectedIndex = useStream(selected.stream, initialData: 0).data ?? 0;
     final isAnimating = useState(false);
 
     void handleRoll() {
-      selected.value = roll(
-        fortuneValues.length,
-        lastValue: selected.value,
+      selected.add(
+        roll(Constants.fortuneValues.length),
       );
     }
 
-    return Column(
-      children: [
-        SizedBox(height: 8),
-        RollButtonWithPreview(
-          selected: selected.value,
-          items: fortuneValues,
-          onPressed: isAnimating.value ? null : handleRoll,
-        ),
-        SizedBox(height: 8),
-        Expanded(
-          child: Center(
-            child: FortuneBar(
-              selected: selected.value,
-              items: [
-                for (var it in fortuneValues) FortuneItem(child: Text(it))
-              ],
-              onFling: handleRoll,
-              onAnimationStart: () {
-                isAnimating.value = true;
-              },
-              onAnimationEnd: () {
-                isAnimating.value = false;
-              },
+    return AppLayout(
+      child: Column(
+        children: [
+          SizedBox(height: 8),
+          RollButtonWithPreview(
+            selected: selectedIndex,
+            items: Constants.fortuneValues,
+            onPressed: isAnimating.value ? null : handleRoll,
+          ),
+          SizedBox(height: 8),
+          Expanded(
+            child: Center(
+              child: FortuneBar(
+                selected: selected.stream,
+                items: [
+                  for (var it in Constants.fortuneValues) FortuneItem(child: Text(it))
+                ],
+                onFling: handleRoll,
+                onAnimationStart: () {
+                  isAnimating.value = true;
+                },
+                onAnimationEnd: () {
+                  isAnimating.value = false;
+                },
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

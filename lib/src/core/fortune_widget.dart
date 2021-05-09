@@ -20,10 +20,10 @@ abstract class FortuneWidget implements Widget {
   List<FortuneItem> get items;
 
   /// {@template flutter_fortune_wheel.FortuneWidget.selected}
-  /// The currently selected index within [items].
+  /// A stream notifying this widget that a new value within [items] was selected.
   /// Used by [FortuneWidget]s to align [indicators] on the selected item.
   /// {@endtemplate}
-  int get selected;
+  Stream<int> get selected;
 
   /// {@template flutter_fortune_wheel.FortuneWidget.rotationCount}
   /// The number of times a [FortuneWidget] rotates around all

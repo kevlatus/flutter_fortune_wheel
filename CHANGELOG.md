@@ -1,3 +1,13 @@
+## [1.0.0] - 2021-05-09
+
+- **Breaking Change**: FortuneWidgets now accept Stream<int> instead of int to select items
+  - this change enables the same item to be selected multiple times in a row and also triggering the animation
+- fix FortuneBar centering when there are only two items
+
+## [0.4.2] - 2021-03-06
+
+fix wheel positioning for right-to-left locales
+
 ## [0.4.1] - 2021-02-23
 
 improve documentation for pan physics

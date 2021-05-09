@@ -10,7 +10,8 @@ They are highly customizable and work across mobile, desktop and the web.
   <img src="https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/img-wheel-256.png">
 </p>
 
-You can learn more about the wheel's implementation [in this article](https://www.kevlatus.de/blog/making-of-flutter-fortune-wheel).
+You can learn more about the wheel's implementation [in this article](https://www.kevlatus.de/blog/making-of-flutter-fortune-wheel)
+and try an [interactive demo here](https://kevlatus.github.io/flutter_fortune_wheel).
 
 ## Quick Start
 
@@ -20,9 +21,9 @@ Then import and use the [FortuneWheel](https://pub.dev/documentation/flutter_for
 ```dart
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
-
+StreamController<int> controller = StreamController<int>();
 FortuneWheel(
-  selected: 0,
+  selected: controller.stream,
   items: [
     FortuneItem(child: Text('Han Solo')),
     FortuneItem(child: Text('Yoda')),
@@ -50,8 +51,9 @@ the fortune bar, which is smaller in the vertical direction, is provided as an a
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 
+StreamController<int> controller = StreamController<int>();
 FortuneBar(
-  selected: 0,
+  selected: controller.stream,
   items: [
     FortuneItem(child: Text('Han Solo')),
     FortuneItem(child: Text('Yoda')),
@@ -64,8 +66,7 @@ FortuneBar(
 
 ### Drag Behavior
 
-By default, the fortune widgets react to touch and drag behavior and slowly return to their initial state
-upon release. This behavior can be customized using the `physics` property, which expects an implementation
+By default, the fortune widgets react to touch and drag input. This behavior can be customized using the `physics` property, which expects an implementation
 of the [`PanPhysics`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/PanPhysics-class.html) class.
 If you want to disable dragging, simply pass an instance of [`NoPanPhysics`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/NoPanPhysics-class.html).
 
@@ -77,7 +78,7 @@ The callback passed to `onFling` is called when the pan physics detects a fling 
 you the opportunity to select a new random item.
 
 ```dart
-int selected = 0;
+StreamController<int> controller = StreamController<int>();
 FortuneWheel(
   // changing the return animation when the user stops dragging
   physics: CircularPanPhysics(
@@ -85,9 +86,9 @@ FortuneWheel(
     curve: Curves.decelerate,
   ),
   onFling: () {
-    selected = 1;
+    controller.add(1);
   }
-  selected: selected,
+  selected: controller.stream,
   items: [
     FortuneItem(child: Text('Han Solo')),
     FortuneItem(child: Text('Yoda')),
@@ -105,10 +106,27 @@ and the FortuneBar uses the [`UniformStyleStrategy`](https://pub.dev/documentati
 As with drag behavior, you can pass custom implementations to the `styleStrategy` property
 
 ```dart
+// styling FortuneItems individually
+FortuneWheel(
+  selected: Stream.value(0),
+  items: [
+    FortuneItem(
+      child: Text('A'),
+      style: FortuneItemStyle(
+        color: Colors.red, // <-- custom circle slice fill color
+        borderColor: Colors.green, // <-- custom circle slice stroke color
+        borderWidth: 3, // <-- custom circle slice stroke width
+      ),
+    ),
+    FortuneItem(child: Text('B')),
+  ],
+)
+
+// common styling for all items of a FortuneWidget
 FortuneBar(
   // using alternating item styles on a fortune bar
   styleStrategy: AlternatingStyleStrategy(),
-  selected: 0,
+  selected: Stream.value(0),
   items: [
     FortuneItem(child: Text('Han Solo')),
     FortuneItem(child: Text('Yoda')),

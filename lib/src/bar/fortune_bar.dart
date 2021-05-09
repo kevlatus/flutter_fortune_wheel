@@ -30,7 +30,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
   final List<FortuneItem> items;
 
   /// {@macro flutter_fortune_wheel.FortuneWidget.selected}
-  final int selected;
+  final Stream<int> selected;
 
   /// {@macro flutter_fortune_wheel.FortuneWidget.rotationCount}
   final int rotationCount;
@@ -101,6 +101,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
 
   @override
   Widget build(BuildContext context) {
+    final visibleItemCount = Math.min(this.visibleItemCount, items.length);
     final animationCtrl = useAnimationController(duration: duration);
     final animation = CurvedAnimation(parent: animationCtrl, curve: curve);
 
@@ -120,9 +121,15 @@ class FortuneBar extends HookWidget implements FortuneWidget {
       return null;
     }, []);
 
-    useValueChanged(selected, (int _, Future<void>? __) async {
-      await animate();
-    });
+    final selectedIndex = useState<int>(0);
+
+    useEffect(() {
+      final subscription = selected.listen((event) {
+        selectedIndex.value = event;
+        animate();
+      });
+      return subscription.cancel;
+    }, []);
 
     final theme = Theme.of(context);
 
@@ -145,7 +152,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
                     animation: animation,
                     builder: (context, _) {
                       final itemPosition =
-                          (items.length * rotationCount + selected);
+                          (items.length * rotationCount + selectedIndex.value);
                       final panFactor = 2 / size.width;
                       final panOffset = -panState.distance * panFactor;
                       final position =
