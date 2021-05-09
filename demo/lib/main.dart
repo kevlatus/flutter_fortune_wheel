@@ -26,7 +26,9 @@ class _DemoAppState extends State<DemoApp> {
           theme: lightTheme,
           darkTheme: darkTheme,
           themeMode: themeMode,
-          routerDelegate: _appRouter.delegate(),
+          routerDelegate: _appRouter.delegate(initialRoutes: [
+            FortuneWheelRoute(),
+          ]),
           routeInformationParser: _appRouter.defaultRouteParser(),
         );
       },

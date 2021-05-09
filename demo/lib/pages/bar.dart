@@ -16,33 +16,35 @@ class FortuneBarPage extends HookWidget {
       );
     }
 
-    return Column(
-      children: [
-        SizedBox(height: 8),
-        RollButtonWithPreview(
-          selected: selectedIndex,
-          items: Constants.fortuneValues,
-          onPressed: isAnimating.value ? null : handleRoll,
-        ),
-        SizedBox(height: 8),
-        Expanded(
-          child: Center(
-            child: FortuneBar(
-              selected: selected.stream,
-              items: [
-                for (var it in Constants.fortuneValues) FortuneItem(child: Text(it))
-              ],
-              onFling: handleRoll,
-              onAnimationStart: () {
-                isAnimating.value = true;
-              },
-              onAnimationEnd: () {
-                isAnimating.value = false;
-              },
+    return AppLayout(
+      child: Column(
+        children: [
+          SizedBox(height: 8),
+          RollButtonWithPreview(
+            selected: selectedIndex,
+            items: Constants.fortuneValues,
+            onPressed: isAnimating.value ? null : handleRoll,
+          ),
+          SizedBox(height: 8),
+          Expanded(
+            child: Center(
+              child: FortuneBar(
+                selected: selected.stream,
+                items: [
+                  for (var it in Constants.fortuneValues) FortuneItem(child: Text(it))
+                ],
+                onFling: handleRoll,
+                onAnimationStart: () {
+                  isAnimating.value = true;
+                },
+                onAnimationEnd: () {
+                  isAnimating.value = false;
+                },
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -7,10 +7,10 @@ int roll(int itemCount) {
 typedef IntCallback = void Function(int);
 
 class RollButton extends StatelessWidget {
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   const RollButton({
-    Key key,
+    Key? key,
     this.onPressed,
   }) : super(key: key);
 
@@ -26,12 +26,12 @@ class RollButton extends StatelessWidget {
 class RollButtonWithPreview extends StatelessWidget {
   final int selected;
   final List<String> items;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   const RollButtonWithPreview({
-    Key key,
-    this.selected,
-    this.items,
+    Key? key,
+    required this.selected,
+    required this.items,
     this.onPressed,
   }) : super(key: key);
 

@@ -1,15 +1,15 @@
 part of 'common.dart';
 
-typedef AlignmentCallback = void Function(Alignment);
+typedef AlignmentCallback = void Function(Alignment?);
 
 class AlignmentSelector extends StatelessWidget {
   final Alignment selected;
   final AlignmentCallback onChanged;
 
   const AlignmentSelector({
-    Key key,
-    @required this.selected,
-    this.onChanged,
+    Key? key,
+    required this.selected,
+    required this.onChanged,
   }) : super(key: key);
 
   @override
