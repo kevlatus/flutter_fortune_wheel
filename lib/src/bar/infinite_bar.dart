@@ -24,15 +24,16 @@ class _InfiniteBar extends StatelessWidget {
     Key? key,
     required this.children,
     required this.size,
-    this.visibleItemCount = 3,
+    required this.visibleItemCount,
     this.position = -1,
     this.centerPosition = 0,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final visibleItemCount = Math.min(this.visibleItemCount, children.length);
-    final position = (-this.position + centerPosition) % children.length;
+    final isLengthTwo = children.length == 2;
+    final position = (-this.position + centerPosition) % children.length -
+        (isLengthTwo ? 0.5 : 0.0);
     final isLockedIn = this.position % 1 == 0;
     final overflowItemCount = position.ceil() + (isLockedIn ? 1 : 0);
     final nonIntOffset = position - position.floor();
@@ -46,13 +47,24 @@ class _InfiniteBar extends StatelessWidget {
         child: Stack(
           alignment: Alignment.centerLeft,
           children: [
+            if (isLengthTwo)
+              Transform.translate(
+                offset: Offset((position + children.length) * itemWidth, 0),
+                child: SizedBox(
+                  width: itemWidth,
+                  height: size.height,
+                  child: children[0],
+                ),
+              ),
             for (int i = 0; i < overflowItemCount; i++)
               Transform.translate(
                 offset: Offset((i + nonIntOffset - 1) * itemWidth, 0),
                 child: SizedBox(
                   width: itemWidth,
                   height: size.height,
-                  child: children[(i - overflowItemCount) % children.length],
+                  child: children[
+                      (i - overflowItemCount - (isLengthTwo && isLockedIn ? 1 : 0)) %
+                          children.length],
                 ),
               ),
             for (int i = 0; i < children.length; i++)
@@ -63,7 +75,7 @@ class _InfiniteBar extends StatelessWidget {
                   height: size.height,
                   child: children[i],
                 ),
-              )
+              ),
           ],
         ),
       ),

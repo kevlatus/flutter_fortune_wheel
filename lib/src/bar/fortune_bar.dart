@@ -101,6 +101,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
 
   @override
   Widget build(BuildContext context) {
+    final visibleItemCount = Math.min(this.visibleItemCount, items.length);
     final animationCtrl = useAnimationController(duration: duration);
     final animation = CurvedAnimation(parent: animationCtrl, curve: curve);
 
