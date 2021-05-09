@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -23,7 +24,13 @@ class ExamplePage extends StatefulWidget {
 }
 
 class _ExamplePageState extends State<ExamplePage> {
-  int selected = 0;
+  StreamController<int> selected = StreamController<int>();
+
+  @override
+  void dispose() {
+    selected.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,14 +52,16 @@ class _ExamplePageState extends State<ExamplePage> {
       body: GestureDetector(
         onTap: () {
           setState(() {
-            selected = Random().nextInt(items.length);
+            selected.add(
+              Random().nextInt(items.length),
+            );
           });
         },
         child: Column(
           children: [
             Expanded(
               child: FortuneWheel(
-                selected: selected,
+                selected: selected.stream,
                 items: [
                   for (var it in items) FortuneItem(child: Text(it)),
                 ],

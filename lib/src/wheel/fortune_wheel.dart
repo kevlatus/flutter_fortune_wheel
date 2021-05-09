@@ -29,7 +29,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   final List<FortuneItem> items;
 
   /// {@macro flutter_fortune_wheel.FortuneWidget.selected}
-  final int selected;
+  final Stream<int> selected;
 
   /// {@macro flutter_fortune_wheel.FortuneWidget.rotationCount}
   final int rotationCount;
@@ -78,7 +78,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     Key? key,
     required this.items,
     this.rotationCount = FortuneWidget.kDefaultRotationCount,
-    this.selected = 0,
+    this.selected = const Stream<int>.empty(),
     this.duration = FortuneWidget.kDefaultDuration,
     this.curve = FortuneCurve.spin,
     this.indicators = kDefaultIndicators,
@@ -90,7 +90,6 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     this.onFling,
   })  : physics = physics ?? CircularPanPhysics(),
         assert(items != null && items.length > 1),
-        assert(selected >= 0 && selected < items.length),
         assert(curve != null),
         super(key: key);
 
@@ -114,9 +113,15 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
       return null;
     }, []);
 
-    useValueChanged(selected, (int _, Future<void>? __) async {
-      await animate();
-    });
+    final selectedIndex = useState<int>(0);
+
+    useEffect(() {
+      final subscription = selected.listen((event) {
+        selectedIndex.value = event;
+        animate();
+      });
+      return subscription.cancel;
+    }, []);
 
     return PanAwareBuilder(
       behavior: HitTestBehavior.translucent,
@@ -133,7 +138,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
                 final panFactor = 6 / meanSize;
 
                 return Transform.rotate(
-                  angle: -2 * Math.pi * (selected / items.length) +
+                  angle: -2 * Math.pi * (selectedIndex.value / items.length) +
                       panState.distance * panFactor,
                   child: Transform.rotate(
                     angle: _getAngle(rotateAnim.value),

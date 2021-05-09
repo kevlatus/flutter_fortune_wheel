@@ -7,7 +7,8 @@ class FortuneWheelPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final alignment = useState(Alignment.topCenter);
-    final selected = useState(0);
+    final selected = useStreamController<int>();
+    final selectedIndex = useStream(selected.stream, initialData: 0).data ?? 0;
     final isAnimating = useState(false);
 
     final alignmentSelector = AlignmentSelector(
@@ -16,9 +17,8 @@ class FortuneWheelPage extends HookWidget {
     );
 
     void handleRoll() {
-      selected.value = roll(
-        fortuneValues.length,
-        lastValue: selected.value,
+      selected.add(
+        roll(fortuneValues.length),
       );
     }
 
@@ -29,14 +29,14 @@ class FortuneWheelPage extends HookWidget {
           alignmentSelector,
           SizedBox(height: 8),
           RollButtonWithPreview(
-            selected: selected.value,
+            selected: selectedIndex,
             items: fortuneValues,
             onPressed: isAnimating.value ? null : handleRoll,
           ),
           SizedBox(height: 8),
           Expanded(
             child: FortuneWheel(
-              selected: selected.value,
+              selected: selected.stream,
               onAnimationStart: () => isAnimating.value = true,
               onAnimationEnd: () => isAnimating.value = false,
               onFling: handleRoll,
