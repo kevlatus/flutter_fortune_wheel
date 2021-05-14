@@ -53,7 +53,7 @@ class _ExamplePageState extends State<ExamplePage> {
         onTap: () {
           setState(() {
             selected.add(
-              Random().nextInt(items.length),
+              Fortune.randomInt(0, items.length),
             );
           });
         },
