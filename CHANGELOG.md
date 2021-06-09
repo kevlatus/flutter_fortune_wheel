@@ -1,3 +1,7 @@
+## [0.5.0] - 2021-06-09
+
+**Breaking Change**: FortuneWidgets now accept Stream
+
 ## [0.4.2] - 2021-03-06
 
 fix wheel positioning for right-to-left locales
