@@ -1,12 +1,13 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 
-void main() {
-  runApp(ExampleApp());
-}
+import 'common/common.dart';
+import 'router.gr.dart';
+import 'util/configure_non_web.dart'
+if (dart.library.html) 'util/configure_web.dart';
+import 'widgets/widgets.dart';
 
 class ExampleApp extends StatelessWidget {
   @override
@@ -70,6 +71,39 @@ class _ExamplePageState extends State<ExamplePage> {
           ],
         ),
       ),
+    );
+  }
+}
+
+
+void main() {
+  configureApp();
+  runApp(DemoApp());
+}
+
+class DemoApp extends StatefulWidget {
+  @override
+  _DemoAppState createState() => _DemoAppState();
+}
+
+class _DemoAppState extends State<DemoApp> {
+  final _appRouter = AppRouter();
+
+  @override
+  Widget build(BuildContext context) {
+    return ThemeModeScope(
+      builder: (context, themeMode) {
+        return MaterialApp.router(
+          title: 'Fortune Wheel Demo',
+          theme: lightTheme,
+          darkTheme: darkTheme,
+          themeMode: themeMode,
+          routerDelegate: _appRouter.delegate(initialRoutes: [
+            FortuneWheelRoute(),
+          ]),
+          routeInformationParser: _appRouter.defaultRouteParser(),
+        );
+      },
     );
   }
 }
