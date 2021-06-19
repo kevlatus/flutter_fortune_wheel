@@ -12,7 +12,7 @@ class TriangleIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Transform.rotate(
-      angle: Math.pi,
+      angle: _math.pi,
       child: SizedBox(
         width: 36,
         height: 36,

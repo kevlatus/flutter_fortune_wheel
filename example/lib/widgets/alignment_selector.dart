@@ -14,15 +14,11 @@ class AlignmentSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Map<Alignment, String> alignments = {
+    final alignments = <Alignment, String>{
       Alignment.topCenter: 'top center',
-      // Alignment.topRight: 'top right',
       Alignment.centerRight: 'center right',
-      // Alignment.bottomRight: 'bottom right',
       Alignment.bottomCenter: 'bottom center',
-      // Alignment.bottomLeft: 'bottom left',
       Alignment.centerLeft: 'center left',
-      // Alignment.topLeft: 'top left',
       Alignment.center: 'center',
     };
 

@@ -1,4 +1,4 @@
-import 'dart:math' as Math;
+import 'dart:math' as _math;
 
 import 'package:flutter/widgets.dart';
 
@@ -6,15 +6,15 @@ import 'package:flutter/widgets.dart';
 ///
 /// See also:
 ///  * [Mathemical proof](https://matthew-brett.github.io/teaching/rotation_2d.html), for a detailed explanation
-Math.Point<double> rotateVector(Math.Point<double> vector, double angle) {
-  return Math.Point(
-    Math.cos(angle) * vector.x - Math.sin(angle) * vector.y,
-    Math.sin(angle) * vector.x + Math.cos(angle) * vector.y,
+_math.Point<double> rotateVector(_math.Point<double> vector, double angle) {
+  return _math.Point(
+    _math.cos(angle) * vector.x - _math.sin(angle) * vector.y,
+    _math.sin(angle) * vector.x + _math.cos(angle) * vector.y,
   );
 }
 
 double getSmallerSide(BoxConstraints constraints) {
-  return Math.min(constraints.maxWidth, constraints.maxHeight);
+  return _math.min(constraints.maxWidth, constraints.maxHeight);
 }
 
 Offset getCenteredMargins(BoxConstraints constraints) {

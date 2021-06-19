@@ -45,7 +45,7 @@ class RectangleIndicator extends StatelessWidget {
           Align(
             alignment: Alignment.topCenter,
             child: Transform.rotate(
-              angle: Math.pi,
+              angle: _math.pi,
               child: SizedBox(
                 width: width / 2,
                 height: height / 10,

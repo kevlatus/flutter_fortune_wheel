@@ -8,7 +8,7 @@ class FortuneIndicator {
   const FortuneIndicator({
     this.alignment = Alignment.center,
     required this.child,
-  }) : assert(child != null);
+  });
 
   @override
   int get hashCode => hash2(alignment, child);

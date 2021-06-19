@@ -35,13 +35,13 @@ double _getAngle(Alignment alignment) {
     return 0;
   }
   if (alignment == Alignment.bottomCenter) {
-    return Math.pi;
+    return _math.pi;
   }
   if (alignment == Alignment.centerLeft) {
-    return -Math.pi * 0.5;
+    return -_math.pi * 0.5;
   }
   if (alignment == Alignment.centerRight) {
-    return Math.pi * 0.5;
+    return _math.pi * 0.5;
   }
 
   throw ArgumentError('Alignments on the diagonals are not yet supported');
@@ -60,8 +60,8 @@ class _WheelIndicator extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final margins = getCenteredMargins(constraints);
-        Offset offset = _getOffset(indicator.alignment, margins);
-        double angle = _getAngle(indicator.alignment);
+        final offset = _getOffset(indicator.alignment, margins);
+        final angle = _getAngle(indicator.alignment);
 
         return Align(
           alignment: indicator.alignment,

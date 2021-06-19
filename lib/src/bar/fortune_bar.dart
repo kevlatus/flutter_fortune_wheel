@@ -12,8 +12,7 @@ part of 'bar.dart';
 class FortuneBar extends HookWidget implements FortuneWidget {
   static const int kDefaultVisibleItemCount = 3;
 
-  static const List<FortuneIndicator> kDefaultIndicators =
-      const <FortuneIndicator>[
+  static const List<FortuneIndicator> kDefaultIndicators = <FortuneIndicator>[
     FortuneIndicator(
       alignment: Alignment.topCenter,
       child: RectangleIndicator(),
@@ -21,7 +20,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
   ];
 
   static const StyleStrategy kDefaultStyleStrategy =
-      const UniformStyleStrategy(borderWidth: 4);
+      UniformStyleStrategy(borderWidth: 4);
 
   /// Requires this widget to have exactly this height.
   final double height;
@@ -101,7 +100,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
 
   @override
   Widget build(BuildContext context) {
-    final visibleItemCount = Math.min(this.visibleItemCount, items.length);
+    final visibleItemCount = _math.min(this.visibleItemCount, items.length);
     final animationCtrl = useAnimationController(duration: duration);
     final animation = CurvedAnimation(parent: animationCtrl, curve: curve);
 

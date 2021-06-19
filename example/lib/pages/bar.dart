@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
-import 'package:flutter_fortune_wheel_example/common/common.dart';
-import 'package:flutter_fortune_wheel_example/widgets/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+
+import '../common/common.dart';
+import '../widgets/widgets.dart';
 
 class FortuneBarPage extends HookWidget {
   @override
@@ -32,7 +33,8 @@ class FortuneBarPage extends HookWidget {
               child: FortuneBar(
                 selected: selected.stream,
                 items: [
-                  for (var it in Constants.fortuneValues) FortuneItem(child: Text(it))
+                  for (var it in Constants.fortuneValues)
+                    FortuneItem(child: Text(it))
                 ],
                 onFling: handleRoll,
                 onAnimationStart: () {

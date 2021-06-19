@@ -11,9 +11,7 @@ class _TrianglePainter extends CustomPainter {
     this.strokeColor,
     this.strokeWidth = 1,
     this.elevation = 0,
-  })  : assert(fillColor != null),
-        assert(strokeWidth != null),
-        assert(elevation != null);
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -55,9 +53,7 @@ class _Triangle extends StatelessWidget {
     this.borderColor,
     this.borderWidth = 1,
     this.elevation = 0,
-  })  : assert(color != null),
-        assert(borderWidth != null),
-        assert(elevation != null);
+  });
 
   @override
   Widget build(BuildContext context) {

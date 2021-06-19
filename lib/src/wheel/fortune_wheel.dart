@@ -14,16 +14,14 @@ part of 'wheel.dart';
 class FortuneWheel extends HookWidget implements FortuneWidget {
   /// The default value for [indicators] on a [FortuneWheel].
   /// Currently uses a single [TriangleIndicator] on [Alignment.topCenter].
-  static const List<FortuneIndicator> kDefaultIndicators =
-      const <FortuneIndicator>[
-    const FortuneIndicator(
+  static const List<FortuneIndicator> kDefaultIndicators = <FortuneIndicator>[
+    FortuneIndicator(
       alignment: Alignment.topCenter,
-      child: const TriangleIndicator(),
+      child: TriangleIndicator(),
     ),
   ];
 
-  static const StyleStrategy kDefaultStyleStrategy =
-      const AlternatingStyleStrategy();
+  static const StyleStrategy kDefaultStyleStrategy = AlternatingStyleStrategy();
 
   /// {@macro flutter_fortune_wheel.FortuneWidget.items}
   final List<FortuneItem> items;
@@ -62,7 +60,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   final VoidCallback? onFling;
 
   double _getAngle(double progress) {
-    return 2 * Math.pi * rotationCount * progress;
+    return 2 * _math.pi * rotationCount * progress;
   }
 
   /// {@template flutter_fortune_wheel.FortuneWheel}
@@ -89,8 +87,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     PanPhysics? physics,
     this.onFling,
   })  : physics = physics ?? CircularPanPhysics(),
-        assert(items != null && items.length > 1),
-        assert(curve != null),
+        assert(items.length > 1),
         super(key: key);
 
   @override
@@ -138,7 +135,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
                 final panFactor = 6 / meanSize;
 
                 return Transform.rotate(
-                  angle: -2 * Math.pi * (selectedIndex.value / items.length) +
+                  angle: -2 * _math.pi * (selectedIndex.value / items.length) +
                       panState.distance * panFactor,
                   child: Transform.rotate(
                     angle: _getAngle(rotateAnim.value),

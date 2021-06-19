@@ -15,7 +15,7 @@ class FortuneItem {
   const FortuneItem({
     this.style,
     required this.child,
-  }) : assert(child != null);
+  });
 
   @override
   int get hashCode => hash2(child, style);
