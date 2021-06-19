@@ -8,18 +8,19 @@ class _SlicedCircle extends StatelessWidget {
     Key? key,
     required this.items,
     this.styleStrategy,
-  })  : assert(items != null && items.length > 1),
+  })  : assert(items.length > 1),
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final anglePerChild = 2 * Math.pi / items.length;
+    final anglePerChild = 2 * _math.pi / items.length;
 
     return LayoutBuilder(builder: (context, constraints) {
       final smallerSide = getSmallerSide(constraints);
-      final offsetX = Directionality.of(context) == TextDirection.ltr
-          ? constraints.maxWidth / 2
-          : 0.0;
+      var offsetX = constraints.maxWidth / 2;
+      if (Directionality.of(context) == TextDirection.rtl) {
+        offsetX = offsetX * -1 + smallerSide / 2;
+      }
 
       return Transform.translate(
         offset: Offset(offsetX, constraints.maxHeight / 2),
@@ -32,7 +33,7 @@ class _SlicedCircle extends StatelessWidget {
             final childAngle = anglePerChild * index;
             // first slice starts at 90 degrees, if 0 degrees is at the top.
             // The angle offset puts the center of the first slice at the top.
-            final angleOffset = -(Math.pi / 2 + anglePerChild / 2);
+            final angleOffset = -(_math.pi / 2 + anglePerChild / 2);
 
             return Transform.rotate(
               alignment: Alignment.topLeft,
@@ -45,7 +46,7 @@ class _SlicedCircle extends StatelessWidget {
                 ),
                 slice: _CircleSlice(
                   radius: smallerSide / 2,
-                  angle: 2 * Math.pi / items.length,
+                  angle: 2 * _math.pi / items.length,
                   fillColor: style.color,
                   strokeColor: style.borderColor,
                   strokeWidth: style.borderWidth,

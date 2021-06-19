@@ -1,3 +1,9 @@
+## [1.0.1] - 2021-06-19
+
+- bump flutter_hooks dependency to v0.17.0
+- fix horizontal wheel alignment for RTL locales
+
+
 ## [1.0.0] - 2021-05-09
 
 - **Breaking Change**: FortuneWidgets now accept Stream<int> instead of int to select items

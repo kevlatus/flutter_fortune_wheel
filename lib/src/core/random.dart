@@ -8,14 +8,14 @@ abstract class Fortune {
   /// The value of [max] must be larger than or equal to [min]. If it is equal
   /// to [min], this function always returns [min].
   ///
-  /// An instance of [Math.Random] can optionally be passed to customize the
+  /// An instance of [_math.Random] can optionally be passed to customize the
   /// random sample distribution.
-  static int randomInt(int min, int max, [Math.Random? random]) {
-    random = random ?? Math.Random();
+  static int randomInt(int min, int max, [_math.Random? random]) {
+    random = random ?? _math.Random();
     if (min == max) {
       return min;
     }
-    final _rng = Math.Random();
+    final _rng = _math.Random();
     return min + _rng.nextInt(max - min);
   }
 
@@ -25,14 +25,14 @@ abstract class Fortune {
   /// The value of [max] must be larger than or equal to [min]. If it is equal
   /// to [min], this function always returns [min].
   ///
-  /// An instance of [Math.Random] can optionally be passed to customize the
+  /// An instance of [_math.Random] can optionally be passed to customize the
   /// random sample distribution.
   static Duration randomDuration(
     Duration min,
     Duration max, [
-    Math.Random? random,
+    _math.Random? random,
   ]) {
-    random = random ?? Math.Random();
+    random = random ?? _math.Random();
     return Duration(
       milliseconds: randomInt(min.inMilliseconds, max.inMilliseconds, random),
     );
@@ -42,10 +42,10 @@ abstract class Fortune {
   ///
   /// Uses [randomInt] internally to select an item index.
   ///
-  /// An instance of [Math.Random] can optionally be passed to customize the
+  /// An instance of [_math.Random] can optionally be passed to customize the
   /// random sample distribution.
-  static T randomItem<T>(Iterable<T> iterable, [Math.Random? random]) {
-    random = random ?? Math.Random();
+  static T randomItem<T>(Iterable<T> iterable, [_math.Random? random]) {
+    random = random ?? _math.Random();
     return iterable.elementAt(
       randomInt(0, iterable.length, random),
     );
