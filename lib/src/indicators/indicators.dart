@@ -1,4 +1,4 @@
-import 'dart:math' as Math;
+import 'dart:math' as _math;
 
 import 'package:flutter/material.dart';
 import 'package:quiver/core.dart';

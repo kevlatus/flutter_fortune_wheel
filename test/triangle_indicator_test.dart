@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('TriangleIndicator', () {
-    testWidgets('', (WidgetTester tester) async {
+    testWidgets('', (tester) async {
       await tester.pumpWidget(
         TriangleIndicator(),
       );

@@ -9,7 +9,7 @@ part of 'core.dart';
 ///  * [FortuneItem]
 abstract class FortuneWidget implements Widget {
   /// The default value for [duration] (currently **5 seconds**).
-  static const Duration kDefaultDuration = const Duration(seconds: 5);
+  static const Duration kDefaultDuration = Duration(seconds: 5);
 
   /// The default value for [rotationCount] (currently **100**).
   static const int kDefaultRotationCount = 100;
@@ -20,8 +20,9 @@ abstract class FortuneWidget implements Widget {
   List<FortuneItem> get items;
 
   /// {@template flutter_fortune_wheel.FortuneWidget.selected}
-  /// A stream notifying this widget that a new value within [items] was selected.
-  /// Used by [FortuneWidget]s to align [indicators] on the selected item.
+  /// A stream notifying this widget that a new value within [items] was
+  /// selected.Used by [FortuneWidget]s to align [indicators] on the selected
+  /// item.
   /// {@endtemplate}
   Stream<int> get selected;
 

@@ -9,7 +9,7 @@ import 'package:flutter_fortune_wheel/src/util.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void repeatFor(VoidCallback func, [int iterations = 1000]) {
-  for (int i = 0; i < 10e6; i++) {
+  for (var i = 0; i < 10e6; i++) {
     func();
   }
 }
@@ -119,7 +119,7 @@ void main() {
 
   group('getCenteredMargins', () {
     test('returns correct offset', () {
-      Offset offset = getCenteredMargins(BoxConstraints(
+      var offset = getCenteredMargins(BoxConstraints(
         maxWidth: 200,
         maxHeight: 100,
       ));

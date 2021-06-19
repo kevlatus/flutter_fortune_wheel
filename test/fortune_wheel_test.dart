@@ -10,9 +10,9 @@ void main() {
     group('animation callbacks', () {
       testWidgets(
         'are not called on first build when animateFirst is false',
-        (WidgetTester tester) async {
-          bool didCallStart = false;
-          bool didCallEnd = false;
+        (tester) async {
+          var didCallStart = false;
+          var didCallEnd = false;
 
           void onStart() {
             didCallStart = true;
@@ -42,9 +42,9 @@ void main() {
 
       testWidgets(
         'are called once on first build when animateFirst is true',
-        (WidgetTester tester) async {
-          List<bool> startLog = <bool>[];
-          List<bool> endLog = <bool>[];
+        (tester) async {
+          final startLog = <bool>[];
+          final endLog = <bool>[];
 
           void onStart() {
             startLog.add(true);
@@ -76,9 +76,9 @@ void main() {
 
       testWidgets(
         'are called when the value of selected changes',
-        (WidgetTester tester) async {
-          List<bool> startLog = <bool>[];
-          List<bool> endLog = <bool>[];
+        (tester) async {
+          final startLog = <bool>[];
+          final endLog = <bool>[];
 
           void onStart() {
             startLog.add(true);
