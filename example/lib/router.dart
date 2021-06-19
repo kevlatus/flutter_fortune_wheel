@@ -6,7 +6,7 @@ import 'pages/pages.dart';
   replaceInRouteName: 'Page,Route',
   transitionsBuilder: TransitionsBuilders.fadeIn,
   routes: <AutoRoute>[
-    AutoRoute(path: '/', page: FortuneWheelPage),
+    AutoRoute(path: '/', page: FortuneWheelPage, initial: true),
     AutoRoute(path: '/bar', page: FortuneBarPage),
   ],
 )

@@ -6,7 +6,7 @@ import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'common/common.dart';
 import 'router.gr.dart';
 import 'util/configure_non_web.dart'
-if (dart.library.html) 'util/configure_web.dart';
+    if (dart.library.html) 'util/configure_web.dart';
 import 'widgets/widgets.dart';
 
 class ExampleApp extends StatelessWidget {
@@ -75,7 +75,6 @@ class _ExamplePageState extends State<ExamplePage> {
   }
 }
 
-
 void main() {
   configureApp();
   runApp(DemoApp());
@@ -98,9 +97,7 @@ class _DemoAppState extends State<DemoApp> {
           theme: lightTheme,
           darkTheme: darkTheme,
           themeMode: themeMode,
-          routerDelegate: _appRouter.delegate(initialRoutes: [
-            FortuneWheelRoute(),
-          ]),
+          routerDelegate: _appRouter.delegate(),
           routeInformationParser: _appRouter.defaultRouteParser(),
         );
       },
