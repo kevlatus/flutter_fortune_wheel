@@ -46,16 +46,15 @@ class PanState {
 
   @override
   String toString() {
-    return "PanState " +
-        {
-          "distance": distance,
-          "isPanning": isPanning,
-          "wasFlung": wasFlung,
-        }.toString();
+    return "PanState ${{
+      "distance": distance,
+      "isPanning": isPanning,
+      "wasFlung": wasFlung,
+    }}";
   }
 }
 
-/// Base class for handling pan events and translating them to travelled distances.
+/// Base class for handling pan events and translating them to distances.
 ///
 /// Implementations should react to pan events by implementing [handlePanStart],
 /// [handlePanUpdate] and [handlePanEnd] and update the [value] with a
@@ -72,8 +71,9 @@ abstract class PanPhysics extends ValueNotifier<PanState> {
 
   /// The size of the area to be panned.
   ///
-  /// This value is only required by some implementations, e.g. [CircularPanPhysics].
-  /// It is set by [PanAwareBuilder]. Therefore users must not update it manually.
+  /// This value is only required by some implementations, e.g.
+  /// [CircularPanPhysics].It is set by [PanAwareBuilder]. Therefore users must
+  /// not update it manually.
   Size size = Size(0.0, 0.0);
 
   /// {@template flutter_fortune_wheel.PanPhysics.duration}
@@ -158,8 +158,7 @@ class CircularPanPhysics extends PanPhysics {
   CircularPanPhysics({
     this.duration = PanPhysics.kDefaultDuration,
     this.curve = PanPhysics.kDefaultCurve,
-  })  : assert(duration != null),
-        assert(curve != null);
+  });
 
   /// {@macro flutter_fortune_wheel.PanPhysics.handlePanStart}
   void handlePanStart(DragStartDetails details) {
@@ -170,29 +169,29 @@ class CircularPanPhysics extends PanPhysics {
   void handlePanUpdate(DragUpdateDetails details) {
     final center = Offset(
       size.width / 2,
-      Math.min(size.width, size.height) / 2,
+      _math.min(size.width, size.height) / 2,
     );
-    bool onTop = details.localPosition.dy <= center.dy;
-    bool onLeftSide = details.localPosition.dx <= center.dx;
-    bool onRightSide = !onLeftSide;
-    bool onBottom = !onTop;
+    final onTop = details.localPosition.dy <= center.dy;
+    final onLeftSide = details.localPosition.dx <= center.dx;
+    final onRightSide = !onLeftSide;
+    final onBottom = !onTop;
 
-    bool panUp = details.delta.dy <= 0.0;
-    bool panLeft = details.delta.dx <= 0.0;
-    bool panRight = !panLeft;
-    bool panDown = !panUp;
+    final panUp = details.delta.dy <= 0.0;
+    final panLeft = details.delta.dx <= 0.0;
+    final panRight = !panLeft;
+    final panDown = !panUp;
 
-    double yChange = details.delta.dy.abs();
-    double xChange = details.delta.dx.abs();
+    final yChange = details.delta.dy.abs();
+    final xChange = details.delta.dx.abs();
 
-    double verticalRotation = (onRightSide && panDown) || (onLeftSide && panUp)
+    final verticalRotation = (onRightSide && panDown) || (onLeftSide && panUp)
         ? yChange
         : yChange * -1;
 
-    double horizontalRotation =
+    final horizontalRotation =
         (onTop && panRight) || (onBottom && panLeft) ? xChange : xChange * -1;
 
-    double rotationalChange = verticalRotation + horizontalRotation;
+    final rotationalChange = verticalRotation + horizontalRotation;
 
     value = value.copyWith(distance: value.distance + rotationalChange);
   }
@@ -230,10 +229,7 @@ class DirectionalPanPhysics extends PanPhysics {
     required this.curve,
     required double direction,
     required this.duration,
-  })   : _direction = direction,
-        assert(curve != null),
-        assert(direction != null),
-        assert(duration != null);
+  }) : _direction = direction;
 
   DirectionalPanPhysics.horizontal({
     Curve curve = PanPhysics.kDefaultCurve,
@@ -279,8 +275,9 @@ class DirectionalPanPhysics extends PanPhysics {
 
 /// A widget builder, which is aware of pan gestures and handles them.
 ///
-/// Pan events are handled by the underlying [physics]. Whenever a new [PanState]
-/// is available, the given [builder] is called wit the new information.
+/// Pan events are handled by the underlying [physics]. Whenever a new
+/// [PanState] is available, the given [builder] is called wit the new
+/// information.
 ///
 /// If a new state signals that a fling/swipe gesture occurred by setting
 /// [PanState.wasFlung] to true, the [onFling] callback is called.
@@ -288,7 +285,8 @@ class DirectionalPanPhysics extends PanPhysics {
 /// See also:
 ///  * [PanPhysics], which implements pan behavior
 class PanAwareBuilder extends HookWidget {
-  /// The builder, which is called with the current [PanState] whenever it changes.
+  /// The builder, which is called with the current [PanState] whenever it
+  /// changes.
   final Widget Function(BuildContext, PanState) builder;
 
   /// The [PanPhysics] to be used for calculating pan states.
@@ -305,12 +303,11 @@ class PanAwareBuilder extends HookWidget {
     required this.physics,
     this.behavior,
     this.onFling,
-  })  : assert(builder != null),
-        assert(physics != null);
+  });
 
   @override
   Widget build(BuildContext context) {
-    PanState panState = useValueListenable(physics);
+    var panState = useValueListenable(physics);
     final returnAnimCtrl = useAnimationController(duration: physics.duration);
     final returnAnim = CurvedAnimation(
       parent: returnAnimCtrl,

@@ -27,10 +27,7 @@ class FortuneItemStyle {
     this.borderWidth = 1.0,
     this.textAlign = TextAlign.start,
     this.textStyle = const TextStyle(),
-  })  : assert(color != null),
-        assert(textStyle != null),
-        assert(borderColor != null),
-        assert(borderWidth != null);
+  });
 
   /// Creates an opinionated disabled style based on the current [ThemeData].
   FortuneItemStyle.disabled(ThemeData theme, {double opacity = 0.0})
@@ -66,8 +63,8 @@ class FortuneItemStyle {
 /// Interface for providing common styling to a list of [FortuneItem]s.
 abstract class StyleStrategy {
   /// {@template flutter_fortune_wheel.StyleStrategy.getItemStyle}
-  /// Creates an [FortuneItemStyle] based on the passed [theme] while considering
-  /// an item's [index] with respect to the overall [itemCount].
+  /// Creates an [FortuneItemStyle] based on the passed [theme] while
+  /// considering an item's [index] with respect to the overall [itemCount].
   /// {@endtemplate}
   FortuneItemStyle getItemStyle(
     ThemeData theme,
@@ -77,7 +74,6 @@ abstract class StyleStrategy {
 }
 
 /// Mixin to allow style strategies to have a common style for disabled items.
-/// ```
 mixin DisableAwareStyleStrategy {
   List<int> get disabledIndices;
 
@@ -102,10 +98,11 @@ mixin DisableAwareStyleStrategy {
   }
 }
 
-/// This strategy renders all items using the same style based on the current [ThemeData].
+/// This strategy renders all items using the same style based on the current
+/// [ThemeData].
 ///
-/// The [ThemeData.primaryColor] is used as the border color and the background is
-/// drawn using the same color at 0.3 opacity.
+/// The [ThemeData.primaryColor] is used as the border color and the background
+/// is drawn using the same color at 0.3 opacity.
 class UniformStyleStrategy
     with DisableAwareStyleStrategy
     implements StyleStrategy {
@@ -147,9 +144,10 @@ class UniformStyleStrategy
   }
 }
 
-/// This strategy renders items in alternating variations of the [ThemeData.primaryColor].
+/// This strategy renders items in alternating variations of the
+/// [ThemeData.primaryColor].
 ///
-/// It renders even items with 0.5 opacity and odd items using the original color.
+/// It renders even items at 0.5 opacity and odd items using the original color.
 /// If the item count is odd, the first item is rendered with 0.7 opacity to
 /// prevent a non-uniform style.
 class AlternatingStyleStrategy

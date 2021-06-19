@@ -8,9 +8,7 @@ class _FortuneBarItem extends StatelessWidget {
     Key? key,
     required this.child,
     this.style = const FortuneItemStyle(),
-  })  : assert(child != null),
-        assert(style != null),
-        super(key: key);
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

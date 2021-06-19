@@ -1,8 +1,8 @@
 part of 'wheel.dart';
 
 enum _SliceSlot {
-  Slice,
-  Child,
+  slice,
+  child,
 }
 
 class _CircleSliceLayoutDelegate extends MultiChildLayoutDelegate {
@@ -15,25 +15,25 @@ class _CircleSliceLayoutDelegate extends MultiChildLayoutDelegate {
     late Size sliceSize;
     Size childSize;
 
-    if (hasChild(_SliceSlot.Slice)) {
+    if (hasChild(_SliceSlot.slice)) {
       sliceSize = layoutChild(
-        _SliceSlot.Slice,
+        _SliceSlot.slice,
         BoxConstraints.tight(size),
       );
-      positionChild(_SliceSlot.Slice, Offset.zero);
+      positionChild(_SliceSlot.slice, Offset.zero);
     }
 
-    if (hasChild(_SliceSlot.Child)) {
+    if (hasChild(_SliceSlot.child)) {
       childSize = layoutChild(
-        _SliceSlot.Child,
+        _SliceSlot.child,
         BoxConstraints.loose(size),
       );
 
-      final topRectVector = Math.Point(sliceSize.width / 2, 0.0);
+      final topRectVector = _math.Point(sliceSize.width / 2, 0.0);
       final halfAngleVector = rotateVector(topRectVector, angle / 2);
 
       positionChild(
-        _SliceSlot.Child,
+        _SliceSlot.child,
         Offset(
           halfAngleVector.x - childSize.width / 2,
           halfAngleVector.y - childSize.height / 2,

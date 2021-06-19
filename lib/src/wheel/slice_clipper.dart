@@ -7,7 +7,7 @@ class _CircleSliceClipper extends CustomClipper<Path> {
 
   @override
   Path getClip(Size size) {
-    final diameter = Math.min(size.width, size.height);
+    final diameter = _math.min(size.width, size.height);
     return _CircleSlice.buildSlicePath(diameter, angle);
   }
 

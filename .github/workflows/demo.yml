@@ -23,11 +23,11 @@ jobs:
       - run: flutter test
 
       - run: flutter pub get
-        working-directory: ./demo
+        working-directory: ./example
       - run: flutter packages pub run build_runner build
-        working-directory: ./demo
+        working-directory: ./example
       - name: build demo
-        working-directory: ./demo
+        working-directory: ./example
         run: flutter build web --web-renderer auto
 
       - name: deploy to Github Pages
@@ -35,4 +35,4 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           BRANCH: gh-pages
-          FOLDER: demo/build/web
+          FOLDER: example/build/web

@@ -12,7 +12,7 @@ Future pumpFortuneWidget(WidgetTester tester, FortuneWidget widget) async {
   );
 }
 
-const List<FortuneItem> testItems = const <FortuneItem>[
+const List<FortuneItem> testItems = <FortuneItem>[
   FortuneItem(child: Text('1')),
   FortuneItem(child: Text('2')),
 ];

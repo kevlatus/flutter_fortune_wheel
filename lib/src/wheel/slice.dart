@@ -30,9 +30,6 @@ class _CircleSlice extends StatelessWidget {
     this.strokeWidth = 1,
     required this.angle,
   })  : assert(radius > 0),
-        assert(fillColor != null),
-        assert(strokeColor != null),
-        assert(angle != null),
         super(key: key);
 
   @override
@@ -73,12 +70,12 @@ class _CircleSliceLayout extends StatelessWidget {
           delegate: _CircleSliceLayoutDelegate(slice.angle),
           children: [
             LayoutId(
-              id: _SliceSlot.Slice,
+              id: _SliceSlot.slice,
               child: slice,
             ),
             if (child != null)
               LayoutId(
-                id: _SliceSlot.Child,
+                id: _SliceSlot.child,
                 child: Transform.rotate(
                   angle: slice.angle / 2,
                   child: child,

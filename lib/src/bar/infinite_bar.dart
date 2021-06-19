@@ -62,9 +62,10 @@ class _InfiniteBar extends StatelessWidget {
                 child: SizedBox(
                   width: itemWidth,
                   height: size.height,
-                  child: children[
-                      (i - overflowItemCount - (isLengthTwo && isLockedIn ? 1 : 0)) %
-                          children.length],
+                  child: children[(i -
+                          overflowItemCount -
+                          (isLengthTwo && isLockedIn ? 1 : 0)) %
+                      children.length],
                 ),
               ),
             for (int i = 0; i < children.length; i++)
