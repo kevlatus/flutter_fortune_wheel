@@ -11,7 +11,7 @@ They are highly customizable and work across mobile, desktop and the web.
 </p>
 
 You can learn more about the wheel's implementation [in this article](https://www.kevlatus.de/blog/making-of-flutter-fortune-wheel)
-and try an [interactive demo here](https://kevlatus.github.io/flutter_fortune_wheel).
+and try an [interactive demo here](https://flutter-fortune-wheel.netlify.app).
 
 ## Quick Start
 
