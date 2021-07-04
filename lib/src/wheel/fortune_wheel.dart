@@ -1,5 +1,48 @@
 part of 'wheel.dart';
 
+Offset _calculateWheelOffset(
+    BoxConstraints constraints, TextDirection textDirection) {
+  final smallerSide = getSmallerSide(constraints);
+  var offsetX = constraints.maxWidth / 2;
+  if (textDirection == TextDirection.rtl) {
+    offsetX = offsetX * -1 + smallerSide / 2;
+  }
+  return Offset(offsetX, constraints.maxHeight / 2);
+}
+
+double _calculateSliceAngle(int index, int itemCount) {
+  final anglePerChild = 2 * _math.pi / itemCount;
+  final childAngle = anglePerChild * index;
+  // first slice starts at 90 degrees, if 0 degrees is at the top.
+  // The angle offset puts the center of the first slice at the top.
+  final angleOffset = -(_math.pi / 2 + anglePerChild / 2);
+  return childAngle + angleOffset;
+}
+
+class _WheelData {
+  final BoxConstraints constraints;
+  final int itemCount;
+  final TextDirection textDirection;
+
+  late final double smallerSide = getSmallerSide(constraints);
+  late final double largerSide = getLargerSide(constraints);
+  late final double sideDifference = largerSide - smallerSide;
+  late final Offset offset = _calculateWheelOffset(constraints, textDirection);
+  late final Offset dOffset = Offset(
+    (constraints.maxHeight - smallerSide) / 2,
+    (constraints.maxWidth - smallerSide) / 2,
+  );
+  late final double diameter = smallerSide;
+  late final double radius = diameter / 2;
+  late final double itemAngle = 2 * _math.pi / itemCount;
+
+  _WheelData({
+    required this.constraints,
+    required this.itemCount,
+    required this.textDirection,
+  });
+}
+
 /// A fortune wheel visualizes a (random) selection process as a spinning wheel
 /// divided into uniformly sized slices, which correspond to the number of
 /// [items].
@@ -134,22 +177,44 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
                 final meanSize = (size.width + size.height) / 2;
                 final panFactor = 6 / meanSize;
 
-                return Transform.rotate(
-                  angle: -2 * _math.pi * (selectedIndex.value / items.length) +
-                      panState.distance * panFactor,
-                  child: Transform.rotate(
-                    angle: _getAngle(rotateAnim.value),
-                    child: SizedBox.expand(
-                      child: _SlicedCircle(
-                        items: items,
-                        styleStrategy: styleStrategy,
+                return LayoutBuilder(builder: (context, constraints) {
+                  final wheelData = _WheelData(
+                    constraints: constraints,
+                    itemCount: items.length,
+                    textDirection: Directionality.of(context),
+                  );
+
+                  final selectedAngle =
+                      -2 * _math.pi * (selectedIndex.value / items.length);
+                  final panAngle = panState.distance * panFactor;
+                  final rotationAngle = _getAngle(rotateAnim.value);
+
+                  final transformedItems = [
+                    for (var i = 0; i < items.length; i++)
+                      TransformedFortuneItem(
+                        item: items[i],
+                        angle: selectedAngle +
+                            panAngle +
+                            rotationAngle +
+                            _calculateSliceAngle(i, items.length),
+                        offset: wheelData.offset,
                       ),
+                  ];
+
+                  return SizedBox.expand(
+                    child: _CircleSlices(
+                      items: transformedItems,
+                      wheelData: wheelData,
+                      styleStrategy: styleStrategy,
                     ),
-                  ),
-                );
+                  );
+                });
               },
             ),
-            for (var it in indicators) _WheelIndicator(indicator: it),
+            for (var it in indicators)
+              IgnorePointer(
+                child: _WheelIndicator(indicator: it),
+              ),
           ],
         );
       },

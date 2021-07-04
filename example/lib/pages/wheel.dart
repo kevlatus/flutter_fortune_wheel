@@ -51,7 +51,7 @@ class FortuneWheelPage extends HookWidget {
                 ],
                 items: [
                   for (var it in Constants.fortuneValues)
-                    FortuneItem(child: Text(it))
+                    FortuneItem(child: Text(it), onTap: () => print(it))
                 ],
               ),
             ),
