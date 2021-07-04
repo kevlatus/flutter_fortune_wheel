@@ -19,8 +19,9 @@ double _calculateSliceAngle(int index, int itemCount) {
   return childAngle + angleOffset;
 }
 
-class _WheelConstraints {
+class _WheelData {
   final BoxConstraints constraints;
+  final int itemCount;
   final TextDirection textDirection;
 
   late final double smallerSide = getSmallerSide(constraints);
@@ -33,9 +34,11 @@ class _WheelConstraints {
   );
   late final double diameter = smallerSide;
   late final double radius = diameter / 2;
+  late final double itemAngle = 2 * _math.pi / itemCount;
 
-  _WheelConstraints({
+  _WheelData({
     required this.constraints,
+    required this.itemCount,
     required this.textDirection,
   });
 }
@@ -174,9 +177,10 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
                 final meanSize = (size.width + size.height) / 2;
                 final panFactor = 6 / meanSize;
 
-                return LayoutBuilder(builder: (context, layoutConstraints) {
-                  final constraints = _WheelConstraints(
-                    constraints: layoutConstraints,
+                return LayoutBuilder(builder: (context, constraints) {
+                  final wheelData = _WheelData(
+                    constraints: constraints,
+                    itemCount: items.length,
                     textDirection: Directionality.of(context),
                   );
 
@@ -193,21 +197,24 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
                             panAngle +
                             rotationAngle +
                             _calculateSliceAngle(i, items.length),
-                        offset: constraints.offset,
+                        offset: wheelData.offset,
                       ),
                   ];
 
                   return SizedBox.expand(
                     child: _CircleSlices(
                       items: transformedItems,
-                      radius: constraints.radius,
+                      wheelData: wheelData,
                       styleStrategy: styleStrategy,
                     ),
                   );
                 });
               },
             ),
-            for (var it in indicators) _WheelIndicator(indicator: it),
+            for (var it in indicators)
+              IgnorePointer(
+                child: _WheelIndicator(indicator: it),
+              ),
           ],
         );
       },

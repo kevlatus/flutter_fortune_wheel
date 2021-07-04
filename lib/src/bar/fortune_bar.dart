@@ -165,7 +165,7 @@ class FortuneBar extends HookWidget implements FortuneWidget {
                         children: [
                           for (int i = 0; i < items.length; i++)
                             _FortuneBarItem(
-                              child: items[i].child,
+                              item: items[i],
                               style: styleStrategy.getItemStyle(
                                 theme,
                                 i,
@@ -176,12 +176,14 @@ class FortuneBar extends HookWidget implements FortuneWidget {
                       );
                     }),
                 for (var it in indicators)
-                  Align(
-                    alignment: it.alignment,
-                    child: SizedBox(
-                      width: size.width / visibleItemCount,
-                      height: height,
-                      child: it.child,
+                  IgnorePointer(
+                    child: Align(
+                      alignment: it.alignment,
+                      child: SizedBox(
+                        width: size.width / visibleItemCount,
+                        height: height,
+                        child: it.child,
+                      ),
                     ),
                   ),
               ],

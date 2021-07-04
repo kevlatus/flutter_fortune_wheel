@@ -52,11 +52,13 @@ class _CircleSlice extends StatelessWidget {
 class _CircleSliceLayout extends StatelessWidget {
   final Widget? child;
   final _CircleSlice slice;
+  final GestureHandler? handler;
 
   const _CircleSliceLayout({
     Key? key,
     required this.slice,
     this.child,
+    this.handler,
   }) : super(key: key);
 
   @override
@@ -64,24 +66,72 @@ class _CircleSliceLayout extends StatelessWidget {
     return SizedBox(
       width: slice.radius,
       height: slice.radius,
-      child: ClipPath(
-        clipper: _CircleSliceClipper(slice.angle),
-        child: CustomMultiChildLayout(
-          delegate: _CircleSliceLayoutDelegate(slice.angle),
-          children: [
-            LayoutId(
-              id: _SliceSlot.slice,
-              child: slice,
-            ),
-            if (child != null)
+      child: GestureDetector(
+        onTap: handler?.onTap,
+        onTapCancel: handler?.onTapCancel,
+        onTapDown: handler?.onTapDown,
+        onTapUp: handler?.onTapUp,
+        onDoubleTap: handler?.onDoubleTap,
+        onDoubleTapCancel: handler?.onDoubleTapCancel,
+        onDoubleTapDown: handler?.onDoubleTapDown,
+        onForcePressEnd: handler?.onForcePressEnd,
+        onForcePressPeak: handler?.onForcePressPeak,
+        onForcePressStart: handler?.onForcePressStart,
+        onForcePressUpdate: handler?.onForcePressUpdate,
+        onLongPress: handler?.onLongPress,
+        onLongPressEnd: handler?.onLongPressEnd,
+        onLongPressMoveUpdate: handler?.onLongPressMoveUpdate,
+        onLongPressStart: handler?.onLongPressStart,
+        onLongPressUp: handler?.onLongPressUp,
+        onPanCancel: handler?.onPanCancel,
+        onPanDown: handler?.onPanDown,
+        onPanEnd: handler?.onPanEnd,
+        onPanStart: handler?.onPanStart,
+        onPanUpdate: handler?.onPanUpdate,
+        onScaleEnd: handler?.onScaleEnd,
+        onScaleStart: handler?.onScaleStart,
+        onScaleUpdate: handler?.onScaleUpdate,
+        onSecondaryLongPress: handler?.onSecondaryLongPress,
+        onSecondaryLongPressMoveUpdate: handler?.onSecondaryLongPressMoveUpdate,
+        onSecondaryLongPressStart: handler?.onSecondaryLongPressStart,
+        onSecondaryLongPressEnd: handler?.onSecondaryLongPressEnd,
+        onSecondaryLongPressUp: handler?.onSecondaryLongPressUp,
+        onHorizontalDragCancel: handler?.onHorizontalDragCancel,
+        onHorizontalDragDown: handler?.onHorizontalDragDown,
+        onHorizontalDragEnd: handler?.onHorizontalDragEnd,
+        onHorizontalDragStart: handler?.onHorizontalDragStart,
+        onHorizontalDragUpdate: handler?.onHorizontalDragUpdate,
+        onVerticalDragCancel: handler?.onVerticalDragCancel,
+        onVerticalDragDown: handler?.onVerticalDragDown,
+        onVerticalDragEnd: handler?.onVerticalDragEnd,
+        onVerticalDragStart: handler?.onVerticalDragStart,
+        onVerticalDragUpdate: handler?.onVerticalDragUpdate,
+        onSecondaryTap: handler?.onSecondaryTap,
+        onSecondaryTapCancel: handler?.onSecondaryTapCancel,
+        onSecondaryTapDown: handler?.onSecondaryTapDown,
+        onSecondaryTapUp: handler?.onSecondaryTapUp,
+        onTertiaryTapCancel: handler?.onTertiaryTapCancel,
+        onTertiaryTapDown: handler?.onTertiaryTapDown,
+        onTertiaryTapUp: handler?.onTertiaryTapUp,
+        child: ClipPath(
+          clipper: _CircleSliceClipper(slice.angle),
+          child: CustomMultiChildLayout(
+            delegate: _CircleSliceLayoutDelegate(slice.angle),
+            children: [
               LayoutId(
-                id: _SliceSlot.child,
-                child: Transform.rotate(
-                  angle: slice.angle / 2,
-                  child: child,
-                ),
+                id: _SliceSlot.slice,
+                child: slice,
               ),
-          ],
+              if (child != null)
+                LayoutId(
+                  id: _SliceSlot.child,
+                  child: Transform.rotate(
+                    angle: slice.angle / 2,
+                    child: child,
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
