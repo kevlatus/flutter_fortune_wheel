@@ -81,7 +81,7 @@ void main() {
     test('returns the same vector for angle of 0 radians', () {
       final inputVector = Point(14.0, 14.0);
       final angle = 0.0;
-      final rotatedVector = rotateVector(inputVector, angle);
+      final rotatedVector = inputVector.rotate(angle);
       expect(rotatedVector.x, moreOrLessEquals(inputVector.x));
       expect(rotatedVector.y, moreOrLessEquals(inputVector.y));
     });
@@ -89,7 +89,7 @@ void main() {
     test('returns the same vector for angle of 2 * pi radians', () {
       final inputVector = Point(14.0, 14.0);
       final angle = pi * 2;
-      final rotatedVector = rotateVector(inputVector, angle);
+      final rotatedVector = inputVector.rotate(angle);
       expect(rotatedVector.x, moreOrLessEquals(inputVector.x));
       expect(rotatedVector.y, moreOrLessEquals(inputVector.y));
     });

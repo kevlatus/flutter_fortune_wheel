@@ -25,3 +25,20 @@ class FortuneItem {
     return other is FortuneItem && style == other.style && child == other.child;
   }
 }
+
+@immutable
+class TransformedFortuneItem implements FortuneItem {
+  final FortuneItem _item;
+  final double angle;
+  final Offset offset;
+
+  const TransformedFortuneItem({
+    required FortuneItem item,
+    this.angle = 0.0,
+    this.offset = Offset.zero,
+  }) : _item = item;
+
+  Widget get child => _item.child;
+
+  FortuneItemStyle? get style => _item.style;
+}

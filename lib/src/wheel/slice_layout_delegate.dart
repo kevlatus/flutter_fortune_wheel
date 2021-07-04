@@ -30,7 +30,7 @@ class _CircleSliceLayoutDelegate extends MultiChildLayoutDelegate {
       );
 
       final topRectVector = _math.Point(sliceSize.width / 2, 0.0);
-      final halfAngleVector = rotateVector(topRectVector, angle / 2);
+      final halfAngleVector = topRectVector.rotate(angle / 2);
 
       positionChild(
         _SliceSlot.child,
