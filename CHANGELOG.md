@@ -1,3 +1,8 @@
+## [1.1.0] - 2021-07-04
+
+- add gesture detection to FortuneItems
+- improve wheel performance by reducing the number of calculations and transformations
+
 ## [1.0.1] - 2021-06-19
 
 - bump flutter_hooks dependency to v0.17.0
