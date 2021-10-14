@@ -103,7 +103,7 @@ FortuneItems can be styled individually using their `style` property. Styling a 
 items according to a common logic is achieved by passing a [`StyleStrategy`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/StyleStrategy-class.html).
 By default, the FortuneWheel uses the [`AlternatingStyleStrategy`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/AlternatingStyleStrategy-class.html)
 and the FortuneBar uses the [`UniformStyleStrategy`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/UniformStyleStrategy-class.html).
-As with drag behavior, you can pass custom implementations to the `styleStrategy` property
+As with drag behavior, you can pass custom implementations to the `styleStrategy` property.
 
 ```dart
 // styling FortuneItems individually
@@ -131,6 +131,28 @@ FortuneBar(
     FortuneItem(child: Text('Han Solo')),
     FortuneItem(child: Text('Yoda')),
     FortuneItem(child: Text('Obi-Wan Kenobi')),
+  ],
+)
+```
+
+### Indicator Styling
+
+The position indicators can be customized by passing a list of [FortuneIndicators](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/FortuneIndicator-class.html) to [`FortuneWidget.indicators`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/FortuneWidget/indicators.html). By default, the [`FortuneWheel`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/FortuneWheel-class.html) uses a [`TriangleIndicator`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/TriangleIndicator-class.html) and the [`FortuneBar`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/FortuneBar-class.html) uses a [`RectangleIndicator`](https://pub.dev/documentation/flutter_fortune_wheel/latest/flutter_fortune_wheel/RectangleIndicator-class.html). You may either pass styled versions of these existing widgets or create your own implementations, since indicators can be any kind of widget. Here is an example of using a customized indicator:
+
+```dart
+FortuneWheel(
+  selected: Stream.value(0),
+  indicators: <FortuneIndicator>[
+    FortuneIndicator(
+      alignment: Alignment.bottomCenter, // <-- changing the position of the indicator
+      child: TriangleIndicator(
+        color: Colors.green, // <-- changing the color of the indicator
+      ),
+    ),
+  ],
+  items: [
+    FortuneItem(child: Text('A'))
+    FortuneItem(child: Text('B')),
   ],
 )
 ```
