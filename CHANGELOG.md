@@ -1,3 +1,7 @@
+## [1.1.2] - 2022-02-01
+
+- touch panning is now disabled when a FortuneWidget is animating
+
 ## [1.1.0] - 2021-07-04
 
 - add gesture detection to FortuneItems
