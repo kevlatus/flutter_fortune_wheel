@@ -19,6 +19,38 @@ double _calculateSliceAngle(int index, int itemCount) {
   return childAngle + angleOffset;
 }
 
+double _calculateAlignmentOffset(Alignment alignment) {
+  if (alignment == Alignment.topRight) {
+    return _math.pi * 0.25;
+  }
+
+  if (alignment == Alignment.centerRight) {
+    return _math.pi * 0.5;
+  }
+
+  if (alignment == Alignment.bottomRight) {
+    return _math.pi * 0.75;
+  }
+
+  if (alignment == Alignment.bottomCenter) {
+    return _math.pi;
+  }
+
+  if (alignment == Alignment.bottomLeft) {
+    return _math.pi * 1.25;
+  }
+
+  if (alignment == Alignment.centerLeft) {
+    return _math.pi * 1.5;
+  }
+
+  if (alignment == Alignment.topLeft) {
+    return _math.pi * 1.75;
+  }
+
+  return 0;
+}
+
 class _WheelData {
   final BoxConstraints constraints;
   final int itemCount;
@@ -102,6 +134,11 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   /// {@macro flutter_fortune_wheel.FortuneWidget.onFling}
   final VoidCallback? onFling;
 
+  /// The position to which the wheel aligns the selected value.
+  ///
+  /// Defaults to [Alignment.topCenter]
+  final Alignment alignment;
+
   double _getAngle(double progress) {
     return 2 * _math.pi * rotationCount * progress;
   }
@@ -127,6 +164,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     this.animateFirst = true,
     this.onAnimationStart,
     this.onAnimationEnd,
+    this.alignment = Alignment.topCenter,
     PanPhysics? physics,
     this.onFling,
   })  : physics = physics ?? CircularPanPhysics(),
@@ -191,6 +229,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
                   final panAngle =
                       panState.distance * panFactor * isAnimatingPanFactor;
                   final rotationAngle = _getAngle(rotateAnim.value);
+                  final alignmentOffset = _calculateAlignmentOffset(alignment);
 
                   final transformedItems = [
                     for (var i = 0; i < items.length; i++)
@@ -199,6 +238,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
                         angle: selectedAngle +
                             panAngle +
                             rotationAngle +
+                            alignmentOffset +
                             _calculateSliceAngle(i, items.length),
                         offset: wheelData.offset,
                       ),
