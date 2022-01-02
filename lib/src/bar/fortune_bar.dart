@@ -152,10 +152,12 @@ class FortuneBar extends HookWidget implements FortuneWidget {
                     builder: (context, _) {
                       final itemPosition =
                           (items.length * rotationCount + selectedIndex.value);
+                      final isAnimatingPanFactor =
+                          animationCtrl.isAnimating ? 0 : 1;
                       final panFactor = 2 / size.width;
                       final panOffset = -panState.distance * panFactor;
-                      final position =
-                          animation.value * itemPosition + panOffset;
+                      final position = animation.value * itemPosition +
+                          panOffset * isAnimatingPanFactor;
 
                       return _InfiniteBar(
                         centerPosition: 1,

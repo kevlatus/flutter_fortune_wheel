@@ -184,9 +184,12 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
                     textDirection: Directionality.of(context),
                   );
 
+                  final isAnimatingPanFactor =
+                      rotateAnimCtrl.isAnimating ? 0 : 1;
                   final selectedAngle =
                       -2 * _math.pi * (selectedIndex.value / items.length);
-                  final panAngle = panState.distance * panFactor;
+                  final panAngle =
+                      panState.distance * panFactor * isAnimatingPanFactor;
                   final rotationAngle = _getAngle(rotateAnim.value);
 
                   final transformedItems = [
