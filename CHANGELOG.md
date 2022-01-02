@@ -1,3 +1,8 @@
+## [1.2.0] - 2022-02-01
+
+- new parameter `alignment` on the `FortuneWheel`
+  - this allows for rotating the wheel to adjust for indicator positions
+
 ## [1.1.2] - 2022-02-01
 
 - touch panning is now disabled when a FortuneWidget is animating
