@@ -255,10 +255,9 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
               },
             ),
             Container(
-              height:30,
+              height:50,
               color:Colors.red
             )
-            
           ],
         );
       },
