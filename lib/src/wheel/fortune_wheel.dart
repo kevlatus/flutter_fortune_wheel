@@ -254,10 +254,11 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
                 });
               },
             ),
-            for (var it in indicators)
-              IgnorePointer(
-                child: _WheelIndicator(indicator: it),
-              ),
+            Container(
+              height:30,
+              color:Colors.red
+            )
+            
           ],
         );
       },
