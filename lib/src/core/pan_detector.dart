@@ -155,9 +155,12 @@ class CircularPanPhysics extends PanPhysics {
   /// {@macro flutter_fortune_wheel.PanPhysics.curve}
   final Curve curve;
 
+  final bool allowOppositeRotationFlung;
+
   CircularPanPhysics({
     this.duration = PanPhysics.kDefaultDuration,
     this.curve = PanPhysics.kDefaultCurve,
+    this.allowOppositeRotationFlung = true,
   });
 
   /// {@macro flutter_fortune_wheel.PanPhysics.handlePanStart}
@@ -198,7 +201,8 @@ class CircularPanPhysics extends PanPhysics {
 
   /// {@macro flutter_fortune_wheel.PanPhysics.handlePanEnd}
   void handlePanEnd(DragEndDetails details) {
-    if (value.distance.abs() > 100 &&
+    if ((allowOppositeRotationFlung ? value.distance.abs() : value.distance) >
+            100 &&
         details.velocity.pixelsPerSecond.distance.abs() > 300) {
       value = value.copyWith(isPanning: false, wasFlung: true);
     } else {
