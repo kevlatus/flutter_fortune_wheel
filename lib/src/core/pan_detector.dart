@@ -155,6 +155,9 @@ class CircularPanPhysics extends PanPhysics {
   /// {@macro flutter_fortune_wheel.PanPhysics.curve}
   final Curve curve;
 
+  /// Decides if Flung can be initiated from the opposite initial rotation
+  ///
+  /// Defaults to true
   final bool allowOppositeRotationFlung;
 
   CircularPanPhysics({
