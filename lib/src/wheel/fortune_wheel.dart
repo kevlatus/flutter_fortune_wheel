@@ -208,7 +208,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
       return subscription.cancel;
     }, []);
 
-    final lastVibratedAngle = useState<double>(0);
+    final lastVibratedAngle = useRef<double>(0);
 
     return PanAwareBuilder(
       behavior: HitTestBehavior.translucent,
@@ -277,7 +277,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
 
   void _vibrateIfBorderCrossed(
     double angle,
-    ValueNotifier<double> lastVibratedAngle,
+    ObjectRef<double> lastVibratedAngle,
     int itemsNumber,
     HapticImpact hapticImpact,
   ) {
