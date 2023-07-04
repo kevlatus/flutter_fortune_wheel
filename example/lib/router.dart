@@ -1,13 +1,16 @@
-import 'package:auto_route/auto_route.dart';
+import 'package:go_router/go_router.dart';
 
 import 'pages/pages.dart';
 
-@CustomAutoRouter(
-  replaceInRouteName: 'Page,Route',
-  transitionsBuilder: TransitionsBuilders.fadeIn,
-  routes: <AutoRoute>[
-    AutoRoute(path: '/', page: FortuneWheelPage, initial: true),
-    AutoRoute(path: '/bar', page: FortuneBarPage),
+final router = GoRouter(
+  routes: [
+    GoRoute(
+        path: '/',
+        builder: (context, state) => FortuneWheelPage(),
+        name: FortuneWheelPage.kRouteName),
+    GoRoute(
+        path: '/bar',
+        builder: (context, state) => FortuneBarPage(),
+        name: FortuneBarPage.kRouteName),
   ],
-)
-class $AppRouter {}
+);

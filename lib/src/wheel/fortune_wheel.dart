@@ -1,5 +1,7 @@
 part of 'wheel.dart';
 
+enum HapticImpact { none, light, medium, heavy }
+
 Offset _calculateWheelOffset(
     BoxConstraints constraints, TextDirection textDirection) {
   final smallerSide = getSmallerSide(constraints);
@@ -139,6 +141,11 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   /// Defaults to [Alignment.topCenter]
   final Alignment alignment;
 
+  /// HapticFeedback strength on each section border crossing.
+  ///
+  /// Defaults to [HapticImpact.none]
+  final HapticImpact hapticImpact;
+
   double _getAngle(double progress) {
     return 2 * _math.pi * rotationCount * progress;
   }
@@ -165,6 +172,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     this.onAnimationStart,
     this.onAnimationEnd,
     this.alignment = Alignment.topCenter,
+    this.hapticImpact = HapticImpact.none,
     PanPhysics? physics,
     this.onFling,
   })  : physics = physics ?? CircularPanPhysics(),
@@ -175,7 +183,6 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   Widget build(BuildContext context) {
     final rotateAnimCtrl = useAnimationController(duration: duration);
     final rotateAnim = CurvedAnimation(parent: rotateAnimCtrl, curve: curve);
-
     Future<void> animate() async {
       if (rotateAnimCtrl.isAnimating) {
         return;
@@ -200,6 +207,8 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
       });
       return subscription.cancel;
     }, []);
+
+    final lastVibratedAngle = useRef<double>(0);
 
     return PanAwareBuilder(
       behavior: HitTestBehavior.translucent,
@@ -230,14 +239,16 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
                       panState.distance * panFactor * isAnimatingPanFactor;
                   final rotationAngle = _getAngle(rotateAnim.value);
                   final alignmentOffset = _calculateAlignmentOffset(alignment);
+                  final totalAngle = selectedAngle + panAngle + rotationAngle;
+
+                  _vibrateIfBorderCrossed(totalAngle, lastVibratedAngle,
+                      items.length, hapticImpact);
 
                   final transformedItems = [
                     for (var i = 0; i < items.length; i++)
                       TransformedFortuneItem(
                         item: items[i],
-                        angle: selectedAngle +
-                            panAngle +
-                            rotationAngle +
+                        angle: totalAngle +
                             alignmentOffset +
                             _calculateSliceAngle(i, items.length),
                         offset: wheelData.offset,
@@ -262,5 +273,34 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
         );
       },
     );
+  }
+
+  void _vibrateIfBorderCrossed(
+    double angle,
+    ObjectRef<double> lastVibratedAngle,
+    int itemsNumber,
+    HapticImpact hapticImpact,
+  ) {
+    final step = 360 / itemsNumber;
+    final angleDegrees = ((angle * 180) / _math.pi).abs() + step / 2;
+    if (lastVibratedAngle.value ~/ step == angleDegrees ~/ step) {
+      return;
+    }
+    final hapticFeedbackFunction;
+    switch (hapticImpact) {
+      case HapticImpact.none:
+        return;
+      case HapticImpact.heavy:
+        hapticFeedbackFunction = HapticFeedback.heavyImpact;
+        break;
+      case HapticImpact.medium:
+        hapticFeedbackFunction = HapticFeedback.mediumImpact;
+        break;
+      case HapticImpact.light:
+        hapticFeedbackFunction = HapticFeedback.lightImpact;
+        break;
+    }
+    hapticFeedbackFunction();
+    lastVibratedAngle.value = angleDegrees ~/ step * step;
   }
 }
