@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 
 import 'common/common.dart';
-import 'router.gr.dart';
+import 'router.dart';
 import 'util/configure_non_web.dart'
     if (dart.library.html) 'util/configure_web.dart';
 import 'widgets/widgets.dart';
@@ -86,8 +86,6 @@ class DemoApp extends StatefulWidget {
 }
 
 class _DemoAppState extends State<DemoApp> {
-  final _appRouter = AppRouter();
-
   @override
   Widget build(BuildContext context) {
     return ThemeModeScope(
@@ -97,8 +95,7 @@ class _DemoAppState extends State<DemoApp> {
           theme: lightTheme,
           darkTheme: darkTheme,
           themeMode: themeMode,
-          routerDelegate: _appRouter.delegate(),
-          routeInformationParser: _appRouter.defaultRouteParser(),
+          routerConfig: router,
         );
       },
     );

@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:go_router/go_router.dart';
 
 import '../common/common.dart';
 import '../widgets/widgets.dart';
 
 class FortuneWheelPage extends HookWidget {
+  static const kRouteName = 'FortuneWheelPage';
+
+  static void go(BuildContext context) {
+    context.goNamed(kRouteName);
+  }
+
   @override
   Widget build(BuildContext context) {
     final alignment = useState(Alignment.topCenter);

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 // Selected with https://color.joelb.dev/hsl/214/80/57
 class KevlatusColors {
   static const MaterialColor blue =
-  MaterialColor(_bluePrimaryValue, <int, Color>{
+      MaterialColor(_bluePrimaryValue, <int, Color>{
     50: Color(0xFFE7F0FC),
     100: Color(0xFFC3DBF8),
     200: Color(0xFF9BC3F4),
@@ -20,7 +20,7 @@ class KevlatusColors {
   static const int _bluePrimaryValue = 0xFF3786E9;
 
   static const MaterialColor blueAccent =
-  MaterialColor(_blueAccentValue, <int, Color>{
+      MaterialColor(_blueAccentValue, <int, Color>{
     100: Color(0xFFFFFFFF),
     200: Color(_blueAccentValue),
     400: Color(0xFFA4BFFF),
@@ -29,7 +29,7 @@ class KevlatusColors {
   static const int _blueAccentValue = 0xFFD7E3FF;
 
   static const MaterialColor gold =
-  MaterialColor(_goldPrimaryValue, <int, Color>{
+      MaterialColor(_goldPrimaryValue, <int, Color>{
     50: Color(0xFFFCF3E7),
     100: Color(0xFFF8E2C4),
     200: Color(0xFFF4CE9D),
@@ -44,7 +44,7 @@ class KevlatusColors {
   static const int _goldPrimaryValue = 0xFFE99D3A;
 
   static const MaterialColor goldAccent =
-  MaterialColor(_goldAccentValue, <int, Color>{
+      MaterialColor(_goldAccentValue, <int, Color>{
     100: Color(0xFFFFFFFF),
     200: Color(_goldAccentValue),
     400: Color(0xFFFFCBA6),
@@ -53,7 +53,7 @@ class KevlatusColors {
   static const int _goldAccentValue = 0xFFFFE9D9;
 
   static const MaterialColor blueDark =
-  MaterialColor(_blueDarkPrimaryValue, <int, Color>{
+      MaterialColor(_blueDarkPrimaryValue, <int, Color>{
     50: Color(0xFFF3F8FE),
     100: Color(0xFFE1EDFC),
     200: Color(0xFFCDE1FA),
@@ -68,7 +68,7 @@ class KevlatusColors {
   static const int _blueDarkPrimaryValue = 0xFF9BC3F4;
 
   static const MaterialColor blueDarkAccent =
-  MaterialColor(_blueDarkAccentValue, <int, Color>{
+      MaterialColor(_blueDarkAccentValue, <int, Color>{
     100: Color(0xFFFFFFFF),
     200: Color(_blueDarkAccentValue),
     400: Color(0xFFFCFDFF),
@@ -81,7 +81,6 @@ final ThemeData lightTheme = ThemeData(
   visualDensity: VisualDensity.comfortable,
   primarySwatch: KevlatusColors.blue,
   primaryColor: KevlatusColors.blue,
-  accentColor: KevlatusColors.gold.shade200,
   brightness: Brightness.light,
 );
 
@@ -89,6 +88,5 @@ final ThemeData darkTheme = ThemeData(
   visualDensity: VisualDensity.comfortable,
   primarySwatch: KevlatusColors.blueDark,
   primaryColor: KevlatusColors.blueDark,
-  accentColor: KevlatusColors.gold.shade200,
   brightness: Brightness.dark,
 );
