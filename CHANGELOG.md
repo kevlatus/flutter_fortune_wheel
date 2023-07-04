@@ -1,3 +1,16 @@
+## [1.3.0] - 2023-07-04
+
+- add support for haptic feedback when an item border passes (huge thanks to [@YatsenkoDev](https://github.com/YatsenkoDev))
+  - use the new `FortuneWheel.hapticImpact` attribute
+- add support for getting notified, when an items border passes
+  - use the new `FortuneWheel.onFocusItemChanged` attribute
+- update all references to `ThemeData` to use the corresponding values from `ColorScheme`
+
+## [1.2.1] - 2023-05-22
+
+- update to support Dart 3
+  - change references from `ThemeData.accentColor` to `ThemeData.colorScheme.accentColor`
+
 ## [1.2.0] - 2022-02-01
 
 - new parameter `alignment` on the `FortuneWheel`
@@ -16,7 +29,6 @@
 
 - bump flutter_hooks dependency to v0.17.0
 - fix horizontal wheel alignment for RTL locales
-
 
 ## [1.0.0] - 2021-05-09
 
