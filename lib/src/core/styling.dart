@@ -132,10 +132,10 @@ class UniformStyleStrategy
       () => FortuneItemStyle(
         color: color ??
             Color.alphaBlend(
-              theme.primaryColor.withOpacity(0.3),
+              theme.colorScheme.primary.withOpacity(0.3),
               theme.colorScheme.surface,
             ),
-        borderColor: borderColor ?? theme.primaryColor,
+        borderColor: borderColor ?? theme.colorScheme.primary,
         borderWidth: borderWidth ?? 1.0,
         textStyle: textStyle ?? TextStyle(color: theme.colorScheme.onSurface),
         textAlign: textAlign ?? TextAlign.center,
@@ -156,8 +156,8 @@ class AlternatingStyleStrategy
   final List<int> disabledIndices;
 
   Color _getFillColor(ThemeData theme, int index, int itemCount) {
-    final color = theme.primaryColor;
-    final background = theme.backgroundColor;
+    final color = theme.colorScheme.primary;
+    final background = theme.colorScheme.background;
     final opacity = itemCount % 2 == 1 && index == 0
         ? 0.7 // TODO: make 0.75
         : index % 2 == 0
@@ -183,7 +183,7 @@ class AlternatingStyleStrategy
       itemCount,
       () => FortuneItemStyle(
         color: _getFillColor(theme, index, itemCount),
-        borderColor: theme.primaryColor,
+        borderColor: theme.colorScheme.primary,
         borderWidth: 0.0,
         textAlign: TextAlign.start,
         textStyle: TextStyle(color: theme.colorScheme.onPrimary),
