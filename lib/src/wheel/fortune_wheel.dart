@@ -281,6 +281,11 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     int itemsNumber,
     HapticImpact hapticImpact,
   ) {
+    final step = 360 / itemsNumber;
+    final angleDegrees = ((angle * 180) / _math.pi).abs() + step / 2;
+    if (lastVibratedAngle.value ~/ step == angleDegrees ~/ step) {
+      return;
+    }
     final hapticFeedbackFunction;
     switch (hapticImpact) {
       case HapticImpact.none:
@@ -295,11 +300,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
         hapticFeedbackFunction = HapticFeedback.lightImpact;
         break;
     }
-    final step = 360 / itemsNumber;
-    final angleDegrees = ((angle * 180) / _math.pi).abs() + step / 2;
-    if (lastVibratedAngle.value ~/ step != angleDegrees ~/ step) {
-      hapticFeedbackFunction();
-      lastVibratedAngle.value = angleDegrees ~/ step * step;
-    }
+    hapticFeedbackFunction();
+    lastVibratedAngle.value = angleDegrees ~/ step * step;
   }
 }
