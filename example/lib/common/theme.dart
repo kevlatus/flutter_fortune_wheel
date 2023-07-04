@@ -77,16 +77,21 @@ class KevlatusColors {
   static const int _blueDarkAccentValue = 0xFFFFFFFF;
 }
 
-final ThemeData lightTheme = ThemeData(
-  visualDensity: VisualDensity.comfortable,
-  primarySwatch: KevlatusColors.blue,
-  primaryColor: KevlatusColors.blue,
-  brightness: Brightness.light,
+final ThemeData lightTheme = ThemeData.from(
+  useMaterial3: true,
+  colorScheme: ColorScheme.fromSwatch(
+    primarySwatch: KevlatusColors.blue,
+    accentColor: KevlatusColors.goldAccent,
+    backgroundColor: Color(0xFFFAFAFA),
+  ),
 );
 
-final ThemeData darkTheme = ThemeData(
-  visualDensity: VisualDensity.comfortable,
-  primarySwatch: KevlatusColors.blueDark,
-  primaryColor: KevlatusColors.blueDark,
-  brightness: Brightness.dark,
+final ThemeData darkTheme = ThemeData.from(
+  useMaterial3: true,
+  colorScheme: ColorScheme.fromSwatch(
+    primarySwatch: KevlatusColors.blueDark,
+    accentColor: KevlatusColors.goldAccent,
+    backgroundColor: Color(0xFF555555),
+    brightness: Brightness.dark,
+  ),
 );
