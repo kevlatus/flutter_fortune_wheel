@@ -147,6 +147,9 @@ FortuneWheel(
       alignment: Alignment.bottomCenter, // <-- changing the position of the indicator
       child: TriangleIndicator(
         color: Colors.green, // <-- changing the color of the indicator
+        width: 20.0, // <-- changing the width of the indicator
+        height: 20.0, // <-- changing the height of the indicator
+        elevation: 0, // <-- changing the elevation of the indicator
       ),
     ),
   ],
