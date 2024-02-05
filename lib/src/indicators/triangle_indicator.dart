@@ -4,7 +4,7 @@ class TriangleIndicator extends StatelessWidget {
   final Color? color;
   final double width;
   final double height;
-  final int elevation;
+  final double elevation;
 
   const TriangleIndicator({
     Key? key,
