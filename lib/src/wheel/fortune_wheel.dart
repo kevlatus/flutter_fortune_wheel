@@ -295,6 +295,14 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   ) {
     final step = 360 / itemsNumber;
     final angleDegrees = (angle * 180 / _math.pi).abs() + step / 2;
+    if (step.isNaN ||
+        angleDegrees.isNaN ||
+        lastVibratedAngle.value.isNaN ||
+        lastVibratedAngle.value.isInfinite ||
+        angleDegrees.isInfinite ||
+        step == 0) {
+      return null;
+    }
     if (lastVibratedAngle.value ~/ step == angleDegrees ~/ step) {
       return null;
     }
