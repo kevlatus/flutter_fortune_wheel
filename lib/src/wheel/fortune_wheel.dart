@@ -53,6 +53,37 @@ double _calculateAlignmentOffset(Alignment alignment) {
   return 0;
 }
 
+class FortuneController {
+  final StreamController<int> _streamController =
+      StreamController<int>.broadcast();
+  late final Stream<int> stream;
+
+  FortuneController({
+    Stream<int>? stream,
+  }) {
+    if (stream == null) {
+      this.stream = _streamController.stream;
+    } else {
+      this.stream = StreamGroup.merge([
+        stream,
+        _streamController.stream,
+      ]);
+    }
+  }
+
+  void selectItem(int index) {
+    _streamController.add(index);
+  }
+
+  void startSpinning() {}
+
+  void stopSpinning() {}
+
+  void dispose() {
+    _streamController.close();
+  }
+}
+
 class _WheelData {
   final BoxConstraints constraints;
   final int itemCount;
@@ -100,11 +131,13 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
 
   static const StyleStrategy kDefaultStyleStrategy = AlternatingStyleStrategy();
 
+  final FortuneController controller;
+
   /// {@macro flutter_fortune_wheel.FortuneWidget.items}
   final List<FortuneItem> items;
 
   /// {@macro flutter_fortune_wheel.FortuneWidget.selected}
-  final Stream<int> selected;
+  Stream<int> get selected => controller.stream;
 
   /// {@macro flutter_fortune_wheel.FortuneWidget.rotationCount}
   final int rotationCount;
@@ -165,9 +198,45 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   /// {@endtemplate}
   FortuneWheel({
     Key? key,
+    required List<FortuneItem> items,
+    int rotationCount = FortuneWidget.kDefaultRotationCount,
+    Stream<int> selected = const Stream<int>.empty(),
+    Duration duration = FortuneWidget.kDefaultDuration,
+    Curve curve = FortuneCurve.spin,
+    List<FortuneIndicator> indicators = kDefaultIndicators,
+    StyleStrategy styleStrategy = kDefaultStyleStrategy,
+    bool animateFirst = true,
+    VoidCallback? onAnimationStart,
+    VoidCallback? onAnimationEnd,
+    Alignment alignment = Alignment.topCenter,
+    HapticImpact hapticImpact = HapticImpact.none,
+    PanPhysics? physics,
+    VoidCallback? onFling,
+    ValueChanged<int>? onFocusItemChanged,
+  }) : this.controllable(
+          key: key,
+          items: items,
+          rotationCount: rotationCount,
+          duration: duration,
+          curve: curve,
+          indicators: indicators,
+          styleStrategy: styleStrategy,
+          animateFirst: animateFirst,
+          onAnimationStart: onAnimationStart,
+          onAnimationEnd: onAnimationEnd,
+          alignment: alignment,
+          hapticImpact: hapticImpact,
+          physics: physics,
+          onFling: onFling,
+          onFocusItemChanged: onFocusItemChanged,
+          controller: FortuneController(stream: selected),
+        );
+
+  FortuneWheel.controllable({
+    Key? key,
+    FortuneController? controller,
     required this.items,
     this.rotationCount = FortuneWidget.kDefaultRotationCount,
-    this.selected = const Stream<int>.empty(),
     this.duration = FortuneWidget.kDefaultDuration,
     this.curve = FortuneCurve.spin,
     this.indicators = kDefaultIndicators,
@@ -181,6 +250,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     this.onFling,
     this.onFocusItemChanged,
   })  : physics = physics ?? CircularPanPhysics(),
+        controller = controller ?? FortuneController(),
         assert(items.length > 1),
         super(key: key);
 
