@@ -1,3 +1,8 @@
+## [1.3.1] - 2024-02-05
+
+- add support for triangle indicator customization (huge thanks to [@Alghost](https://github.com/Alghost))
+- fix NaN and infinite value handling in FortuneWheel (huge thanks to [@azaderdogan](https://github.com/azaderdogan))
+
 ## [1.3.0] - 2023-07-04
 
 - add support for haptic feedback when an item border passes (huge thanks to [@YatsenkoDev](https://github.com/YatsenkoDev))
