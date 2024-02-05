@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
@@ -15,16 +14,16 @@ void repeatFor(VoidCallback func, [int iterations = 1000]) {
 }
 
 void tick(Duration duration) {
-  SchedulerBinding.instance!.handleBeginFrame(duration);
-  SchedulerBinding.instance!.handleDrawFrame();
+  SchedulerBinding.instance.handleBeginFrame(duration);
+  SchedulerBinding.instance.handleDrawFrame();
 }
 
 void main() {
   setUp(() {
     WidgetsFlutterBinding.ensureInitialized();
-    WidgetsBinding.instance!.resetEpoch();
-    ui.window.onBeginFrame = null;
-    ui.window.onDrawFrame = null;
+    WidgetsBinding.instance.resetEpoch();
+    PlatformDispatcher.instance.onBeginFrame = null;
+    PlatformDispatcher.instance.onDrawFrame = null;
   });
 
   group('Fortune.randomInt', () {

@@ -2,13 +2,11 @@ part of 'indicators.dart';
 
 class _TrianglePainter extends CustomPainter {
   final Color fillColor;
-  final Color? strokeColor;
   final double strokeWidth;
   final double elevation;
 
   const _TrianglePainter({
     required this.fillColor,
-    this.strokeColor,
     this.strokeWidth = 1,
     this.elevation = 0,
   });
@@ -21,7 +19,7 @@ class _TrianglePainter extends CustomPainter {
       ..lineTo(0, size.height)
       ..lineTo(size.width / 2, 0);
 
-    final strokeColor = this.strokeColor ?? fillColor;
+    final strokeColor = fillColor;
     final fillPaint = Paint()..color = fillColor;
     final strokePaint = Paint()
       ..color = strokeColor
@@ -37,21 +35,16 @@ class _TrianglePainter extends CustomPainter {
   bool shouldRepaint(_TrianglePainter oldDelegate) {
     return fillColor != oldDelegate.fillColor ||
         elevation != oldDelegate.elevation ||
-        strokeWidth != oldDelegate.strokeWidth ||
-        strokeColor != oldDelegate.strokeColor;
+        strokeWidth != oldDelegate.strokeWidth;
   }
 }
 
 class _Triangle extends StatelessWidget {
   final Color color;
-  final Color? borderColor;
-  final double borderWidth;
   final double elevation;
 
   const _Triangle({
     required this.color,
-    this.borderColor,
-    this.borderWidth = 1,
     this.elevation = 0,
   });
 
@@ -60,8 +53,7 @@ class _Triangle extends StatelessWidget {
     return CustomPaint(
       painter: _TrianglePainter(
         fillColor: color,
-        strokeColor: borderColor,
-        strokeWidth: borderWidth,
+        strokeWidth: 1,
         elevation: elevation,
       ),
     );

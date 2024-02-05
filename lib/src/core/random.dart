@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_classes_with_only_static_members
+
 part of 'core.dart';
 
 /// Static methods for common tasks when working with [FortuneWidget]s.

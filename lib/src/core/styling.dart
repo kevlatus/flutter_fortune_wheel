@@ -61,6 +61,7 @@ class FortuneItemStyle {
 }
 
 /// Interface for providing common styling to a list of [FortuneItem]s.
+// ignore: one_member_abstracts
 abstract class StyleStrategy {
   /// {@template flutter_fortune_wheel.StyleStrategy.getItemStyle}
   /// Creates an [FortuneItemStyle] based on the passed [theme] while

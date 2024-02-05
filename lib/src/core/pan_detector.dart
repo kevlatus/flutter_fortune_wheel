@@ -321,15 +321,18 @@ class PanAwareBuilder extends HookWidget {
       curve: physics.curve,
     );
 
-    useValueChanged(panState.isPanning, (bool oldValue, Future<void>? _) async {
-      if (!oldValue) {
-        returnAnimCtrl.reset();
-      } else {
-        await returnAnimCtrl.forward(from: 0.0);
-      }
-    });
+    useValueChanged<bool, Future<void>>(
+      panState.isPanning,
+      (oldValue, _) async {
+        if (!oldValue) {
+          returnAnimCtrl.reset();
+        } else {
+          await returnAnimCtrl.forward(from: 0.0);
+        }
+      },
+    );
 
-    useValueChanged(panState.wasFlung, (bool oldValue, Future<void>? _) async {
+    useValueChanged<bool, Future<void>>(panState.wasFlung, (oldValue, _) async {
       if (panState.wasFlung) {
         await Future.microtask(() => onFling?.call());
       }
