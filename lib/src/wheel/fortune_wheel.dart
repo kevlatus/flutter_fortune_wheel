@@ -81,8 +81,6 @@ class _WheelData {
 /// divided into uniformly sized slices, which correspond to the number of
 /// [items].
 ///
-/// ![](https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/img-wheel-256.png?sanitize=true)
-///
 /// See also:
 ///  * [FortuneBar], which provides an alternative visualization
 ///  * [FortuneWidget()], which automatically chooses a fitting widget
@@ -186,6 +184,46 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Arrow animation: Setting up the AnimationController and Animation
+    final arrowController =
+        useAnimationController(duration: const Duration(milliseconds: 300));
+// Initializes an AnimationController with a duration of 300 milliseconds.
+// This controller manages the timing of the animation.
+
+    final arrowAnimation = Tween<double>(begin: 0, end: -20).animate(
+      CurvedAnimation(
+        parent: arrowController,
+        curve: Curves.easeOut, // Curve for the forward animation (ease out)
+        reverseCurve:
+            Curves.easeIn, // Curve for the reverse animation (ease in)
+      ),
+    );
+// Creates an Animation that interpolates from 0 to -20 using a Tween.
+// The animation uses a CurvedAnimation to apply easing curves for smoother motion.
+
+    useEffect(() {
+      // Add a listener to the arrowController to monitor animation status changes
+      arrowController.addStatusListener((status) {
+        // If the animation has completed (reached the end)
+        if (status == AnimationStatus.completed) {
+          // Reverse the animation back to the starting point
+          arrowController.reverse();
+        }
+      });
+      // No cleanup necessary, so return null
+      return null;
+    }, [arrowController]); // The effect depends on arrowController
+
+    void _animateArrow() {
+      // Check if the animation has completed (reached the end)
+      if (arrowController.isCompleted) {
+        // Reset the animation controller to the beginning
+        arrowController.reset();
+      }
+      // Start the animation moving forward from the current position
+      arrowController.forward();
+    }
+
     final rotateAnimCtrl = useAnimationController(duration: duration);
     final rotateAnim = CurvedAnimation(parent: rotateAnimCtrl, curve: curve);
     Future<void> animate() async {
@@ -246,11 +284,12 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
                   final alignmentOffset = _calculateAlignmentOffset(alignment);
                   final totalAngle = selectedAngle + panAngle + rotationAngle;
 
-                  final focusedIndex = _vibrateIfBorderCrossed(
+                  final focusedIndex = _borderCross(
                     totalAngle,
                     lastVibratedAngle,
                     items.length,
                     hapticImpact,
+                    _animateArrow, // _tetikle fonksiyonunu burada geçiriyoruz
                   );
                   if (focusedIndex != null) {
                     onFocusItemChanged?.call(focusedIndex % items.length);
@@ -279,7 +318,19 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
             ),
             for (var it in indicators)
               IgnorePointer(
-                child: _WheelIndicator(indicator: it),
+                child: Container(
+                  alignment: it.alignment,
+                  child: AnimatedBuilder(
+                    animation: arrowAnimation,
+                    builder: (context, child) {
+                      return Transform.translate(
+                        offset: Offset(0, arrowAnimation.value),
+                        child: child,
+                      );
+                    },
+                    child: it.child,
+                  ),
+                ),
               ),
           ],
         );
@@ -287,11 +338,13 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     );
   }
 
-  int? _vibrateIfBorderCrossed(
+  /// * vibrate and animate arrow when cross border
+  int? _borderCross(
     double angle,
     ObjectRef<double> lastVibratedAngle,
     int itemsNumber,
     HapticImpact hapticImpact,
+    VoidCallback animateArrow,
   ) {
     final step = 360 / itemsNumber;
     final angleDegrees = (angle * 180 / _math.pi).abs() + step / 2;
@@ -322,7 +375,8 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
         break;
     }
     hapticFeedbackFunction();
-    lastVibratedAngle.value = angleDegrees ~/ step * step;
+    animateArrow();
+    lastVibratedAngle.value = (angleDegrees ~/ step) * step;
     return index;
   }
 }
