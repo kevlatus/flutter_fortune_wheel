@@ -81,6 +81,8 @@ class _WheelData {
 /// divided into uniformly sized slices, which correspond to the number of
 /// [items].
 ///
+/// ![](https://raw.githubusercontent.com/kevlatus/flutter_fortune_wheel/main/images/img-wheel-256.png?sanitize=true)
+///
 /// See also:
 ///  * [FortuneBar], which provides an alternative visualization
 ///  * [FortuneWidget()], which automatically chooses a fitting widget
