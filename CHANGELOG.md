@@ -1,3 +1,7 @@
+## [1.3.1] - 2024-10-20
+
+- add support for indicator animation (huge thanks to [@yakup2525](https://github.com/yakup2525))
+
 ## [1.3.1] - 2024-02-05
 
 - add support for triangle indicator customization (huge thanks to [@Alghost](https://github.com/Alghost))
