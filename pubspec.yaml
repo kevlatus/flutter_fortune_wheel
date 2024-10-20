@@ -10,7 +10,7 @@ dependencies:
   flutter:
     sdk: flutter
 
-  flutter_hooks: ^0.18.6
+  flutter_hooks: ^0.20.5
   quiver: ^3.2.1
 
 dev_dependencies:

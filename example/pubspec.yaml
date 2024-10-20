@@ -12,7 +12,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
 
-  flutter_hooks: ^0.18.1
+  flutter_hooks: ^0.20.5
   flutter_fortune_wheel:
     path: ../
   go_router: ^9.0.0
