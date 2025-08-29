@@ -47,10 +47,10 @@ double _getAngle(Alignment alignment) {
   throw ArgumentError('Alignments on the diagonals are not yet supported');
 }
 
-class _WheelIndicator extends StatelessWidget {
+class WheelIndicator extends StatelessWidget {
   final FortuneIndicator indicator;
 
-  const _WheelIndicator({
+  const WheelIndicator({
     Key? key,
     required this.indicator,
   }) : super(key: key);
