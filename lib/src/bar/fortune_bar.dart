@@ -101,34 +101,14 @@ class FortuneBar extends HookWidget implements FortuneWidget {
   @override
   Widget build(BuildContext context) {
     final visibleItemCount = _math.min(this.visibleItemCount, items.length);
-    final animationCtrl = useAnimationController(duration: duration);
-    final animation = CurvedAnimation(parent: animationCtrl, curve: curve);
-
-    // TODO: refactor: implement shared fortune animation hook
-    Future<void> animate() async {
-      if (animationCtrl.isAnimating) {
-        return;
-      }
-
-      await Future.microtask(() => onAnimationStart?.call());
-      await animationCtrl.forward(from: 0);
-      await Future.microtask(() => onAnimationEnd?.call());
-    }
-
-    useEffect(() {
-      if (animateFirst) animate();
-      return null;
-    }, []);
-
-    final selectedIndex = useState<int>(0);
-
-    useEffect(() {
-      final subscription = selected.listen((event) {
-        selectedIndex.value = event;
-        animate();
-      });
-      return subscription.cancel;
-    }, []);
+    final animation = useFortuneAnimation(
+      duration: duration,
+      curve: curve,
+      selected: selected,
+      animateFirst: animateFirst,
+      onAnimationStart: onAnimationStart,
+      onAnimationEnd: onAnimationEnd,
+    );
 
     final theme = Theme.of(context);
 
@@ -148,15 +128,15 @@ class FortuneBar extends HookWidget implements FortuneWidget {
             return Stack(
               children: [
                 AnimatedBuilder(
-                    animation: animation,
+                    animation: animation.animation,
                     builder: (context, _) {
-                      final itemPosition =
-                          (items.length * rotationCount + selectedIndex.value);
+                      final itemPosition = (items.length * rotationCount +
+                          animation.selectedIndex.value);
                       final isAnimatingPanFactor =
-                          animationCtrl.isAnimating ? 0 : 1;
+                          animation.controller.isAnimating ? 0 : 1;
                       final panFactor = 2 / size.width;
                       final panOffset = -panState.distance * panFactor;
-                      final position = animation.value * itemPosition +
+                      final position = animation.animation.value * itemPosition +
                           panOffset * isAnimatingPanFactor;
 
                       return _InfiniteBar(

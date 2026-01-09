@@ -226,32 +226,14 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
       arrowController.forward();
     }
 
-    final rotateAnimCtrl = useAnimationController(duration: duration);
-    final rotateAnim = CurvedAnimation(parent: rotateAnimCtrl, curve: curve);
-    Future<void> animate() async {
-      if (rotateAnimCtrl.isAnimating) {
-        return;
-      }
-
-      await Future.microtask(() => onAnimationStart?.call());
-      await rotateAnimCtrl.forward(from: 0);
-      await Future.microtask(() => onAnimationEnd?.call());
-    }
-
-    useEffect(() {
-      if (animateFirst) animate();
-      return null;
-    }, []);
-
-    final selectedIndex = useState<int>(0);
-
-    useEffect(() {
-      final subscription = selected.listen((event) {
-        selectedIndex.value = event;
-        animate();
-      });
-      return subscription.cancel;
-    }, []);
+    final animation = useFortuneAnimation(
+      duration: duration,
+      curve: curve,
+      selected: selected,
+      animateFirst: animateFirst,
+      onAnimationStart: onAnimationStart,
+      onAnimationEnd: onAnimationEnd,
+    );
 
     final lastVibratedAngle = useRef<double>(0);
 
@@ -263,7 +245,7 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
         return Stack(
           children: [
             AnimatedBuilder(
-              animation: rotateAnim,
+              animation: animation.animation,
               builder: (context, _) {
                 final size = MediaQuery.of(context).size;
                 final meanSize = (size.width + size.height) / 2;
@@ -277,12 +259,12 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
                   );
 
                   final isAnimatingPanFactor =
-                      rotateAnimCtrl.isAnimating ? 0 : 1;
+                      animation.controller.isAnimating ? 0 : 1;
                   final selectedAngle =
-                      -2 * _math.pi * (selectedIndex.value / items.length);
+                      -2 * _math.pi * (animation.selectedIndex.value / items.length);
                   final panAngle =
                       panState.distance * panFactor * isAnimatingPanFactor;
-                  final rotationAngle = _getAngle(rotateAnim.value);
+                  final rotationAngle = _getAngle(animation.animation.value);
                   final alignmentOffset = _calculateAlignmentOffset(alignment);
                   final totalAngle = selectedAngle + panAngle + rotationAngle;
 
