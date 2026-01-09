@@ -15,11 +15,9 @@ class FortuneCurve {
 /// Manages the animation state for a [FortuneWidget].
 class FortuneAnimationManager {
   final AnimationController controller;
-  late final Animation<double> animation;
+  late final CurvedAnimation animation;
   final ValueNotifier<int> selectedIndex = ValueNotifier(0);
 
-  final Stream<int> selected;
-  final bool animateFirst;
   final VoidCallback? onAnimationStart;
   final VoidCallback? onAnimationEnd;
   StreamSubscription? _subscription;
@@ -28,13 +26,27 @@ class FortuneAnimationManager {
     required TickerProvider vsync,
     required Duration duration,
     required Curve curve,
-    required this.selected,
-    required this.animateFirst,
+    required Stream<int> selected,
     this.onAnimationStart,
     this.onAnimationEnd,
   }) : controller = AnimationController(vsync: vsync, duration: duration) {
     animation = CurvedAnimation(parent: controller, curve: curve);
-    if (animateFirst) animate();
+    _subscription = selected.listen((event) {
+      selectedIndex.value = event;
+      animate();
+    });
+  }
+
+  void set duration(Duration value) {
+    controller.duration = value;
+  }
+
+  void set curve(Curve value) {
+    animation.curve = value;
+  }
+
+  void updateSelected(Stream<int> selected) {
+    _subscription?.cancel();
     _subscription = selected.listen((event) {
       selectedIndex.value = event;
       animate();
@@ -47,7 +59,12 @@ class FortuneAnimationManager {
     }
 
     await Future.microtask(() => onAnimationStart?.call());
-    await controller.forward(from: 0);
+    try {
+      await controller.forward(from: 0);
+    } catch (e) {
+      // Controller might be disposed
+      return;
+    }
     await Future.microtask(() => onAnimationEnd?.call());
   }
 

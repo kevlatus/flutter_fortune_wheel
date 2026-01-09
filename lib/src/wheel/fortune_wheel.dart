@@ -217,10 +217,15 @@ class _FortuneWheelState extends State<FortuneWheel>
       duration: widget.duration,
       curve: widget.curve,
       selected: widget.selected,
-      animateFirst: widget.animateFirst,
       onAnimationStart: () => widget.onAnimationStart?.call(),
       onAnimationEnd: () => widget.onAnimationEnd?.call(),
     );
+
+    if (widget.animateFirst) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        _animationManager.animate();
+      });
+    }
   }
 
   void _arrowStatusListener(AnimationStatus status) {
@@ -247,20 +252,14 @@ class _FortuneWheelState extends State<FortuneWheel>
   @override
   void didUpdateWidget(FortuneWheel oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.duration != oldWidget.duration ||
-        widget.curve != oldWidget.curve ||
-        widget.selected != oldWidget.selected ||
-        widget.animateFirst != oldWidget.animateFirst) {
-      _animationManager.dispose();
-      _animationManager = FortuneAnimationManager(
-        vsync: this,
-        duration: widget.duration,
-        curve: widget.curve,
-        selected: widget.selected,
-        animateFirst: widget.animateFirst,
-        onAnimationStart: () => widget.onAnimationStart?.call(),
-        onAnimationEnd: () => widget.onAnimationEnd?.call(),
-      );
+    if (widget.duration != oldWidget.duration) {
+      _animationManager.duration = widget.duration;
+    }
+    if (widget.curve != oldWidget.curve) {
+      _animationManager.curve = widget.curve;
+    }
+    if (widget.selected != oldWidget.selected) {
+      _animationManager.updateSelected(widget.selected);
     }
   }
 
@@ -397,7 +396,6 @@ class _FortuneWheelState extends State<FortuneWheel>
       animateArrow();
     }
 
-    // I'm keeping the logic I settled on previously:
     if (hapticImpact == HapticImpact.none) {
        return index;
     }

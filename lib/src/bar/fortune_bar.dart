@@ -113,10 +113,15 @@ class _FortuneBarState extends State<FortuneBar> with SingleTickerProviderStateM
       duration: widget.duration,
       curve: widget.curve,
       selected: widget.selected,
-      animateFirst: widget.animateFirst,
       onAnimationStart: () => widget.onAnimationStart?.call(),
       onAnimationEnd: () => widget.onAnimationEnd?.call(),
     );
+
+    if (widget.animateFirst) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        _animationManager.animate();
+      });
+    }
   }
 
   @override
@@ -128,21 +133,16 @@ class _FortuneBarState extends State<FortuneBar> with SingleTickerProviderStateM
   @override
   void didUpdateWidget(FortuneBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.duration != oldWidget.duration ||
-        widget.curve != oldWidget.curve ||
-        widget.selected != oldWidget.selected ||
-        widget.animateFirst != oldWidget.animateFirst) {
-      _animationManager.dispose();
-      _animationManager = FortuneAnimationManager(
-        vsync: this,
-        duration: widget.duration,
-        curve: widget.curve,
-        selected: widget.selected,
-        animateFirst: widget.animateFirst,
-        onAnimationStart: () => widget.onAnimationStart?.call(),
-        onAnimationEnd: () => widget.onAnimationEnd?.call(),
-      );
+    if (widget.duration != oldWidget.duration) {
+      _animationManager.duration = widget.duration;
     }
+    if (widget.curve != oldWidget.curve) {
+      _animationManager.curve = widget.curve;
+    }
+    if (widget.selected != oldWidget.selected) {
+      _animationManager.updateSelected(widget.selected);
+    }
+    // animateFirst is only for initState
   }
 
   @override
