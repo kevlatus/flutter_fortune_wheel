@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 
 import '../core/core.dart';
 import '../indicators/indicators.dart';
+import '../util.dart';
 
 part 'fortune_wheel.dart';
 part 'slice.dart';
