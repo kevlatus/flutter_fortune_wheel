@@ -291,7 +291,7 @@ class DirectionalPanPhysics extends PanPhysics {
 ///
 /// See also:
 ///  * [PanPhysics], which implements pan behavior
-class PanAwareBuilder extends HookWidget {
+class PanAwareBuilder extends StatefulWidget {
   /// The builder, which is called with the current [PanState] whenever it
   /// changes.
   final Widget Function(BuildContext, PanState) builder;
@@ -313,53 +313,99 @@ class PanAwareBuilder extends HookWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    var panState = useValueListenable(physics);
-    final returnAnimCtrl = useAnimationController(duration: physics.duration);
-    final returnAnim = CurvedAnimation(
-      parent: returnAnimCtrl,
-      curve: physics.curve,
-    );
+  _PanAwareBuilderState createState() => _PanAwareBuilderState();
+}
 
-    useValueChanged<bool, Future<void>>(
-      panState.isPanning,
-      (oldValue, _) async {
-        if (!oldValue) {
-          returnAnimCtrl.reset();
-        } else {
-          await returnAnimCtrl.forward(from: 0.0);
-        }
-      },
-    );
+class _PanAwareBuilderState extends State<PanAwareBuilder>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _returnAnimCtrl;
+  late Animation<double> _returnAnim;
+  late PanState _lastPanState;
 
-    useValueChanged<bool, Future<void>>(panState.wasFlung, (oldValue, _) async {
-      if (panState.wasFlung) {
-        await Future.microtask(() => onFling?.call());
+  @override
+  void initState() {
+    super.initState();
+    _returnAnimCtrl = AnimationController(
+      vsync: this,
+      duration: widget.physics.duration,
+    );
+    _returnAnim = CurvedAnimation(
+      parent: _returnAnimCtrl,
+      curve: widget.physics.curve,
+    );
+    _lastPanState = widget.physics.value;
+    widget.physics.addListener(_handlePhysicsChange);
+  }
+
+  @override
+  void didUpdateWidget(PanAwareBuilder oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.physics != widget.physics) {
+      oldWidget.physics.removeListener(_handlePhysicsChange);
+      widget.physics.addListener(_handlePhysicsChange);
+      _returnAnimCtrl.duration = widget.physics.duration;
+      _returnAnim = CurvedAnimation(
+        parent: _returnAnimCtrl,
+        curve: widget.physics.curve,
+      );
+      _lastPanState = widget.physics.value;
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.physics.removeListener(_handlePhysicsChange);
+    _returnAnimCtrl.dispose();
+    super.dispose();
+  }
+
+  void _handlePhysicsChange() {
+    final panState = widget.physics.value;
+
+    if (panState.isPanning != _lastPanState.isPanning) {
+      if (!_lastPanState.isPanning) {
+        _returnAnimCtrl.reset();
+      } else {
+        _returnAnimCtrl.forward(from: 0.0);
       }
-    });
+    }
+
+    if (panState.wasFlung != _lastPanState.wasFlung) {
+      if (panState.wasFlung) {
+        Future.microtask(() => widget.onFling?.call());
+      }
+    }
+
+    _lastPanState = panState;
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var panState = widget.physics.value;
 
     return LayoutBuilder(builder: (context, constraints) {
-      physics.size = Size(constraints.maxWidth, constraints.maxHeight);
+      widget.physics.size = Size(constraints.maxWidth, constraints.maxHeight);
 
       return GestureDetector(
-        behavior: behavior,
-        onPanStart: physics.handlePanStart,
-        onPanUpdate: physics.handlePanUpdate,
-        onPanEnd: physics.handlePanEnd,
+        behavior: widget.behavior,
+        onPanStart: widget.physics.handlePanStart,
+        onPanUpdate: widget.physics.handlePanUpdate,
+        onPanEnd: widget.physics.handlePanEnd,
         child: AnimatedBuilder(
-            animation: returnAnim,
+            animation: _returnAnim,
             builder: (context, _) {
-              final mustApplyEasing = returnAnimCtrl.isAnimating ||
-                  returnAnimCtrl.status == AnimationStatus.completed;
+              final mustApplyEasing = _returnAnimCtrl.isAnimating ||
+                  _returnAnimCtrl.status == AnimationStatus.completed;
 
               if (mustApplyEasing) {
                 panState = panState.copyWith(
-                  distance: panState.distance * (1 - returnAnim.value),
+                  distance: panState.distance * (1 - _returnAnim.value),
                 );
               }
 
               return Builder(
-                builder: (context) => builder(context, panState),
+                builder: (context) => widget.builder(context, panState),
               );
             }),
       );
