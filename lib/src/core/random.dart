@@ -4,6 +4,9 @@ part of 'core.dart';
 
 /// Static methods for common tasks when working with [FortuneWidget]s.
 abstract class Fortune {
+  /// The value to use to indicate that the fortune wheel should spin indefinitely.
+  static const int indefinite = -1;
+
   /// Generates a random integer uniformly distributed in the range
   /// from [min], inclusive, to [max], exclusive.
   ///
