@@ -23,10 +23,13 @@ class FortuneBarPage extends HookWidget {
 
     void handleRoll() {
       if (isIndefinite.value) {
-        selected.add(Fortune.indefinite);
-        Future.delayed(const Duration(seconds: 2), () {
+        if (isAnimating.value) {
+          // Stop an ongoing indefinite spin by sending a definitive target
           selected.add(roll(Constants.fortuneValues.length));
-        });
+        } else {
+          // Start indefinite spin
+          selected.add(Fortune.indefinite);
+        }
       } else {
         selected.add(
           roll(Constants.fortuneValues.length),
@@ -52,7 +55,8 @@ class FortuneBarPage extends HookWidget {
           RollButtonWithPreview(
             selected: selectedIndex,
             items: Constants.fortuneValues,
-            onPressed: isAnimating.value ? null : handleRoll,
+            onPressed: (isIndefinite.value || !isAnimating.value) ? handleRoll : null,
+            isStopMode: isIndefinite.value && isAnimating.value,
           ),
           SizedBox(height: 8),
           Expanded(

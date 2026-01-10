@@ -103,7 +103,7 @@ class FortuneBar extends StatefulWidget implements FortuneWidget {
 }
 
 class _FortuneBarState extends State<FortuneBar>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late FortuneAnimationManager _animationManager;
   double _scrollWeightOffset = 0;
   int _previousIndex = 0;
@@ -133,8 +133,22 @@ class _FortuneBarState extends State<FortuneBar>
     final oldIndex = _previousIndex;
     final newIndex = _animationManager.selectedIndex.value;
 
-    final currentRotation = _animationManager.animation.value;
     final totalWeight = _getTotalWeight();
+
+    // If we are stopping from an indefinite spin, the controller's animation
+    // value may not reflect the current visual position. In that case we
+    // compute the effective scroll weight directly from the ticker-backed
+    // `progress` (which accumulates cycles) so the transition to the
+    // definitive selection starts from the true current position.
+    if (oldIndex == Fortune.indefinite) {
+      final animationValue = _animationManager.progress.value;
+      final oldScrollWeight = animationValue * widget.rotationCount * totalWeight;
+      _scrollWeightOffset = oldScrollWeight;
+      _previousIndex = newIndex;
+      return;
+    }
+
+    final currentRotation = _animationManager.animation.value;
 
     final oldTarget = _getItemCenterWeight(oldIndex);
     final oldTotalWeight = widget.rotationCount * totalWeight + oldTarget;
@@ -219,7 +233,7 @@ class _FortuneBarState extends State<FortuneBar>
             final totalWidth = totalWeight * unitWidth;
 
             return AnimatedBuilder(
-              animation: _animationManager.animation,
+              animation: _animationManager.progress,
               builder: (context, _) {
                 // Calculate Target
                 final selectedIndex = _animationManager.selectedIndex.value;
@@ -240,10 +254,18 @@ class _FortuneBarState extends State<FortuneBar>
                 // Current Scroll Weight
                 // Logic: _scrollWeightOffset * (1 - t) + t * targetTotalScrollWeight
 
-                final animationValue = _animationManager.animation.value;
-                final currentScrollWeight = _scrollWeightOffset * (1 - animationValue) +
+                final isIndefinite = _animationManager.selectedIndex.value == Fortune.indefinite;
+                final animationValue = _animationManager.progress.value;
+
+                final currentScrollWeight = isIndefinite
+                    // For indefinite mode, spin continuously by advancing the
+                    // scroll weight proportional to rotation count and elapsed
+                    // cycles so the visual strip scrolls until stopped.
+                    ? animationValue * widget.rotationCount * totalWeight +
+                        panWeight * isAnimatingPanFactor
+                    : _scrollWeightOffset * (1 - animationValue) +
                         animationValue * targetTotalScrollWeight +
-                    panWeight * isAnimatingPanFactor;
+                        panWeight * isAnimatingPanFactor;
 
                 final scrollOffset = currentScrollWeight * unitWidth;
 

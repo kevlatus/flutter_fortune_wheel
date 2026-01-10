@@ -317,7 +317,7 @@ class PanAwareBuilder extends StatefulWidget {
 }
 
 class _PanAwareBuilderState extends State<PanAwareBuilder>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _returnAnimCtrl;
   late Animation<double> _returnAnim;
   late PanState _lastPanState;

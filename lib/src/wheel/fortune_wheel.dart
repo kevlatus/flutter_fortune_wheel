@@ -13,7 +13,8 @@ Offset _calculateWheelOffset(
 }
 
 double _calculateSliceAngle(int index, List<FortuneItem> items) {
-  final totalWeight = items.fold<double>(0, (prev, element) => prev + element.weight);
+  final totalWeight =
+      items.fold<double>(0, (prev, element) => prev + element.weight);
   final weightBefore = items
       .sublist(0, index)
       .fold<double>(0, (prev, element) => prev + element.weight);
@@ -247,33 +248,24 @@ class _FortuneWheelState extends State<FortuneWheel>
     final oldIndex = _previousIndex;
     final newIndex = _animationManager.selectedIndex.value;
 
-    final currentRotation = _animationManager.animation.value;
     final oldSelectedAngle = _getAngleForIndex(oldIndex);
 
-    // We want to calculate the current actual angle of rotation.
-    // However, build() uses _rotationOffset * (1 - animation.value).
-    // So the previous state calculation is slightly complex.
-    // But conceptually, _rotationOffset decays to 0.
-    // So if the previous animation finished (value=1), the offset is 0.
-    // If it was interrupted (e.g. infinite spin), value might be anything.
-    // But in infinite spin, we likely want to use the standard rotation formula.
-    // Let's assume standard rotation logic applies for extracting "current pos".
-
-    // Wait, if we use the new formula:
-    // rotationAngle = _rotationOffset * (1 - value) + widget._getAngle(value);
-
-    final oldRotationAngle = _rotationOffset * (1 - currentRotation) + widget._getAngle(currentRotation);
+    // If the previous selection was indefinite, the visual rotation angle is
+    // derived from the ticker-backed `progress` value. Use that value so the
+    // transition to the definitive selection starts from the real current
+    // rotation instead of assuming the controller's animation value.
+    double oldRotationAngle;
+    if (oldIndex == Fortune.indefinite) {
+      oldRotationAngle = widget._getAngle(_animationManager.progress.value);
+    } else {
+      final currentRotation = _animationManager.animation.value;
+      oldRotationAngle = _rotationOffset * (1 - currentRotation) +
+          widget._getAngle(currentRotation);
+    }
 
     final newSelectedAngle = _getAngleForIndex(newIndex);
 
     // We want the new animation to start at the same total angle.
-    // newTotalAngle(0) = newSelectedAngle + newRotationAngle(0).
-    // newRotationAngle(0) = _newRotationOffset * (1 - 0) + widget._getAngle(0)
-    //                     = _newRotationOffset.
-
-    // So: oldSelectedAngle + oldRotationAngle = newSelectedAngle + _newRotationOffset.
-    // _newRotationOffset = oldSelectedAngle + oldRotationAngle - newSelectedAngle.
-
     final oldTotal = oldSelectedAngle + oldRotationAngle;
     _rotationOffset = oldTotal - newSelectedAngle;
 
@@ -322,20 +314,22 @@ class _FortuneWheelState extends State<FortuneWheel>
     }
 
     final items = widget.items;
-    final totalWeight = items.fold<double>(0, (prev, element) => prev + element.weight);
+    final totalWeight =
+        items.fold<double>(0, (prev, element) => prev + element.weight);
 
     // Optimize: this is O(N) inside O(1) call (when index changes).
 
     double weightBefore = 0;
     for (int i = 0; i < index; i++) {
-        weightBefore += items[i].weight;
+      weightBefore += items[i].weight;
     }
     final itemWeight = items[index].weight;
 
     final anglePerWeight = 2 * _math.pi / totalWeight;
     final item0Weight = items[0].weight;
 
-    final offsetFromZero = (weightBefore + itemWeight / 2 - item0Weight / 2) * anglePerWeight;
+    final offsetFromZero =
+        (weightBefore + itemWeight / 2 - item0Weight / 2) * anglePerWeight;
 
     return -offsetFromZero;
   }
@@ -350,7 +344,7 @@ class _FortuneWheelState extends State<FortuneWheel>
         return Stack(
           children: [
             AnimatedBuilder(
-              animation: _animationManager.animation,
+              animation: _animationManager.progress,
               builder: (context, _) {
                 final size = MediaQuery.of(context).size;
                 final meanSize = (size.width + size.height) / 2;
@@ -373,11 +367,16 @@ class _FortuneWheelState extends State<FortuneWheel>
                   final panAngle =
                       panState.distance * panFactor * isAnimatingPanFactor;
 
-                  // Use the interpolation logic:
-                  // rotationAngle = _rotationOffset * (1 - t) + standardRotation(t).
-                  final animationValue = _animationManager.animation.value;
-                  final rotationAngle = _rotationOffset * (1 - animationValue) +
-                      widget._getAngle(animationValue);
+                  // Use progress notifier which yields continuous values in
+                  // indefinite mode and normalized [0,1] for definitive animations.
+                  final isIndefinite = _animationManager.selectedIndex.value ==
+                      Fortune.indefinite;
+                  final animationValue = _animationManager.progress.value;
+
+                  final rotationAngle = isIndefinite
+                      ? widget._getAngle(animationValue)
+                      : (_rotationOffset * (1 - animationValue) +
+                          widget._getAngle(animationValue));
 
                   final alignmentOffset =
                       _calculateAlignmentOffset(widget.alignment);
@@ -395,27 +394,32 @@ class _FortuneWheelState extends State<FortuneWheel>
                   }
 
                   // Optimization: Calculate total weight and accumulated weights once
-                  final totalWeight = widget.items.fold<double>(0, (p, e) => p + e.weight);
+                  final totalWeight =
+                      widget.items.fold<double>(0, (p, e) => p + e.weight);
                   final anglePerWeight = 2 * _math.pi / totalWeight;
                   final item0Weight = widget.items[0].weight;
-                  final angleOffset = -(_math.pi / 2 + (item0Weight * anglePerWeight) / 2);
+                  final angleOffset =
+                      -(_math.pi / 2 + (item0Weight * anglePerWeight) / 2);
 
                   double currentStartAngle = 0;
                   final transformedItems = <TransformedFortuneItem>[];
 
                   for (var i = 0; i < widget.items.length; i++) {
-                      final itemWeight = widget.items[i].weight;
-                      final sweepAngle = itemWeight * anglePerWeight;
+                    final itemWeight = widget.items[i].weight;
+                    final sweepAngle = itemWeight * anglePerWeight;
 
-                      transformedItems.add(
-                        TransformedFortuneItem(
-                            item: widget.items[i],
-                            angle: totalAngle + alignmentOffset + angleOffset + currentStartAngle,
-                            sweepAngle: sweepAngle,
-                            offset: wheelData.offset,
-                        ),
-                      );
-                      currentStartAngle += sweepAngle;
+                    transformedItems.add(
+                      TransformedFortuneItem(
+                        item: widget.items[i],
+                        angle: totalAngle +
+                            alignmentOffset +
+                            angleOffset +
+                            currentStartAngle,
+                        sweepAngle: sweepAngle,
+                        offset: wheelData.offset,
+                      ),
+                    );
+                    currentStartAngle += sweepAngle;
                   }
 
                   return SizedBox.expand(
@@ -484,8 +488,8 @@ class _FortuneWheelState extends State<FortuneWheel>
     if (index == -1) index = 0;
 
     if (_lastVibratedAngle == -1) {
-         _lastVibratedAngle = index.toDouble();
-         return null;
+      _lastVibratedAngle = index.toDouble();
+      return null;
     }
 
     if (_lastVibratedAngle.toInt() == index) {
@@ -516,7 +520,7 @@ class _FortuneWheelState extends State<FortuneWheel>
     _lastVibratedAngle = index.toDouble();
 
     if (hapticImpact == HapticImpact.none) {
-       return index;
+      return index;
     }
 
     return index;

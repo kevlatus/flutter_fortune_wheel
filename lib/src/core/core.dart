@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as _math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:quiver/core.dart';
 
 import '../bar/bar.dart';

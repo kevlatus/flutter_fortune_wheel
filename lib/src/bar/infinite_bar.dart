@@ -71,10 +71,13 @@ class _InfiniteBar extends StatelessWidget {
 
       addIfVisible(screenLeft);
 
-      // Check for wrapping neighbors if totalWidth is small
-      if (totalWidth < size.width + w) {
-          addIfVisible(screenLeft + totalWidth);
-          addIfVisible(screenLeft - totalWidth);
+      // Wrap neighbors to fill the viewport when the total strip width is small.
+      if (totalWidth > 0 && totalWidth < size.width + w) {
+          final repeats = (size.width / totalWidth).ceil() + 1;
+          for (int n = -repeats; n <= repeats; n++) {
+            if (n == 0) continue;
+            addIfVisible(screenLeft + n * totalWidth);
+          }
       }
 
       currentItemStart += w;
