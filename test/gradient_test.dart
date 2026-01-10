@@ -32,6 +32,25 @@ void main() {
 
       expect(find.text('Item 1'), findsOneWidget);
       expect(find.text('Item 2'), findsOneWidget);
+
+      final customPaintFinder = find.byType(CustomPaint);
+
+      bool foundGradient = false;
+      for (final element in customPaintFinder.evaluate()) {
+        final customPaint = element.widget as CustomPaint;
+        final dynamic painter = customPaint.painter;
+        try {
+          // Check if the painter has a gradient property and it matches our gradient
+          if (painter.gradient == gradient) {
+            foundGradient = true;
+            break;
+          }
+        } catch (_) {
+          // Ignore painters that don't have a gradient property
+        }
+      }
+
+      expect(foundGradient, isTrue, reason: 'Could not find a CustomPaint with the expected gradient');
     });
   });
 
@@ -62,6 +81,20 @@ void main() {
       // FortuneBar might render items multiple times for infinite scrolling, so use findsAtLeastNWidgets
       expect(find.text('Item 1'), findsAtLeastNWidgets(1));
       expect(find.text('Item 2'), findsAtLeastNWidgets(1));
+
+      final decoratedBoxFinder = find.byType(DecoratedBox);
+
+      bool foundGradient = false;
+      for (final element in decoratedBoxFinder.evaluate()) {
+        final decoratedBox = element.widget as DecoratedBox;
+        final decoration = decoratedBox.decoration;
+        if (decoration is BoxDecoration && decoration.gradient == gradient) {
+          foundGradient = true;
+          break;
+        }
+      }
+
+      expect(foundGradient, isTrue, reason: 'Could not find a DecoratedBox with the expected gradient');
     });
   });
 }
