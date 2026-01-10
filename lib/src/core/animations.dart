@@ -17,6 +17,10 @@ class FortuneAnimationManager {
   final AnimationController controller;
   late final CurvedAnimation animation;
   final ValueNotifier<int> selectedIndex = ValueNotifier(0);
+  final ValueNotifier<double> rotationOffset = ValueNotifier(0);
+
+  int rotationCount = 1;
+  int itemCount = 1;
 
   final VoidCallback? onAnimationStart;
   final VoidCallback? onAnimationEnd;
@@ -27,14 +31,13 @@ class FortuneAnimationManager {
     required Duration duration,
     required Curve curve,
     required Stream<int> selected,
+    this.rotationCount = 1,
+    this.itemCount = 1,
     this.onAnimationStart,
     this.onAnimationEnd,
   }) : controller = AnimationController(vsync: vsync, duration: duration) {
     animation = CurvedAnimation(parent: controller, curve: curve);
-    _subscription = selected.listen((event) {
-      selectedIndex.value = event;
-      animate();
-    });
+    _subscription = selected.listen(_handleSelection);
   }
 
   void set duration(Duration value) {
@@ -47,10 +50,35 @@ class FortuneAnimationManager {
 
   void updateSelected(Stream<int> selected) {
     _subscription?.cancel();
-    _subscription = selected.listen((event) {
-      selectedIndex.value = event;
+    _subscription = selected.listen(_handleSelection);
+  }
+
+  void _handleSelection(int event) {
+    if (controller.isAnimating && selectedIndex.value == Fortune.indefinite) {
+      if (event == Fortune.indefinite) {
+        return;
+      }
+    }
+
+    final oldIndex = selectedIndex.value;
+    final newIndex = event;
+    final oldAngle = _getAngle(oldIndex, controller.value);
+    final newAngle = _getAngle(newIndex, 0);
+    final diff = oldAngle - newAngle;
+
+    rotationOffset.value += diff;
+    selectedIndex.value = event;
+
+    if (event == Fortune.indefinite) {
+      controller.repeat();
+    } else {
       animate();
-    });
+    }
+  }
+
+  double _getAngle(int index, double progress) {
+    return (-2 * _math.pi * index / itemCount) +
+        (2 * _math.pi * rotationCount * progress);
   }
 
   Future<void> animate() async {
@@ -72,5 +100,6 @@ class FortuneAnimationManager {
     _subscription?.cancel();
     controller.dispose();
     selectedIndex.dispose();
+    rotationOffset.dispose();
   }
 }

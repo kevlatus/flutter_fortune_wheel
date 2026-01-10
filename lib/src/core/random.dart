@@ -4,6 +4,10 @@ part of 'core.dart';
 
 /// Static methods for common tasks when working with [FortuneWidget]s.
 abstract class Fortune {
+  /// The value to be sent to the [FortuneWidget.selected] stream to make the
+  /// widget spin indefinitely.
+  static const int indefinite = -1;
+
   /// Generates a random integer uniformly distributed in the range
   /// from [min], inclusive, to [max], exclusive.
   ///

@@ -217,6 +217,8 @@ class _FortuneWheelState extends State<FortuneWheel>
       duration: widget.duration,
       curve: widget.curve,
       selected: widget.selected,
+      rotationCount: widget.rotationCount,
+      itemCount: widget.items.length,
       onAnimationStart: () => widget.onAnimationStart?.call(),
       onAnimationEnd: () => widget.onAnimationEnd?.call(),
     );
@@ -258,6 +260,12 @@ class _FortuneWheelState extends State<FortuneWheel>
     if (widget.curve != oldWidget.curve) {
       _animationManager.curve = widget.curve;
     }
+    if (widget.items.length != oldWidget.items.length) {
+      _animationManager.itemCount = widget.items.length;
+    }
+    if (widget.rotationCount != oldWidget.rotationCount) {
+      _animationManager.rotationCount = widget.rotationCount;
+    }
     if (widget.selected != oldWidget.selected) {
       _animationManager.updateSelected(widget.selected);
     }
@@ -273,7 +281,10 @@ class _FortuneWheelState extends State<FortuneWheel>
         return Stack(
           children: [
             AnimatedBuilder(
-              animation: _animationManager.animation,
+              animation: Listenable.merge([
+                _animationManager.animation,
+                _animationManager.rotationOffset,
+              ]),
               builder: (context, _) {
                 final size = MediaQuery.of(context).size;
                 final meanSize = (size.width + size.height) / 2;
@@ -298,7 +309,10 @@ class _FortuneWheelState extends State<FortuneWheel>
                       widget._getAngle(_animationManager.animation.value);
                   final alignmentOffset =
                       _calculateAlignmentOffset(widget.alignment);
-                  final totalAngle = selectedAngle + panAngle + rotationAngle;
+                  final totalAngle = selectedAngle +
+                      panAngle +
+                      rotationAngle +
+                      _animationManager.rotationOffset.value;
 
                   final focusedIndex = _borderCross(
                     totalAngle,
