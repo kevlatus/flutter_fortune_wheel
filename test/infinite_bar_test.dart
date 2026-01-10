@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'test_helpers.dart';
 
 void main() {
-  testWidgets('infinite bar wraps items to fill viewport', (WidgetTester tester) async {
+  testWidgets('infinite bar wraps items to fill viewport', (tester) async {
     await pumpFortuneWidget(
       tester,
       FortuneBar(

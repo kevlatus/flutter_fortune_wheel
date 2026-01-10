@@ -65,11 +65,11 @@ class FortuneAnimationManager {
     });
   }
 
-  void set duration(Duration value) {
+  set duration(Duration value) {
     controller.duration = value;
   }
 
-  void set curve(Curve value) {
+  set curve(Curve value) {
     animation.curve = value;
   }
 
@@ -89,14 +89,16 @@ class FortuneAnimationManager {
     // This ensures a running indefinite repeat can be stopped when a target
     // index is requested.
     // ignore: avoid_print
-    print('animate() called sel=${selectedIndex.value} isAnimating=${controller.isAnimating} tickerActive=${_indefiniteTicker?.isActive}');
+    print(
+        'animate() called sel=${selectedIndex.value} isAnimating=${controller.isAnimating} tickerActive=${_indefiniteTicker?.isActive}');
 
     if (controller.isAnimating) {
       if (selectedIndex.value != Fortune.indefinite) {
         // Stop any running repeat and reset cycle tracking so subsequent
         // definitive animations behave normally.
         // ignore: avoid_print
-        print('animate: stopping running controller for definitive selection ${selectedIndex.value}');
+        print(
+            'animate: stopping running controller for definitive selection ${selectedIndex.value}');
         controller.stop();
         _stopIndefinite();
         _indefiniteCycles = 0.0;
@@ -123,7 +125,8 @@ class FortuneAnimationManager {
       } else {
         // Stop any ticking indefinite animation and run a definitive animation.
         // ignore: avoid_print
-        print('animate: starting definitive animation to ${selectedIndex.value}');
+        print(
+            'animate: starting definitive animation to ${selectedIndex.value}');
         _stopIndefinite();
         _indefiniteCycles = 0.0;
         await controller.forward(from: 0);

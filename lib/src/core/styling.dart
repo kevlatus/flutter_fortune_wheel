@@ -39,7 +39,7 @@ class FortuneItemStyle {
   FortuneItemStyle.disabled(ThemeData theme, {double opacity = 0.0})
       : this(
           color: Color.alphaBlend(
-            theme.disabledColor.withOpacity(opacity),
+            theme.disabledColor.withValues(alpha: opacity),
             theme.disabledColor,
           ),
           borderWidth: 0.0,
@@ -141,7 +141,7 @@ class UniformStyleStrategy
       () => FortuneItemStyle(
         color: color ??
             Color.alphaBlend(
-              theme.colorScheme.primary.withOpacity(0.3),
+              theme.colorScheme.primary.withValues(alpha: 0.3),
               theme.colorScheme.surface,
             ),
         borderColor: borderColor ?? theme.colorScheme.primary,
@@ -166,7 +166,7 @@ class AlternatingStyleStrategy
 
   Color _getFillColor(ThemeData theme, int index, int itemCount) {
     final color = theme.colorScheme.primary;
-    final background = theme.colorScheme.background;
+    final background = theme.colorScheme.surface;
     final opacity = itemCount % 2 == 1 && index == 0
         ? 0.75
         : index % 2 == 0
@@ -174,7 +174,7 @@ class AlternatingStyleStrategy
             : 1.0;
 
     return Color.alphaBlend(
-      color.withOpacity(opacity),
+      color.withValues(alpha: opacity),
       background,
     );
   }

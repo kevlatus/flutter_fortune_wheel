@@ -3,7 +3,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
-import 'package:flutter_fortune_wheel/src/wheel/wheel.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'test_helpers.dart';
@@ -55,16 +54,11 @@ void main() {
       // Let's get the render object of the Text and walk up to find the constrained width.
 
       double? getWidth(Finder finder) {
-        final element = finder.evaluate().first;
-        final renderObject = element.renderObject as RenderBox;
-        // This is the Text size.
-        // We want the size of the container _InfiniteBar put it in.
-        // Walk up until we find a SizedBox that determines the slot width.
-        // Or simpler: The DecoratedBox in _FortuneBarItem fills the SizedBox.
-        // So checking the size of DecoratedBox (ancestor of Text) should give us the slot size.
-
-        final decoratedBoxFinder = find.ancestor(of: finder, matching: find.byType(DecoratedBox)).first;
-        final decoratedBoxRenderObject = tester.renderObject(decoratedBoxFinder) as RenderBox;
+        final decoratedBoxFinder = find
+            .ancestor(of: finder, matching: find.byType(DecoratedBox))
+            .first;
+        final decoratedBoxRenderObject =
+            tester.renderObject(decoratedBoxFinder) as RenderBox;
         return decoratedBoxRenderObject.size.width;
       }
 
@@ -81,7 +75,7 @@ void main() {
 
   group('FortuneWheel Weighted Items', () {
     testWidgets('renders items with different angles', (tester) async {
-       final items = [
+      final items = [
         FortuneItem(child: Text('1'), weight: 1),
         FortuneItem(child: Text('3'), weight: 3),
       ];
@@ -108,7 +102,10 @@ void main() {
       // We can try to find the CustomMultiChildLayout and check its delegate.
 
       double? getAngle(Finder textFinder) {
-        final layoutFinder = find.ancestor(of: textFinder, matching: find.byType(CustomMultiChildLayout)).first;
+        final layoutFinder = find
+            .ancestor(
+                of: textFinder, matching: find.byType(CustomMultiChildLayout))
+            .first;
         final layout = tester.widget(layoutFinder) as CustomMultiChildLayout;
         // The delegate is _CircleSliceLayoutDelegate. It has 'angle' property.
         // Since it is private, we can't cast it easily.

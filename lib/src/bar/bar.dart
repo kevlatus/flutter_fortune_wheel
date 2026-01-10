@@ -1,7 +1,5 @@
 library bar;
 
-import 'dart:math' as _math;
-
 import 'package:flutter/material.dart';
 
 import '../core/core.dart';

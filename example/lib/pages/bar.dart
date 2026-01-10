@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -55,7 +54,8 @@ class FortuneBarPage extends HookWidget {
           RollButtonWithPreview(
             selected: selectedIndex,
             items: Constants.fortuneValues,
-            onPressed: (isIndefinite.value || !isAnimating.value) ? handleRoll : null,
+            onPressed:
+                (isIndefinite.value || !isAnimating.value) ? handleRoll : null,
             isStopMode: isIndefinite.value && isAnimating.value,
           ),
           SizedBox(height: 8),

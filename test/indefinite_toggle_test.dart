@@ -4,7 +4,8 @@ import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('pressing toggle starts indefinite then stops on second press', (WidgetTester tester) async {
+  testWidgets('pressing toggle starts indefinite then stops on second press',
+      (tester) async {
     final selected = StreamController<int>();
     final isAnimating = ValueNotifier<bool>(false);
 
@@ -73,6 +74,7 @@ void main() {
       }
     }
 
-    expect(stopped, isTrue, reason: 'Expected indefinite spin to stop after pressing');
+    expect(stopped, isTrue,
+        reason: 'Expected indefinite spin to stop after pressing');
   });
 }

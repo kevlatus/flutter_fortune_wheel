@@ -15,4 +15,3 @@ part 'slice_clipper.dart';
 part 'slice_layout_delegate.dart';
 part 'slice_painter.dart';
 part 'sliced_circle.dart';
-part 'wheel_indicator.dart';

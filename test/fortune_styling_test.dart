@@ -61,23 +61,28 @@ void main() {
       final boxes = tester.widgetList<DecoratedBox>(find.byType(DecoratedBox));
       print('Found ${boxes.length} DecoratedBoxes');
 
-      bool foundCorrectDecoration = false;
+      var foundCorrectDecoration = false;
       for (var box in boxes) {
-         if (box.decoration is BoxDecoration) {
-             final decoration = box.decoration as BoxDecoration;
-             print('BoxDecoration: color=${decoration.color}, border=${decoration.border}');
+        if (box.decoration is BoxDecoration) {
+          final decoration = box.decoration as BoxDecoration;
+          print(
+              // ignore: lines_longer_than_80_chars
+              'BoxDecoration: color=${decoration.color}, border=${decoration.border}');
 
-             if (decoration.color == Colors.red) {
-                 if (decoration.border != null && decoration.border!.top.color == Colors.green) {
-                      foundCorrectDecoration = true;
-                 }
-             }
-         }
+          if (decoration.color == Colors.red) {
+            if (decoration.border != null &&
+                decoration.border!.top.color == Colors.green) {
+              foundCorrectDecoration = true;
+            }
+          }
+        }
       }
 
-      expect(foundCorrectDecoration, isTrue, reason: 'Could not find DecoratedBox with red color and green border');
+      expect(foundCorrectDecoration, isTrue,
+          reason:
+              'Could not find DecoratedBox with red color and green border');
 
-      final textWidget = tester.firstWidget<Text>(find.text('Item 1'));
+      tester.firstWidget<Text>(find.text('Item 1'));
       final textContext = tester.element(find.text('Item 1').first);
       final defaultTextStyle = DefaultTextStyle.of(textContext);
 

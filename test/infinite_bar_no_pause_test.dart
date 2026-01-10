@@ -1,10 +1,13 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('FortuneBar continuous motion during indefinite spin (no per-cycle pause)', (WidgetTester tester) async {
+  testWidgets(
+      'FortuneBar continuous motion during indefinite spin (no per-cycle pause)',
+      (tester) async {
     final selected = StreamController<int>();
 
     await tester.pumpWidget(

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -7,7 +6,7 @@ import 'test_helpers.dart';
 
 void main() {
   group('FortuneWheel with Gradient', () {
-    testWidgets('renders gradient when provided', (WidgetTester tester) async {
+    testWidgets('renders gradient when provided', (tester) async {
       final gradient = LinearGradient(
         colors: [Colors.red, Colors.blue],
       );
@@ -35,7 +34,7 @@ void main() {
 
       final customPaintFinder = find.byType(CustomPaint);
 
-      bool foundGradient = false;
+      var foundGradient = false;
       for (final element in customPaintFinder.evaluate()) {
         final customPaint = element.widget as CustomPaint;
         final dynamic painter = customPaint.painter;
@@ -50,12 +49,13 @@ void main() {
         }
       }
 
-      expect(foundGradient, isTrue, reason: 'Could not find a CustomPaint with the expected gradient');
+      expect(foundGradient, isTrue,
+          reason: 'Could not find a CustomPaint with the expected gradient');
     });
   });
 
   group('FortuneBar with Gradient', () {
-    testWidgets('renders gradient when provided', (WidgetTester tester) async {
+    testWidgets('renders gradient when provided', (tester) async {
       final gradient = LinearGradient(
         colors: [Colors.red, Colors.blue],
       );
@@ -84,7 +84,7 @@ void main() {
 
       final decoratedBoxFinder = find.byType(DecoratedBox);
 
-      bool foundGradient = false;
+      var foundGradient = false;
       for (final element in decoratedBoxFinder.evaluate()) {
         final decoratedBox = element.widget as DecoratedBox;
         final decoration = decoratedBox.decoration;
@@ -94,7 +94,8 @@ void main() {
         }
       }
 
-      expect(foundGradient, isTrue, reason: 'Could not find a DecoratedBox with the expected gradient');
+      expect(foundGradient, isTrue,
+          reason: 'Could not find a DecoratedBox with the expected gradient');
     });
   });
 }

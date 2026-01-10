@@ -1,10 +1,11 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('FortuneBar moves during indefinite spin', (WidgetTester tester) async {
+  testWidgets('FortuneBar moves during indefinite spin', (tester) async {
     final selected = StreamController<int>();
 
     await tester.pumpWidget(
@@ -45,6 +46,7 @@ void main() {
 
     final box2 = tester.getTopLeft(aFinder.first);
 
-    expect(box1 != box2, isTrue, reason: 'Expected position to change during indefinite spin');
+    expect(box1 != box2, isTrue,
+        reason: 'Expected position to change during indefinite spin');
   });
 }

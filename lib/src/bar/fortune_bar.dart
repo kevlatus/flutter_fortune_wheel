@@ -102,8 +102,7 @@ class FortuneBar extends StatefulWidget implements FortuneWidget {
   _FortuneBarState createState() => _FortuneBarState();
 }
 
-class _FortuneBarState extends State<FortuneBar>
-    with TickerProviderStateMixin {
+class _FortuneBarState extends State<FortuneBar> with TickerProviderStateMixin {
   late FortuneAnimationManager _animationManager;
   double _scrollWeightOffset = 0;
   int _previousIndex = 0;
@@ -123,7 +122,7 @@ class _FortuneBarState extends State<FortuneBar>
     _animationManager.selectedIndex.addListener(_handleSelectionChange);
 
     if (widget.animateFirst) {
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         _animationManager.animate();
       });
     }
@@ -142,7 +141,8 @@ class _FortuneBarState extends State<FortuneBar>
     // definitive selection starts from the true current position.
     if (oldIndex == Fortune.indefinite) {
       final animationValue = _animationManager.progress.value;
-      final oldScrollWeight = animationValue * widget.rotationCount * totalWeight;
+      final oldScrollWeight =
+          animationValue * widget.rotationCount * totalWeight;
       _scrollWeightOffset = oldScrollWeight;
       _previousIndex = newIndex;
       return;
@@ -153,34 +153,26 @@ class _FortuneBarState extends State<FortuneBar>
     final oldTarget = _getItemCenterWeight(oldIndex);
     final oldTotalWeight = widget.rotationCount * totalWeight + oldTarget;
 
-    // Use previous interpolation logic to reconstruct where we are.
-    // oldScrollWeight = _scrollWeightOffset * (1 - t) + t * oldTotalWeight
-
-    final oldScrollWeight = _scrollWeightOffset * (1 - currentRotation) + currentRotation * oldTotalWeight;
-
-    final newTarget = _getItemCenterWeight(newIndex);
-    // newTotalWeight = widget.rotationCount * totalWeight + newTarget;
-    // newScrollWeight(0) = _newOffset * (1-0) + 0 * ... = _newOffset.
-
-    // We want oldScrollWeight = newScrollWeight(0) = _newOffset.
+    final oldScrollWeight = _scrollWeightOffset * (1 - currentRotation) +
+        currentRotation * oldTotalWeight;
 
     _scrollWeightOffset = oldScrollWeight;
     _previousIndex = newIndex;
   }
 
   double _getTotalWeight() {
-     return widget.items.fold<double>(0, (p, e) => p + e.weight);
+    return widget.items.fold<double>(0, (p, e) => p + e.weight);
   }
 
   double _getItemCenterWeight(int index) {
-      if (index < 0 || index >= widget.items.length) return 0;
+    if (index < 0 || index >= widget.items.length) return 0;
 
-      double targetCenterWeight = 0;
-      for (int i = 0; i < index; i++) {
-        targetCenterWeight += widget.items[i].weight;
-      }
-      targetCenterWeight += widget.items[index].weight / 2;
-      return targetCenterWeight;
+    double targetCenterWeight = 0;
+    for (var i = 0; i < index; i++) {
+      targetCenterWeight += widget.items[i].weight;
+    }
+    targetCenterWeight += widget.items[index].weight / 2;
+    return targetCenterWeight;
   }
 
   @override
@@ -251,10 +243,8 @@ class _FortuneBarState extends State<FortuneBar>
                 final isAnimating = _animationManager.controller.isAnimating;
                 final isAnimatingPanFactor = isAnimating ? 0 : 1;
 
-                // Current Scroll Weight
-                // Logic: _scrollWeightOffset * (1 - t) + t * targetTotalScrollWeight
-
-                final isIndefinite = _animationManager.selectedIndex.value == Fortune.indefinite;
+                final isIndefinite =
+                    _animationManager.selectedIndex.value == Fortune.indefinite;
                 final animationValue = _animationManager.progress.value;
 
                 final currentScrollWeight = isIndefinite
@@ -291,8 +281,11 @@ class _FortuneBarState extends State<FortuneBar>
                           )
                       ],
                     ),
+                    // ignore: lines_longer_than_80_chars
                     // Indicator children are centered in a slot of width `unitWidth`.
+                    // ignore: lines_longer_than_80_chars
                     // To ensure the indicator visual stays proportional to the smallest
+                    // ignore: lines_longer_than_80_chars
                     // item, we constrain the indicator to 80% of the smallest item width.
                     for (var it in widget.indicators)
                       IgnorePointer(

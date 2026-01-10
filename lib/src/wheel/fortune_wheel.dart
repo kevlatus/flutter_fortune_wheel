@@ -12,27 +12,6 @@ Offset _calculateWheelOffset(
   return Offset(offsetX, constraints.maxHeight / 2);
 }
 
-double _calculateSliceAngle(int index, List<FortuneItem> items) {
-  final totalWeight =
-      items.fold<double>(0, (prev, element) => prev + element.weight);
-  final weightBefore = items
-      .sublist(0, index)
-      .fold<double>(0, (prev, element) => prev + element.weight);
-  final itemWeight = items[index].weight;
-
-  final anglePerWeight = 2 * _math.pi / totalWeight;
-  final startAngle = weightBefore * anglePerWeight;
-
-  // The angle offset puts the center of the first slice at the top.
-  // We want the center of the first slice (index 0) to be at -pi/2.
-  // Center of first slice is: startAngle_0 + itemAngle_0 / 2 = 0 + itemAngle_0 / 2.
-  // So we need to subtract (pi/2 + itemAngle_0 / 2).
-  final firstItemAngle = items[0].weight * anglePerWeight;
-  final angleOffset = -(_math.pi / 2 + firstItemAngle / 2);
-
-  return startAngle + angleOffset;
-}
-
 double _calculateAlignmentOffset(Alignment alignment) {
   if (alignment == Alignment.topRight) {
     return _math.pi * 0.25;
@@ -238,7 +217,7 @@ class _FortuneWheelState extends State<FortuneWheel>
     _animationManager.selectedIndex.addListener(_handleSelectionChange);
 
     if (widget.animateFirst) {
-      WidgetsBinding.instance!.addPostFrameCallback((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         _animationManager.animate();
       });
     }
@@ -320,7 +299,7 @@ class _FortuneWheelState extends State<FortuneWheel>
     // Optimize: this is O(N) inside O(1) call (when index changes).
 
     double weightBefore = 0;
-    for (int i = 0; i < index; i++) {
+    for (var i = 0; i < index; i++) {
       weightBefore += items[i].weight;
     }
     final itemWeight = items[index].weight;
@@ -368,6 +347,7 @@ class _FortuneWheelState extends State<FortuneWheel>
                       panState.distance * panFactor * isAnimatingPanFactor;
 
                   // Use progress notifier which yields continuous values in
+                  // ignore: lines_longer_than_80_chars
                   // indefinite mode and normalized [0,1] for definitive animations.
                   final isIndefinite = _animationManager.selectedIndex.value ==
                       Fortune.indefinite;
@@ -393,6 +373,7 @@ class _FortuneWheelState extends State<FortuneWheel>
                         ?.call(focusedIndex % widget.items.length);
                   }
 
+                  // ignore: lines_longer_than_80_chars
                   // Optimization: Calculate total weight and accumulated weights once
                   final totalWeight =
                       widget.items.fold<double>(0, (p, e) => p + e.weight);
@@ -474,7 +455,7 @@ class _FortuneWheelState extends State<FortuneWheel>
     if (target < 0) target += 2 * _math.pi;
 
     double currentAngle = 0;
-    int index = -1;
+    var index = -1;
 
     for (var i = 0; i < items.length; i++) {
       final w = items[i].weight * anglePerWeight;

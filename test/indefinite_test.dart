@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
@@ -8,10 +7,11 @@ import 'test_helpers.dart';
 
 void main() {
   group('FortuneWheel Indefinite Spin', () {
-    testWidgets('supports indefinite spin then stop at target', (WidgetTester tester) async {
+    testWidgets('supports indefinite spin then stop at target', (tester) async {
       final selected = StreamController<int>();
 
-      await pumpFortuneWidget(tester,
+      await pumpFortuneWidget(
+        tester,
         FortuneWheel(
           items: [
             FortuneItem(child: Text('0')),

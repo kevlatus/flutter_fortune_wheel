@@ -30,7 +30,7 @@ class _InfiniteBar extends StatelessWidget {
     // Iterate all items.
     double currentItemStart = 0;
 
-    for (int i = 0; i < children.length; i++) {
+    for (var i = 0; i < children.length; i++) {
       final w = itemWidths[i];
       final itemCenter = currentItemStart + w / 2;
 
@@ -47,8 +47,12 @@ class _InfiniteBar extends StatelessWidget {
       // Dart % operator can be negative.
 
       // Safe normalization:
-      while (relCenter < -totalWidth / 2) relCenter += totalWidth;
-      while (relCenter > totalWidth / 2) relCenter -= totalWidth;
+      while (relCenter < -totalWidth / 2) {
+        relCenter += totalWidth;
+      }
+      while (relCenter > totalWidth / 2) {
+        relCenter -= totalWidth;
+      }
 
       // Determine screen X
       final screenCenter = relCenter + centerOffset;
@@ -57,15 +61,13 @@ class _InfiniteBar extends StatelessWidget {
       // Check visibility and add to list
       void addIfVisible(double left) {
         if (left < size.width && left + w > 0) {
-           visibleItems.add(
-            Positioned(
-              left: left,
-              top: 0,
-              width: w,
-              height: size.height,
-              child: children[i],
-            )
-          );
+          visibleItems.add(Positioned(
+            left: left,
+            top: 0,
+            width: w,
+            height: size.height,
+            child: children[i],
+          ));
         }
       }
 
@@ -73,11 +75,11 @@ class _InfiniteBar extends StatelessWidget {
 
       // Wrap neighbors to fill the viewport when the total strip width is small.
       if (totalWidth > 0 && totalWidth < size.width + w) {
-          final repeats = (size.width / totalWidth).ceil() + 1;
-          for (int n = -repeats; n <= repeats; n++) {
-            if (n == 0) continue;
-            addIfVisible(screenLeft + n * totalWidth);
-          }
+        final repeats = (size.width / totalWidth).ceil() + 1;
+        for (var n = -repeats; n <= repeats; n++) {
+          if (n == 0) continue;
+          addIfVisible(screenLeft + n * totalWidth);
+        }
       }
 
       currentItemStart += w;
