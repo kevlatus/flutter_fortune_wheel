@@ -60,7 +60,11 @@ class FortuneAnimationManager {
 
     await Future.microtask(() => onAnimationStart?.call());
     try {
-      await controller.forward(from: 0);
+      if (selectedIndex.value == Fortune.indefinite) {
+        await controller.repeat();
+      } else {
+        await controller.forward(from: 0);
+      }
     } catch (e) {
       // Controller might be disposed
       return;

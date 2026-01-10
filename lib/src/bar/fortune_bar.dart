@@ -105,6 +105,8 @@ class FortuneBar extends StatefulWidget implements FortuneWidget {
 class _FortuneBarState extends State<FortuneBar>
     with SingleTickerProviderStateMixin {
   late FortuneAnimationManager _animationManager;
+  double _scrollWeightOffset = 0;
+  int _previousIndex = 0;
 
   @override
   void initState() {
@@ -118,6 +120,8 @@ class _FortuneBarState extends State<FortuneBar>
       onAnimationEnd: () => widget.onAnimationEnd?.call(),
     );
 
+    _animationManager.selectedIndex.addListener(_handleSelectionChange);
+
     if (widget.animateFirst) {
       WidgetsBinding.instance!.addPostFrameCallback((_) {
         _animationManager.animate();
@@ -125,8 +129,49 @@ class _FortuneBarState extends State<FortuneBar>
     }
   }
 
+  void _handleSelectionChange() {
+    final oldIndex = _previousIndex;
+    final newIndex = _animationManager.selectedIndex.value;
+
+    final currentRotation = _animationManager.animation.value;
+    final totalWeight = _getTotalWeight();
+
+    final oldTarget = _getItemCenterWeight(oldIndex);
+    final oldTotalWeight = widget.rotationCount * totalWeight + oldTarget;
+
+    // Use previous interpolation logic to reconstruct where we are.
+    // oldScrollWeight = _scrollWeightOffset * (1 - t) + t * oldTotalWeight
+
+    final oldScrollWeight = _scrollWeightOffset * (1 - currentRotation) + currentRotation * oldTotalWeight;
+
+    final newTarget = _getItemCenterWeight(newIndex);
+    // newTotalWeight = widget.rotationCount * totalWeight + newTarget;
+    // newScrollWeight(0) = _newOffset * (1-0) + 0 * ... = _newOffset.
+
+    // We want oldScrollWeight = newScrollWeight(0) = _newOffset.
+
+    _scrollWeightOffset = oldScrollWeight;
+    _previousIndex = newIndex;
+  }
+
+  double _getTotalWeight() {
+     return widget.items.fold<double>(0, (p, e) => p + e.weight);
+  }
+
+  double _getItemCenterWeight(int index) {
+      if (index < 0 || index >= widget.items.length) return 0;
+
+      double targetCenterWeight = 0;
+      for (int i = 0; i < index; i++) {
+        targetCenterWeight += widget.items[i].weight;
+      }
+      targetCenterWeight += widget.items[index].weight / 2;
+      return targetCenterWeight;
+  }
+
   @override
   void dispose() {
+    _animationManager.selectedIndex.removeListener(_handleSelectionChange);
     _animationManager.dispose();
     super.dispose();
   }
@@ -164,8 +209,7 @@ class _FortuneBarState extends State<FortuneBar>
             );
 
             // Calculate weights and dimensions
-            final totalWeight =
-                widget.items.fold<double>(0, (p, e) => p + e.weight);
+            final totalWeight = _getTotalWeight();
             final avgWeight = totalWeight / widget.items.length;
             final visibleWeight = widget.visibleItemCount * avgWeight;
             final unitWidth = size.width / visibleWeight;
@@ -179,11 +223,7 @@ class _FortuneBarState extends State<FortuneBar>
               builder: (context, _) {
                 // Calculate Target
                 final selectedIndex = _animationManager.selectedIndex.value;
-                double targetCenterWeight = 0;
-                for (int i = 0; i < selectedIndex; i++) {
-                  targetCenterWeight += widget.items[i].weight;
-                }
-                targetCenterWeight += widget.items[selectedIndex].weight / 2;
+                final targetCenterWeight = _getItemCenterWeight(selectedIndex);
 
                 final targetTotalScrollWeight =
                     widget.rotationCount * totalWeight + targetCenterWeight;
@@ -198,8 +238,11 @@ class _FortuneBarState extends State<FortuneBar>
                 final isAnimatingPanFactor = isAnimating ? 0 : 1;
 
                 // Current Scroll Weight
-                final currentScrollWeight = _animationManager.animation.value *
-                        targetTotalScrollWeight +
+                // Logic: _scrollWeightOffset * (1 - t) + t * targetTotalScrollWeight
+
+                final animationValue = _animationManager.animation.value;
+                final currentScrollWeight = _scrollWeightOffset * (1 - animationValue) +
+                        animationValue * targetTotalScrollWeight +
                     panWeight * isAnimatingPanFactor;
 
                 final scrollOffset = currentScrollWeight * unitWidth;

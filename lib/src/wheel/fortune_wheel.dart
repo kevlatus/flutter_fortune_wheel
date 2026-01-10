@@ -205,6 +205,8 @@ class _FortuneWheelState extends State<FortuneWheel>
   late AnimationController _arrowController;
   late Animation<double> _arrowAnimation;
   double _lastVibratedAngle = 0;
+  double _rotationOffset = 0;
+  int _previousIndex = 0;
 
   @override
   void initState() {
@@ -232,11 +234,50 @@ class _FortuneWheelState extends State<FortuneWheel>
       onAnimationEnd: () => widget.onAnimationEnd?.call(),
     );
 
+    _animationManager.selectedIndex.addListener(_handleSelectionChange);
+
     if (widget.animateFirst) {
       WidgetsBinding.instance!.addPostFrameCallback((_) {
         _animationManager.animate();
       });
     }
+  }
+
+  void _handleSelectionChange() {
+    final oldIndex = _previousIndex;
+    final newIndex = _animationManager.selectedIndex.value;
+
+    final currentRotation = _animationManager.animation.value;
+    final oldSelectedAngle = _getAngleForIndex(oldIndex);
+
+    // We want to calculate the current actual angle of rotation.
+    // However, build() uses _rotationOffset * (1 - animation.value).
+    // So the previous state calculation is slightly complex.
+    // But conceptually, _rotationOffset decays to 0.
+    // So if the previous animation finished (value=1), the offset is 0.
+    // If it was interrupted (e.g. infinite spin), value might be anything.
+    // But in infinite spin, we likely want to use the standard rotation formula.
+    // Let's assume standard rotation logic applies for extracting "current pos".
+
+    // Wait, if we use the new formula:
+    // rotationAngle = _rotationOffset * (1 - value) + widget._getAngle(value);
+
+    final oldRotationAngle = _rotationOffset * (1 - currentRotation) + widget._getAngle(currentRotation);
+
+    final newSelectedAngle = _getAngleForIndex(newIndex);
+
+    // We want the new animation to start at the same total angle.
+    // newTotalAngle(0) = newSelectedAngle + newRotationAngle(0).
+    // newRotationAngle(0) = _newRotationOffset * (1 - 0) + widget._getAngle(0)
+    //                     = _newRotationOffset.
+
+    // So: oldSelectedAngle + oldRotationAngle = newSelectedAngle + _newRotationOffset.
+    // _newRotationOffset = oldSelectedAngle + oldRotationAngle - newSelectedAngle.
+
+    final oldTotal = oldSelectedAngle + oldRotationAngle;
+    _rotationOffset = oldTotal - newSelectedAngle;
+
+    _previousIndex = newIndex;
   }
 
   void _arrowStatusListener(AnimationStatus status) {
@@ -254,6 +295,7 @@ class _FortuneWheelState extends State<FortuneWheel>
 
   @override
   void dispose() {
+    _animationManager.selectedIndex.removeListener(_handleSelectionChange);
     _arrowController.removeStatusListener(_arrowStatusListener);
     _arrowController.dispose();
     _animationManager.dispose();
@@ -275,6 +317,10 @@ class _FortuneWheelState extends State<FortuneWheel>
   }
 
   double _getAngleForIndex(int index) {
+    if (index < 0 || index >= widget.items.length) {
+      return 0;
+    }
+
     final items = widget.items;
     final totalWeight = items.fold<double>(0, (prev, element) => prev + element.weight);
 
@@ -326,8 +372,13 @@ class _FortuneWheelState extends State<FortuneWheel>
 
                   final panAngle =
                       panState.distance * panFactor * isAnimatingPanFactor;
-                  final rotationAngle =
-                      widget._getAngle(_animationManager.animation.value);
+
+                  // Use the interpolation logic:
+                  // rotationAngle = _rotationOffset * (1 - t) + standardRotation(t).
+                  final animationValue = _animationManager.animation.value;
+                  final rotationAngle = _rotationOffset * (1 - animationValue) +
+                      widget._getAngle(animationValue);
+
                   final alignmentOffset =
                       _calculateAlignmentOffset(widget.alignment);
                   final totalAngle = selectedAngle + panAngle + rotationAngle;
