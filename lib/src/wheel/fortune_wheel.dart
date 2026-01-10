@@ -12,13 +12,24 @@ Offset _calculateWheelOffset(
   return Offset(offsetX, constraints.maxHeight / 2);
 }
 
-double _calculateSliceAngle(int index, int itemCount) {
-  final anglePerChild = 2 * _math.pi / itemCount;
-  final childAngle = anglePerChild * index;
-  // first slice starts at 90 degrees, if 0 degrees is at the top.
+double _calculateSliceAngle(int index, List<FortuneItem> items) {
+  final totalWeight = items.fold<double>(0, (prev, element) => prev + element.weight);
+  final weightBefore = items
+      .sublist(0, index)
+      .fold<double>(0, (prev, element) => prev + element.weight);
+  final itemWeight = items[index].weight;
+
+  final anglePerWeight = 2 * _math.pi / totalWeight;
+  final startAngle = weightBefore * anglePerWeight;
+
   // The angle offset puts the center of the first slice at the top.
-  final angleOffset = -(_math.pi / 2 + anglePerChild / 2);
-  return childAngle + angleOffset;
+  // We want the center of the first slice (index 0) to be at -pi/2.
+  // Center of first slice is: startAngle_0 + itemAngle_0 / 2 = 0 + itemAngle_0 / 2.
+  // So we need to subtract (pi/2 + itemAngle_0 / 2).
+  final firstItemAngle = items[0].weight * anglePerWeight;
+  final angleOffset = -(_math.pi / 2 + firstItemAngle / 2);
+
+  return startAngle + angleOffset;
 }
 
 double _calculateAlignmentOffset(Alignment alignment) {
@@ -263,6 +274,26 @@ class _FortuneWheelState extends State<FortuneWheel>
     }
   }
 
+  double _getAngleForIndex(int index) {
+    final items = widget.items;
+    final totalWeight = items.fold<double>(0, (prev, element) => prev + element.weight);
+
+    // Optimize: this is O(N) inside O(1) call (when index changes).
+
+    double weightBefore = 0;
+    for (int i = 0; i < index; i++) {
+        weightBefore += items[i].weight;
+    }
+    final itemWeight = items[index].weight;
+
+    final anglePerWeight = 2 * _math.pi / totalWeight;
+    final item0Weight = items[0].weight;
+
+    final offsetFromZero = (weightBefore + itemWeight / 2 - item0Weight / 2) * anglePerWeight;
+
+    return -offsetFromZero;
+  }
+
   @override
   Widget build(BuildContext context) {
     return PanAwareBuilder(
@@ -288,10 +319,11 @@ class _FortuneWheelState extends State<FortuneWheel>
 
                   final isAnimatingPanFactor =
                       _animationManager.controller.isAnimating ? 0 : 1;
-                  final selectedAngle = -2 *
-                      _math.pi *
-                      (_animationManager.selectedIndex.value /
-                          widget.items.length);
+
+                  // Calculate selected angle based on weighted items
+                  final selectedIndex = _animationManager.selectedIndex.value;
+                  final selectedAngle = _getAngleForIndex(selectedIndex);
+
                   final panAngle =
                       panState.distance * panFactor * isAnimatingPanFactor;
                   final rotationAngle =
@@ -302,7 +334,7 @@ class _FortuneWheelState extends State<FortuneWheel>
 
                   final focusedIndex = _borderCross(
                     totalAngle,
-                    widget.items.length,
+                    widget.items,
                     widget.hapticImpact,
                     _animateArrow,
                   );
@@ -311,16 +343,29 @@ class _FortuneWheelState extends State<FortuneWheel>
                         ?.call(focusedIndex % widget.items.length);
                   }
 
-                  final transformedItems = [
-                    for (var i = 0; i < widget.items.length; i++)
-                      TransformedFortuneItem(
-                        item: widget.items[i],
-                        angle: totalAngle +
-                            alignmentOffset +
-                            _calculateSliceAngle(i, widget.items.length),
-                        offset: wheelData.offset,
-                      ),
-                  ];
+                  // Optimization: Calculate total weight and accumulated weights once
+                  final totalWeight = widget.items.fold<double>(0, (p, e) => p + e.weight);
+                  final anglePerWeight = 2 * _math.pi / totalWeight;
+                  final item0Weight = widget.items[0].weight;
+                  final angleOffset = -(_math.pi / 2 + (item0Weight * anglePerWeight) / 2);
+
+                  double currentStartAngle = 0;
+                  final transformedItems = <TransformedFortuneItem>[];
+
+                  for (var i = 0; i < widget.items.length; i++) {
+                      final itemWeight = widget.items[i].weight;
+                      final sweepAngle = itemWeight * anglePerWeight;
+
+                      transformedItems.add(
+                        TransformedFortuneItem(
+                            item: widget.items[i],
+                            angle: totalAngle + alignmentOffset + angleOffset + currentStartAngle,
+                            sweepAngle: sweepAngle,
+                            offset: wheelData.offset,
+                        ),
+                      );
+                      currentStartAngle += sweepAngle;
+                  }
 
                   return SizedBox.expand(
                     child: _CircleSlices(
@@ -357,24 +402,45 @@ class _FortuneWheelState extends State<FortuneWheel>
   /// * vibrate and animate arrow when cross border
   int? _borderCross(
     double angle,
-    int itemsNumber,
+    List<FortuneItem> items,
     HapticImpact hapticImpact,
     VoidCallback animateArrow,
   ) {
-    final step = 360 / itemsNumber;
-    final angleDegrees = (angle * 180 / _math.pi).abs() + step / 2;
-    if (step.isNaN ||
-        angleDegrees.isNaN ||
-        _lastVibratedAngle.isNaN ||
-        _lastVibratedAngle.isInfinite ||
-        angleDegrees.isInfinite ||
-        step == 0) {
+    // ... (logic remains same, just ensure it is correct)
+
+    final totalWeight = items.fold<double>(0, (p, e) => p + e.weight);
+    final anglePerWeight = 2 * _math.pi / totalWeight;
+
+    final item0Weight = items[0].weight;
+    final item0CenterAngle = item0Weight * anglePerWeight / 2;
+
+    var target = item0CenterAngle - angle;
+    target = target % (2 * _math.pi);
+    if (target < 0) target += 2 * _math.pi;
+
+    double currentAngle = 0;
+    int index = -1;
+
+    for (var i = 0; i < items.length; i++) {
+      final w = items[i].weight * anglePerWeight;
+      if (target >= currentAngle && target < currentAngle + w) {
+        index = i;
+        break;
+      }
+      currentAngle += w;
+    }
+
+    if (index == -1) index = 0;
+
+    if (_lastVibratedAngle == -1) {
+         _lastVibratedAngle = index.toDouble();
+         return null;
+    }
+
+    if (_lastVibratedAngle.toInt() == index) {
       return null;
     }
-    if (_lastVibratedAngle ~/ step == angleDegrees ~/ step) {
-      return null;
-    }
-    final index = angleDegrees ~/ step * angle.sign.toInt() * -1;
+
     final VoidCallback hapticFeedbackFunction;
     switch (hapticImpact) {
       case HapticImpact.none:
@@ -396,11 +462,12 @@ class _FortuneWheelState extends State<FortuneWheel>
       animateArrow();
     }
 
+    _lastVibratedAngle = index.toDouble();
+
     if (hapticImpact == HapticImpact.none) {
        return index;
     }
 
-    _lastVibratedAngle = (angleDegrees ~/ step) * step;
     return index;
   }
 }
