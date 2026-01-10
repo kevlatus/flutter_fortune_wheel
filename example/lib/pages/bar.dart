@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -18,16 +19,35 @@ class FortuneBarPage extends HookWidget {
     final selected = useStreamController<int>();
     final selectedIndex = useStream(selected.stream, initialData: 0).data ?? 0;
     final isAnimating = useState(false);
+    final isIndefinite = useState(false);
 
     void handleRoll() {
-      selected.add(
-        roll(Constants.fortuneValues.length),
-      );
+      if (isIndefinite.value) {
+        selected.add(Fortune.indefinite);
+        Future.delayed(const Duration(seconds: 2), () {
+          selected.add(roll(Constants.fortuneValues.length));
+        });
+      } else {
+        selected.add(
+          roll(Constants.fortuneValues.length),
+        );
+      }
     }
 
     return AppLayout(
       child: Column(
         children: [
+          SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Indefinite wait'),
+              Switch(
+                value: isIndefinite.value,
+                onChanged: (v) => isIndefinite.value = v,
+              ),
+            ],
+          ),
           SizedBox(height: 8),
           RollButtonWithPreview(
             selected: selectedIndex,
