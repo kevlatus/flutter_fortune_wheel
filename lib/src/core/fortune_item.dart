@@ -9,6 +9,11 @@ part of 'core.dart';
 class FortuneItem implements GestureHandler {
   final FortuneItemStyle? style;
 
+  /// The custom weight of this item.
+  ///
+  /// Defaults to 1.0.
+  final double weight;
+
   /// A widget to be rendered within this item.
   final Widget child;
 
@@ -152,6 +157,7 @@ class FortuneItem implements GestureHandler {
 
   const FortuneItem({
     this.style,
+    this.weight = 1.0,
     required this.child,
     this.onTap,
     this.onTapUp,
@@ -202,11 +208,14 @@ class FortuneItem implements GestureHandler {
   });
 
   @override
-  int get hashCode => hash2(child, style);
+  int get hashCode => hash3(child, style, weight);
 
   @override
   bool operator ==(Object other) {
-    return other is FortuneItem && style == other.style && child == other.child;
+    return other is FortuneItem &&
+        style == other.style &&
+        child == other.child &&
+        weight == other.weight;
   }
 }
 
@@ -214,17 +223,22 @@ class FortuneItem implements GestureHandler {
 class TransformedFortuneItem implements FortuneItem {
   final FortuneItem _item;
   final double angle;
+  final double sweepAngle;
   final Offset offset;
 
   const TransformedFortuneItem({
     required FortuneItem item,
     this.angle = 0.0,
+    this.sweepAngle = 0.0,
     this.offset = Offset.zero,
   }) : _item = item;
 
   Widget get child => _item.child;
 
   FortuneItemStyle? get style => _item.style;
+
+  @override
+  double get weight => _item.weight;
 
   @override
   GestureTapCallback? get onDoubleTap => _item.onDoubleTap;
