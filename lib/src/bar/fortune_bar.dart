@@ -113,6 +113,11 @@ class _FortuneBarState extends State<FortuneBar> with SingleTickerProviderStateM
       duration: widget.duration,
       curve: widget.curve,
       selected: widget.selected,
+      rotationCount: widget.rotationCount,
+      itemCount: widget.items.length,
+      getPosition: (index, progress, itemCount, rotationCount) {
+        return (itemCount * rotationCount + index) * progress;
+      },
       onAnimationStart: () => widget.onAnimationStart?.call(),
       onAnimationEnd: () => widget.onAnimationEnd?.call(),
     );
@@ -138,6 +143,12 @@ class _FortuneBarState extends State<FortuneBar> with SingleTickerProviderStateM
     }
     if (widget.curve != oldWidget.curve) {
       _animationManager.curve = widget.curve;
+    }
+    if (widget.items.length != oldWidget.items.length) {
+      _animationManager.itemCount = widget.items.length;
+    }
+    if (widget.rotationCount != oldWidget.rotationCount) {
+      _animationManager.rotationCount = widget.rotationCount;
     }
     if (widget.selected != oldWidget.selected) {
       _animationManager.updateSelected(widget.selected);
@@ -166,7 +177,10 @@ class _FortuneBarState extends State<FortuneBar> with SingleTickerProviderStateM
             return Stack(
               children: [
                 AnimatedBuilder(
-                    animation: _animationManager.animation,
+                    animation: Listenable.merge([
+                      _animationManager.animation,
+                      _animationManager.valueOffset,
+                    ]),
                     builder: (context, _) {
                       final itemPosition = (widget.items.length * widget.rotationCount +
                           _animationManager.selectedIndex.value);
@@ -175,7 +189,7 @@ class _FortuneBarState extends State<FortuneBar> with SingleTickerProviderStateM
                       final panFactor = 2 / size.width;
                       final panOffset = -panState.distance * panFactor;
                       final position = _animationManager.animation.value * itemPosition +
-                          panOffset * isAnimatingPanFactor;
+                          panOffset * isAnimatingPanFactor + _animationManager.valueOffset.value;
 
                       return _InfiniteBar(
                         centerPosition: 1,

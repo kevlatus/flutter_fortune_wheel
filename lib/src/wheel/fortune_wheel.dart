@@ -219,6 +219,10 @@ class _FortuneWheelState extends State<FortuneWheel>
       selected: widget.selected,
       rotationCount: widget.rotationCount,
       itemCount: widget.items.length,
+      getPosition: (index, progress, itemCount, rotationCount) {
+        return (-2 * _math.pi * index / itemCount) +
+            (2 * _math.pi * rotationCount * progress);
+      },
       onAnimationStart: () => widget.onAnimationStart?.call(),
       onAnimationEnd: () => widget.onAnimationEnd?.call(),
     );
@@ -283,7 +287,7 @@ class _FortuneWheelState extends State<FortuneWheel>
             AnimatedBuilder(
               animation: Listenable.merge([
                 _animationManager.animation,
-                _animationManager.rotationOffset,
+                _animationManager.valueOffset,
               ]),
               builder: (context, _) {
                 final size = MediaQuery.of(context).size;
@@ -312,7 +316,7 @@ class _FortuneWheelState extends State<FortuneWheel>
                   final totalAngle = selectedAngle +
                       panAngle +
                       rotationAngle +
-                      _animationManager.rotationOffset.value;
+                      _animationManager.valueOffset.value;
 
                   final focusedIndex = _borderCross(
                     totalAngle,

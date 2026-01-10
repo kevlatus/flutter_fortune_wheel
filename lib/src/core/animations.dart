@@ -12,12 +12,20 @@ class FortuneCurve {
   static const Curve none = Threshold(0.0);
 }
 
+typedef double FortuneAnimationFunc(
+  int index,
+  double progress,
+  int itemCount,
+  int rotationCount,
+);
+
 /// Manages the animation state for a [FortuneWidget].
 class FortuneAnimationManager {
   final AnimationController controller;
   late final CurvedAnimation animation;
   final ValueNotifier<int> selectedIndex = ValueNotifier(0);
-  final ValueNotifier<double> rotationOffset = ValueNotifier(0);
+  final ValueNotifier<double> valueOffset = ValueNotifier(0);
+  final FortuneAnimationFunc getPosition;
 
   int rotationCount = 1;
   int itemCount = 1;
@@ -31,6 +39,7 @@ class FortuneAnimationManager {
     required Duration duration,
     required Curve curve,
     required Stream<int> selected,
+    required this.getPosition,
     this.rotationCount = 1,
     this.itemCount = 1,
     this.onAnimationStart,
@@ -62,11 +71,11 @@ class FortuneAnimationManager {
 
     final oldIndex = selectedIndex.value;
     final newIndex = event;
-    final oldAngle = _getAngle(oldIndex, controller.value);
-    final newAngle = _getAngle(newIndex, 0);
+    final oldAngle = getPosition(oldIndex, controller.value, itemCount, rotationCount);
+    final newAngle = getPosition(newIndex, 0, itemCount, rotationCount);
     final diff = oldAngle - newAngle;
 
-    rotationOffset.value += diff;
+    valueOffset.value += diff;
     selectedIndex.value = event;
 
     if (event == Fortune.indefinite) {
@@ -74,11 +83,6 @@ class FortuneAnimationManager {
     } else {
       animate();
     }
-  }
-
-  double _getAngle(int index, double progress) {
-    return (-2 * _math.pi * index / itemCount) +
-        (2 * _math.pi * rotationCount * progress);
   }
 
   Future<void> animate() async {
@@ -100,6 +104,6 @@ class FortuneAnimationManager {
     _subscription?.cancel();
     controller.dispose();
     selectedIndex.dispose();
-    rotationOffset.dispose();
+    valueOffset.dispose();
   }
 }
