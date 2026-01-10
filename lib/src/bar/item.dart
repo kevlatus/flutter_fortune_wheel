@@ -72,6 +72,7 @@ class _FortuneBarItem extends StatelessWidget {
             ),
           ),
           color: style.color,
+          gradient: style.gradient,
         ),
         child: Center(
           child: DefaultTextStyle(

@@ -19,6 +19,7 @@ class _CircleSlice extends StatelessWidget {
   final double radius;
   final double angle;
   final Color fillColor;
+  final Gradient? gradient;
   final Color strokeColor;
   final double strokeWidth;
 
@@ -26,6 +27,7 @@ class _CircleSlice extends StatelessWidget {
     Key? key,
     required this.radius,
     required this.fillColor,
+    this.gradient,
     required this.strokeColor,
     this.strokeWidth = 1,
     required this.angle,
@@ -41,6 +43,7 @@ class _CircleSlice extends StatelessWidget {
         painter: _CircleSlicePainter(
           angle: angle,
           fillColor: fillColor,
+          gradient: gradient,
           strokeColor: strokeColor,
           strokeWidth: strokeWidth,
         ),
