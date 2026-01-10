@@ -145,34 +145,6 @@ class _FortuneBarState extends State<FortuneBar> with SingleTickerProviderStateM
     // animateFirst is only for initState
   }
 
-  double _getIndicatorWidth(
-    Alignment alignment,
-    double scrollOffset,
-    List<double> itemWidths,
-    double screenWidth,
-    double totalWidth,
-  ) {
-    final centerOffset = screenWidth / 2;
-    final P = scrollOffset % totalWidth;
-    final relativeP = P < 0 ? P + totalWidth : P;
-
-    final screenX = (alignment.x + 1) / 2 * screenWidth;
-    final distFromCenter = screenX - centerOffset;
-
-    var stripPos = relativeP + distFromCenter;
-    stripPos %= totalWidth;
-    if (stripPos < 0) stripPos += totalWidth;
-
-    double currentPos = 0;
-    for (final w in itemWidths) {
-      if (stripPos < currentPos + w) {
-        return w;
-      }
-      currentPos += w;
-    }
-    return itemWidths.isEmpty ? 0 : itemWidths.last;
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -254,15 +226,11 @@ class _FortuneBarState extends State<FortuneBar> with SingleTickerProviderStateM
                         child: Align(
                           alignment: it.alignment,
                           child: SizedBox(
-                            width: _getIndicatorWidth(
-                              it.alignment.resolve(Directionality.of(context)),
-                              scrollOffset,
-                              itemWidths,
-                              size.width,
-                              totalWidth,
-                            ),
+                            width: unitWidth,
                             height: widget.height,
-                            child: it.child,
+                            child: Center(
+                              child: it.child,
+                            ),
                           ),
                         ),
                       ),
