@@ -186,11 +186,12 @@ class _FortuneBarState extends State<FortuneBar> with SingleTickerProviderStateM
                           for (int i = 0; i < widget.items.length; i++)
                             _FortuneBarItem(
                               item: widget.items[i],
-                              style: widget.styleStrategy.getItemStyle(
-                                theme,
-                                i,
-                                widget.items.length,
-                              ),
+                              style: widget.items[i].style ??
+                                  widget.styleStrategy.getItemStyle(
+                                    theme,
+                                    i,
+                                    widget.items.length,
+                                  ),
                             )
                         ],
                       );
