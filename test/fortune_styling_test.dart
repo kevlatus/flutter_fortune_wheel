@@ -29,6 +29,11 @@ void main() {
 
       final textFinder = find.text('Item 1');
       expect(textFinder, findsOneWidget);
+
+      final textContext = tester.element(textFinder.first);
+      final defaultTextStyle = DefaultTextStyle.of(textContext);
+
+      expect(defaultTextStyle.style.fontSize, 20);
     });
 
     testWidgets('FortuneBar respects item style', (tester) async {
