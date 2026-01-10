@@ -88,7 +88,7 @@ class _WheelData {
 ///  * [FortuneWidget()], which automatically chooses a fitting widget
 ///  * [Fortune.randomItem], which helps selecting random items from a list
 ///  * [Fortune.randomDuration], which helps choosing a random duration
-class FortuneWheel extends HookWidget implements FortuneWidget {
+class FortuneWheel extends StatefulWidget implements FortuneWidget {
   /// The default value for [indicators] on a [FortuneWheel].
   /// Currently uses a single [TriangleIndicator] on [Alignment.topCenter].
   static const List<FortuneIndicator> kDefaultIndicators = <FortuneIndicator>[
@@ -185,67 +185,95 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
         super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    // Arrow animation: Setting up the AnimationController and Animation
-    final arrowController =
-        useAnimationController(duration: const Duration(milliseconds: 300));
-// Initializes an AnimationController with a duration of 300 milliseconds.
-// This controller manages the timing of the animation.
+  _FortuneWheelState createState() => _FortuneWheelState();
+}
 
-    final arrowAnimation = Tween<double>(begin: 0, end: -20).animate(
+class _FortuneWheelState extends State<FortuneWheel>
+    with TickerProviderStateMixin {
+  late FortuneAnimationManager _animationManager;
+  late AnimationController _arrowController;
+  late Animation<double> _arrowAnimation;
+  double _lastVibratedAngle = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _arrowController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+    _arrowAnimation = Tween<double>(begin: 0, end: -20).animate(
       CurvedAnimation(
-        parent: arrowController,
-        curve: Curves.easeOut, // Curve for the forward animation (ease out)
-        reverseCurve:
-            Curves.easeIn, // Curve for the reverse animation (ease in)
+        parent: _arrowController,
+        curve: Curves.easeOut,
+        reverseCurve: Curves.easeIn,
       ),
     );
-// Creates an Animation that interpolates from 0 to -20 using a Tween.
-// The animation uses a CurvedAnimation to apply easing curves for smoother motion.
 
-    useEffect(() {
-      // Add a listener to the arrowController to monitor animation status changes
-      arrowController.addStatusListener((status) {
-        // If the animation has completed (reached the end)
-        if (status == AnimationStatus.completed) {
-          // Reverse the animation back to the starting point
-          arrowController.reverse();
-        }
-      });
-      // No cleanup necessary, so return null
-      return null;
-    }, [arrowController]); // The effect depends on arrowController
+    _arrowController.addStatusListener(_arrowStatusListener);
 
-    void _animateArrow() {
-      // Check if the animation has completed (reached the end)
-      if (arrowController.isCompleted) {
-        // Reset the animation controller to the beginning
-        arrowController.reset();
-      }
-      // Start the animation moving forward from the current position
-      arrowController.forward();
-    }
-
-    final animation = useFortuneAnimation(
-      duration: duration,
-      curve: curve,
-      selected: selected,
-      animateFirst: animateFirst,
-      onAnimationStart: onAnimationStart,
-      onAnimationEnd: onAnimationEnd,
+    _animationManager = FortuneAnimationManager(
+      vsync: this,
+      duration: widget.duration,
+      curve: widget.curve,
+      selected: widget.selected,
+      onAnimationStart: () => widget.onAnimationStart?.call(),
+      onAnimationEnd: () => widget.onAnimationEnd?.call(),
     );
 
-    final lastVibratedAngle = useRef<double>(0);
+    if (widget.animateFirst) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        _animationManager.animate();
+      });
+    }
+  }
 
+  void _arrowStatusListener(AnimationStatus status) {
+    if (status == AnimationStatus.completed) {
+      _arrowController.reverse();
+    }
+  }
+
+  void _animateArrow() {
+    if (_arrowController.isCompleted) {
+      _arrowController.reset();
+    }
+    _arrowController.forward();
+  }
+
+  @override
+  void dispose() {
+    _arrowController.removeStatusListener(_arrowStatusListener);
+    _arrowController.dispose();
+    _animationManager.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(FortuneWheel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.duration != oldWidget.duration) {
+      _animationManager.duration = widget.duration;
+    }
+    if (widget.curve != oldWidget.curve) {
+      _animationManager.curve = widget.curve;
+    }
+    if (widget.selected != oldWidget.selected) {
+      _animationManager.updateSelected(widget.selected);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return PanAwareBuilder(
       behavior: HitTestBehavior.translucent,
-      physics: physics,
-      onFling: onFling,
+      physics: widget.physics,
+      onFling: widget.onFling,
       builder: (context, panState) {
         return Stack(
           children: [
             AnimatedBuilder(
-              animation: animation.animation,
+              animation: _animationManager.animation,
               builder: (context, _) {
                 final size = MediaQuery.of(context).size;
                 final meanSize = (size.width + size.height) / 2;
@@ -254,38 +282,42 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
                 return LayoutBuilder(builder: (context, constraints) {
                   final wheelData = _WheelData(
                     constraints: constraints,
-                    itemCount: items.length,
+                    itemCount: widget.items.length,
                     textDirection: Directionality.of(context),
                   );
 
                   final isAnimatingPanFactor =
-                      animation.controller.isAnimating ? 0 : 1;
-                  final selectedAngle =
-                      -2 * _math.pi * (animation.selectedIndex.value / items.length);
+                      _animationManager.controller.isAnimating ? 0 : 1;
+                  final selectedAngle = -2 *
+                      _math.pi *
+                      (_animationManager.selectedIndex.value /
+                          widget.items.length);
                   final panAngle =
                       panState.distance * panFactor * isAnimatingPanFactor;
-                  final rotationAngle = _getAngle(animation.animation.value);
-                  final alignmentOffset = _calculateAlignmentOffset(alignment);
+                  final rotationAngle =
+                      widget._getAngle(_animationManager.animation.value);
+                  final alignmentOffset =
+                      _calculateAlignmentOffset(widget.alignment);
                   final totalAngle = selectedAngle + panAngle + rotationAngle;
 
                   final focusedIndex = _borderCross(
                     totalAngle,
-                    lastVibratedAngle,
-                    items.length,
-                    hapticImpact,
-                    _animateArrow, // _tetikle fonksiyonunu burada geçiriyoruz
+                    widget.items.length,
+                    widget.hapticImpact,
+                    _animateArrow,
                   );
                   if (focusedIndex != null) {
-                    onFocusItemChanged?.call(focusedIndex % items.length);
+                    widget.onFocusItemChanged
+                        ?.call(focusedIndex % widget.items.length);
                   }
 
                   final transformedItems = [
-                    for (var i = 0; i < items.length; i++)
+                    for (var i = 0; i < widget.items.length; i++)
                       TransformedFortuneItem(
-                        item: items[i],
+                        item: widget.items[i],
                         angle: totalAngle +
                             alignmentOffset +
-                            _calculateSliceAngle(i, items.length),
+                            _calculateSliceAngle(i, widget.items.length),
                         offset: wheelData.offset,
                       ),
                   ];
@@ -294,21 +326,21 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
                     child: _CircleSlices(
                       items: transformedItems,
                       wheelData: wheelData,
-                      styleStrategy: styleStrategy,
+                      styleStrategy: widget.styleStrategy,
                     ),
                   );
                 });
               },
             ),
-            for (var it in indicators)
+            for (var it in widget.indicators)
               IgnorePointer(
                 child: Container(
                   alignment: it.alignment,
                   child: AnimatedBuilder(
-                    animation: arrowAnimation,
+                    animation: _arrowAnimation,
                     builder: (context, child) {
                       return Transform.translate(
-                        offset: Offset(0, arrowAnimation.value),
+                        offset: Offset(0, _arrowAnimation.value),
                         child: child,
                       );
                     },
@@ -325,7 +357,6 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
   /// * vibrate and animate arrow when cross border
   int? _borderCross(
     double angle,
-    ObjectRef<double> lastVibratedAngle,
     int itemsNumber,
     HapticImpact hapticImpact,
     VoidCallback animateArrow,
@@ -334,20 +365,21 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
     final angleDegrees = (angle * 180 / _math.pi).abs() + step / 2;
     if (step.isNaN ||
         angleDegrees.isNaN ||
-        lastVibratedAngle.value.isNaN ||
-        lastVibratedAngle.value.isInfinite ||
+        _lastVibratedAngle.isNaN ||
+        _lastVibratedAngle.isInfinite ||
         angleDegrees.isInfinite ||
         step == 0) {
       return null;
     }
-    if (lastVibratedAngle.value ~/ step == angleDegrees ~/ step) {
+    if (_lastVibratedAngle ~/ step == angleDegrees ~/ step) {
       return null;
     }
     final index = angleDegrees ~/ step * angle.sign.toInt() * -1;
-    final hapticFeedbackFunction;
+    final VoidCallback hapticFeedbackFunction;
     switch (hapticImpact) {
       case HapticImpact.none:
-        return index;
+        hapticFeedbackFunction = () {};
+        break;
       case HapticImpact.heavy:
         hapticFeedbackFunction = HapticFeedback.heavyImpact;
         break;
@@ -359,8 +391,16 @@ class FortuneWheel extends HookWidget implements FortuneWidget {
         break;
     }
     hapticFeedbackFunction();
-    animateArrow();
-    lastVibratedAngle.value = (angleDegrees ~/ step) * step;
+
+    if (hapticImpact != HapticImpact.none) {
+      animateArrow();
+    }
+
+    if (hapticImpact == HapticImpact.none) {
+       return index;
+    }
+
+    _lastVibratedAngle = (angleDegrees ~/ step) * step;
     return index;
   }
 }

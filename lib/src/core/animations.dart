@@ -12,31 +12,46 @@ class FortuneCurve {
   static const Curve none = Threshold(0.0);
 }
 
-/// Result of [useFortuneAnimation].
-class FortuneAnimation {
+/// Manages the animation state for a [FortuneWidget].
+class FortuneAnimationManager {
   final AnimationController controller;
-  final Animation<double> animation;
-  final ValueNotifier<int> selectedIndex;
+  late final CurvedAnimation animation;
+  final ValueNotifier<int> selectedIndex = ValueNotifier(0);
 
-  const FortuneAnimation({
-    required this.controller,
-    required this.animation,
-    required this.selectedIndex,
-  });
-}
+  final VoidCallback? onAnimationStart;
+  final VoidCallback? onAnimationEnd;
+  StreamSubscription? _subscription;
 
-/// A hook for handling fortune animations.
-FortuneAnimation useFortuneAnimation({
-  required Duration duration,
-  required Curve curve,
-  required Stream<int> selected,
-  required bool animateFirst,
-  VoidCallback? onAnimationStart,
-  VoidCallback? onAnimationEnd,
-}) {
-  final controller = useAnimationController(duration: duration);
-  final animation = CurvedAnimation(parent: controller, curve: curve);
-  final selectedIndex = useState<int>(0);
+  FortuneAnimationManager({
+    required TickerProvider vsync,
+    required Duration duration,
+    required Curve curve,
+    required Stream<int> selected,
+    this.onAnimationStart,
+    this.onAnimationEnd,
+  }) : controller = AnimationController(vsync: vsync, duration: duration) {
+    animation = CurvedAnimation(parent: controller, curve: curve);
+    _subscription = selected.listen((event) {
+      selectedIndex.value = event;
+      animate();
+    });
+  }
+
+  void set duration(Duration value) {
+    controller.duration = value;
+  }
+
+  void set curve(Curve value) {
+    animation.curve = value;
+  }
+
+  void updateSelected(Stream<int> selected) {
+    _subscription?.cancel();
+    _subscription = selected.listen((event) {
+      selectedIndex.value = event;
+      animate();
+    });
+  }
 
   Future<void> animate() async {
     if (controller.isAnimating) {
@@ -44,26 +59,18 @@ FortuneAnimation useFortuneAnimation({
     }
 
     await Future.microtask(() => onAnimationStart?.call());
-    await controller.forward(from: 0);
+    try {
+      await controller.forward(from: 0);
+    } catch (e) {
+      // Controller might be disposed
+      return;
+    }
     await Future.microtask(() => onAnimationEnd?.call());
   }
 
-  useEffect(() {
-    if (animateFirst) animate();
-    return null;
-  }, []);
-
-  useEffect(() {
-    final subscription = selected.listen((event) {
-      selectedIndex.value = event;
-      animate();
-    });
-    return subscription.cancel;
-  }, []);
-
-  return FortuneAnimation(
-    controller: controller,
-    animation: animation,
-    selectedIndex: selectedIndex,
-  );
+  void dispose() {
+    _subscription?.cancel();
+    controller.dispose();
+    selectedIndex.dispose();
+  }
 }

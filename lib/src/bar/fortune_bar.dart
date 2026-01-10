@@ -9,7 +9,7 @@ part of 'bar.dart';
 ///  * [FortuneWidget()], which automatically chooses a fitting widget
 ///  * [Fortune.randomItem], which helps selecting random items from a list
 ///  * [Fortune.randomDuration], which helps choosing a random duration
-class FortuneBar extends HookWidget implements FortuneWidget {
+class FortuneBar extends StatefulWidget implements FortuneWidget {
   static const int kDefaultVisibleItemCount = 3;
 
   static const List<FortuneIndicator> kDefaultIndicators = <FortuneIndicator>[
@@ -99,44 +99,82 @@ class FortuneBar extends HookWidget implements FortuneWidget {
         super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final visibleItemCount = _math.min(this.visibleItemCount, items.length);
-    final animation = useFortuneAnimation(
-      duration: duration,
-      curve: curve,
-      selected: selected,
-      animateFirst: animateFirst,
-      onAnimationStart: onAnimationStart,
-      onAnimationEnd: onAnimationEnd,
+  _FortuneBarState createState() => _FortuneBarState();
+}
+
+class _FortuneBarState extends State<FortuneBar> with SingleTickerProviderStateMixin {
+  late FortuneAnimationManager _animationManager;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationManager = FortuneAnimationManager(
+      vsync: this,
+      duration: widget.duration,
+      curve: widget.curve,
+      selected: widget.selected,
+      onAnimationStart: () => widget.onAnimationStart?.call(),
+      onAnimationEnd: () => widget.onAnimationEnd?.call(),
     );
 
+    if (widget.animateFirst) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) {
+        _animationManager.animate();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _animationManager.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(FortuneBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.duration != oldWidget.duration) {
+      _animationManager.duration = widget.duration;
+    }
+    if (widget.curve != oldWidget.curve) {
+      _animationManager.curve = widget.curve;
+    }
+    if (widget.selected != oldWidget.selected) {
+      _animationManager.updateSelected(widget.selected);
+    }
+    // animateFirst is only for initState
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final visibleItemCount = _math.min(widget.visibleItemCount, widget.items.length);
     final theme = Theme.of(context);
 
     return PanAwareBuilder(
         behavior: HitTestBehavior.translucent,
-        physics: physics,
-        onFling: onFling,
+        physics: widget.physics,
+        onFling: widget.onFling,
         builder: (context, panState) {
           return LayoutBuilder(builder: (context, constraints) {
             final size = Size(
-              fullWidth
+              widget.fullWidth
                   ? MediaQuery.of(context).size.width
                   : constraints.maxWidth,
-              height,
+              widget.height,
             );
 
             return Stack(
               children: [
                 AnimatedBuilder(
-                    animation: animation.animation,
+                    animation: _animationManager.animation,
                     builder: (context, _) {
-                      final itemPosition = (items.length * rotationCount +
-                          animation.selectedIndex.value);
+                      final itemPosition = (widget.items.length * widget.rotationCount +
+                          _animationManager.selectedIndex.value);
                       final isAnimatingPanFactor =
-                          animation.controller.isAnimating ? 0 : 1;
+                          _animationManager.controller.isAnimating ? 0 : 1;
                       final panFactor = 2 / size.width;
                       final panOffset = -panState.distance * panFactor;
-                      final position = animation.animation.value * itemPosition +
+                      final position = _animationManager.animation.value * itemPosition +
                           panOffset * isAnimatingPanFactor;
 
                       return _InfiniteBar(
@@ -145,25 +183,25 @@ class FortuneBar extends HookWidget implements FortuneWidget {
                         size: size,
                         position: position,
                         children: [
-                          for (int i = 0; i < items.length; i++)
+                          for (int i = 0; i < widget.items.length; i++)
                             _FortuneBarItem(
-                              item: items[i],
-                              style: styleStrategy.getItemStyle(
+                              item: widget.items[i],
+                              style: widget.styleStrategy.getItemStyle(
                                 theme,
                                 i,
-                                items.length,
+                                widget.items.length,
                               ),
                             )
                         ],
                       );
                     }),
-                for (var it in indicators)
+                for (var it in widget.indicators)
                   IgnorePointer(
                     child: Align(
                       alignment: it.alignment,
                       child: SizedBox(
                         width: size.width / visibleItemCount,
-                        height: height,
+                        height: widget.height,
                         child: it.child,
                       ),
                     ),
