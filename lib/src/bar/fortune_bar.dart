@@ -147,7 +147,6 @@ class _FortuneBarState extends State<FortuneBar> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    final visibleItemCount = _math.min(widget.visibleItemCount, widget.items.length);
     final theme = Theme.of(context);
 
     return PanAwareBuilder(
@@ -163,25 +162,50 @@ class _FortuneBarState extends State<FortuneBar> with SingleTickerProviderStateM
               widget.height,
             );
 
+            // Calculate weights and dimensions
+            final totalWeight = widget.items.fold<double>(0, (p, e) => p + e.weight);
+            final avgWeight = totalWeight / widget.items.length;
+            final visibleWeight = widget.visibleItemCount * avgWeight;
+            final unitWidth = size.width / visibleWeight;
+
+            final itemWidths = widget.items.map((e) => e.weight * unitWidth).toList();
+            final totalWidth = totalWeight * unitWidth;
+
+            // Calculate Target
+            final selectedIndex = _animationManager.selectedIndex.value;
+            double targetCenterWeight = 0;
+            for(int i=0; i<selectedIndex; i++) {
+                targetCenterWeight += widget.items[i].weight;
+            }
+            targetCenterWeight += widget.items[selectedIndex].weight / 2;
+
+            final targetTotalScrollWeight = widget.rotationCount * totalWeight + targetCenterWeight;
+
+            // Pan logic
+            // We want panning width/2 to correspond to 1 item (avg weight).
+            // panWeight = -dist * (2 * avgWeight / size.width)
+            final panWeight = -panState.distance * (2 * avgWeight / size.width);
+
+            final isAnimating = _animationManager.controller.isAnimating;
+            final isAnimatingPanFactor = isAnimating ? 0 : 1;
+
+            // Current Scroll Weight
+            final currentScrollWeight =
+                _animationManager.animation.value * targetTotalScrollWeight
+                + panWeight * isAnimatingPanFactor;
+
+            final scrollOffset = currentScrollWeight * unitWidth;
+
             return Stack(
               children: [
                 AnimatedBuilder(
                     animation: _animationManager.animation,
                     builder: (context, _) {
-                      final itemPosition = (widget.items.length * widget.rotationCount +
-                          _animationManager.selectedIndex.value);
-                      final isAnimatingPanFactor =
-                          _animationManager.controller.isAnimating ? 0 : 1;
-                      final panFactor = 2 / size.width;
-                      final panOffset = -panState.distance * panFactor;
-                      final position = _animationManager.animation.value * itemPosition +
-                          panOffset * isAnimatingPanFactor;
-
                       return _InfiniteBar(
-                        centerPosition: 1,
-                        visibleItemCount: visibleItemCount,
                         size: size,
-                        position: position,
+                        scrollOffset: scrollOffset,
+                        itemWidths: itemWidths,
+                        totalWidth: totalWidth,
                         children: [
                           for (int i = 0; i < widget.items.length; i++)
                             _FortuneBarItem(
@@ -201,7 +225,15 @@ class _FortuneBarState extends State<FortuneBar> with SingleTickerProviderStateM
                     child: Align(
                       alignment: it.alignment,
                       child: SizedBox(
-                        width: size.width / visibleItemCount,
+                        width: size.width / widget.visibleItemCount, // Indicator size assumes uniform?
+                        // The user can customize indicator.
+                        // Standard indicator assumes uniform items.
+                        // Ideally indicator should match the item being pointed at?
+                        // But in FortuneBar, indicator is usually fixed.
+                        // If we have variable weights, the item under indicator has variable width.
+                        // So the indicator width probably shouldn't depend on "visibleItemCount" if items vary?
+                        // Or maybe it should just be a fixed size visual?
+                        // "SizedBox(width: size.width / visibleItemCount)" makes indicator same size as "average item".
                         height: widget.height,
                         child: it.child,
                       ),

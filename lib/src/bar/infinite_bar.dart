@@ -1,83 +1,91 @@
 part of 'bar.dart';
 
-class _RectClipper extends CustomClipper<Rect> {
-  final Rect rect;
-
-  _RectClipper(this.rect);
-
-  @override
-  Rect getClip(Size size) => rect;
-
-  @override
-  bool shouldReclip(covariant _RectClipper oldClipper) =>
-      rect != oldClipper.rect;
-}
-
 class _InfiniteBar extends StatelessWidget {
   final List<Widget> children;
-  final int visibleItemCount;
-  final double position;
-  final int centerPosition;
   final Size size;
+  final double scrollOffset;
+  final List<double> itemWidths;
+  final double totalWidth;
 
   const _InfiniteBar({
     Key? key,
     required this.children,
     required this.size,
-    required this.visibleItemCount,
-    this.position = -1,
-    this.centerPosition = 0,
+    required this.scrollOffset,
+    required this.itemWidths,
+    required this.totalWidth,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final isLengthTwo = children.length == 2;
-    final position = (-this.position + centerPosition) % children.length -
-        (isLengthTwo ? 0.5 : 0.0);
-    final isLockedIn = this.position % 1 == 0;
-    final overflowItemCount = position.ceil() + (isLockedIn ? 1 : 0);
-    final nonIntOffset = position - position.floor();
-    final itemWidth = size.width / visibleItemCount;
+    final centerOffset = size.width / 2;
+    // Current point on strip at center of screen is P = scrollOffset % totalWidth.
+    // If P < 0, P += totalWidth.
+
+    var P = scrollOffset % totalWidth;
+    if (P < 0) P += totalWidth;
+
+    final visibleItems = <Widget>[];
+
+    // Iterate all items.
+    double currentItemStart = 0;
+
+    for (int i = 0; i < children.length; i++) {
+      final w = itemWidths[i];
+      final itemCenter = currentItemStart + w / 2;
+
+      // Relative center to P
+      var relCenter = itemCenter - P;
+
+      // Normalize relCenter to [-totalWidth/2, totalWidth/2]
+      // We want the item instance closest to the center P.
+      // relCenter is distance from P.
+      // We want distance to be minimal modulo totalWidth.
+
+      // Algorithm to minimize |relCenter| with wrapping:
+      // relCenter = (relCenter + totalWidth/2) % totalWidth - totalWidth/2;
+      // Dart % operator can be negative.
+
+      // Safe normalization:
+      while (relCenter < -totalWidth / 2) relCenter += totalWidth;
+      while (relCenter > totalWidth / 2) relCenter -= totalWidth;
+
+      // Determine screen X
+      final screenCenter = relCenter + centerOffset;
+      final screenLeft = screenCenter - w / 2;
+
+      // Check visibility and add to list
+      void addIfVisible(double left) {
+        if (left < size.width && left + w > 0) {
+           visibleItems.add(
+            Positioned(
+              left: left,
+              top: 0,
+              width: w,
+              height: size.height,
+              child: children[i],
+            )
+          );
+        }
+      }
+
+      addIfVisible(screenLeft);
+
+      // Check for wrapping neighbors if totalWidth is small
+      if (totalWidth < size.width + w) {
+          addIfVisible(screenLeft + totalWidth);
+          addIfVisible(screenLeft - totalWidth);
+      }
+
+      currentItemStart += w;
+    }
 
     return ClipRect(
-      clipper: _RectClipper(Rect.fromLTWH(0, 0, size.width, size.height)),
       child: SizedBox(
         width: size.width,
         height: size.height,
         child: Stack(
-          alignment: Alignment.centerLeft,
-          children: [
-            if (isLengthTwo)
-              Transform.translate(
-                offset: Offset((position + children.length) * itemWidth, 0),
-                child: SizedBox(
-                  width: itemWidth,
-                  height: size.height,
-                  child: children[0],
-                ),
-              ),
-            for (int i = 0; i < overflowItemCount; i++)
-              Transform.translate(
-                offset: Offset((i + nonIntOffset - 1) * itemWidth, 0),
-                child: SizedBox(
-                  width: itemWidth,
-                  height: size.height,
-                  child: children[(i -
-                          overflowItemCount -
-                          (isLengthTwo && isLockedIn ? 1 : 0)) %
-                      children.length],
-                ),
-              ),
-            for (int i = 0; i < children.length; i++)
-              Transform.translate(
-                offset: Offset((position + i) * itemWidth, 0),
-                child: SizedBox(
-                  width: itemWidth,
-                  height: size.height,
-                  child: children[i],
-                ),
-              ),
-          ],
+          children: visibleItems,
         ),
       ),
     );
