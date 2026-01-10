@@ -40,8 +40,12 @@ class FortuneBarPage extends HookWidget {
               child: FortuneBar(
                 selected: selected.stream,
                 items: [
-                  for (var it in Constants.fortuneValues)
-                    FortuneItem(child: Text(it), onTap: () => print(it))
+                  for (var i = 0; i < Constants.fortuneValues.length; i++)
+                    FortuneItem(
+                      child: Text(Constants.fortuneValues[i]),
+                      onTap: () => print(Constants.fortuneValues[i]),
+                      weight: i.isEven ? 1 : 2,
+                    )
                 ],
                 onFling: handleRoll,
                 onAnimationStart: () {

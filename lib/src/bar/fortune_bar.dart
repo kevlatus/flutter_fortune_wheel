@@ -15,7 +15,7 @@ class FortuneBar extends StatefulWidget implements FortuneWidget {
   static const List<FortuneIndicator> kDefaultIndicators = <FortuneIndicator>[
     FortuneIndicator(
       alignment: Alignment.topCenter,
-      child: RectangleIndicator(),
+      child: BarIndicator(),
     ),
   ];
 
@@ -102,7 +102,8 @@ class FortuneBar extends StatefulWidget implements FortuneWidget {
   _FortuneBarState createState() => _FortuneBarState();
 }
 
-class _FortuneBarState extends State<FortuneBar> with SingleTickerProviderStateMixin {
+class _FortuneBarState extends State<FortuneBar>
+    with SingleTickerProviderStateMixin {
   late FortuneAnimationManager _animationManager;
 
   @override
@@ -163,12 +164,14 @@ class _FortuneBarState extends State<FortuneBar> with SingleTickerProviderStateM
             );
 
             // Calculate weights and dimensions
-            final totalWeight = widget.items.fold<double>(0, (p, e) => p + e.weight);
+            final totalWeight =
+                widget.items.fold<double>(0, (p, e) => p + e.weight);
             final avgWeight = totalWeight / widget.items.length;
             final visibleWeight = widget.visibleItemCount * avgWeight;
             final unitWidth = size.width / visibleWeight;
 
-            final itemWidths = widget.items.map((e) => e.weight * unitWidth).toList();
+            final itemWidths =
+                widget.items.map((e) => e.weight * unitWidth).toList();
             final totalWidth = totalWeight * unitWidth;
 
             return AnimatedBuilder(
@@ -201,6 +204,8 @@ class _FortuneBarState extends State<FortuneBar> with SingleTickerProviderStateM
 
                 final scrollOffset = currentScrollWeight * unitWidth;
 
+                final minItemWidth = itemWidths.reduce((a, b) => a < b ? a : b);
+
                 return Stack(
                   children: [
                     _InfiniteBar(
@@ -221,6 +226,9 @@ class _FortuneBarState extends State<FortuneBar> with SingleTickerProviderStateM
                           )
                       ],
                     ),
+                    // Indicator children are centered in a slot of width `unitWidth`.
+                    // To ensure the indicator visual stays proportional to the smallest
+                    // item, we constrain the indicator to 80% of the smallest item width.
                     for (var it in widget.indicators)
                       IgnorePointer(
                         child: Align(
@@ -228,8 +236,16 @@ class _FortuneBarState extends State<FortuneBar> with SingleTickerProviderStateM
                           child: SizedBox(
                             width: unitWidth,
                             height: widget.height,
-                            child: Center(
-                              child: it.child,
+                            child: Align(
+                              alignment: Alignment(
+                                  it.alignment.x,
+                                  it.alignment.y < 0
+                                      ? -1.0
+                                      : (it.alignment.y > 0 ? 1.0 : -1.0)),
+                              child: SizedBox(
+                                width: minItemWidth * 0.8,
+                                child: it.child,
+                              ),
                             ),
                           ),
                         ),

@@ -12,3 +12,5 @@ part 'shared.dart';
 part 'triangle.dart';
 
 part 'triangle_indicator.dart';
+
+part 'bar_indicator.dart';
