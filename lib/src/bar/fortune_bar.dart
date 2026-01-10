@@ -145,6 +145,34 @@ class _FortuneBarState extends State<FortuneBar> with SingleTickerProviderStateM
     // animateFirst is only for initState
   }
 
+  double _getIndicatorWidth(
+    Alignment alignment,
+    double scrollOffset,
+    List<double> itemWidths,
+    double screenWidth,
+    double totalWidth,
+  ) {
+    final centerOffset = screenWidth / 2;
+    final P = scrollOffset % totalWidth;
+    final relativeP = P < 0 ? P + totalWidth : P;
+
+    final screenX = (alignment.x + 1) / 2 * screenWidth;
+    final distFromCenter = screenX - centerOffset;
+
+    var stripPos = relativeP + distFromCenter;
+    stripPos %= totalWidth;
+    if (stripPos < 0) stripPos += totalWidth;
+
+    double currentPos = 0;
+    for (final w in itemWidths) {
+      if (stripPos < currentPos + w) {
+        return w;
+      }
+      currentPos += w;
+    }
+    return itemWidths.isEmpty ? 0 : itemWidths.last;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -171,82 +199,76 @@ class _FortuneBarState extends State<FortuneBar> with SingleTickerProviderStateM
             final itemWidths = widget.items.map((e) => e.weight * unitWidth).toList();
             final totalWidth = totalWeight * unitWidth;
 
-            return Stack(
-              children: [
-                AnimatedBuilder(
-                    animation: _animationManager.animation,
-                    builder: (context, _) {
-                      // Calculate Target
-                      final selectedIndex =
-                          _animationManager.selectedIndex.value;
-                      double targetCenterWeight = 0;
-                      for (int i = 0; i < selectedIndex; i++) {
-                        targetCenterWeight += widget.items[i].weight;
-                      }
-                      targetCenterWeight +=
-                          widget.items[selectedIndex].weight / 2;
+            return AnimatedBuilder(
+              animation: _animationManager.animation,
+              builder: (context, _) {
+                // Calculate Target
+                final selectedIndex = _animationManager.selectedIndex.value;
+                double targetCenterWeight = 0;
+                for (int i = 0; i < selectedIndex; i++) {
+                  targetCenterWeight += widget.items[i].weight;
+                }
+                targetCenterWeight += widget.items[selectedIndex].weight / 2;
 
-                      final targetTotalScrollWeight =
-                          widget.rotationCount * totalWeight +
-                              targetCenterWeight;
+                final targetTotalScrollWeight =
+                    widget.rotationCount * totalWeight + targetCenterWeight;
 
-                      // Pan logic
-                      // We want panning width/2 to correspond to 1 item (avg weight).
-                      // panWeight = -dist * (2 * avgWeight / size.width)
-                      final panWeight = -panState.distance *
-                          (2 * avgWeight / size.width);
+                // Pan logic
+                // We want panning width/2 to correspond to 1 item (avg weight).
+                // panWeight = -dist * (2 * avgWeight / size.width)
+                final panWeight =
+                    -panState.distance * (2 * avgWeight / size.width);
 
-                      final isAnimating =
-                          _animationManager.controller.isAnimating;
-                      final isAnimatingPanFactor = isAnimating ? 0 : 1;
+                final isAnimating = _animationManager.controller.isAnimating;
+                final isAnimatingPanFactor = isAnimating ? 0 : 1;
 
-                      // Current Scroll Weight
-                      final currentScrollWeight =
-                          _animationManager.animation.value *
-                                  targetTotalScrollWeight +
-                              panWeight * isAnimatingPanFactor;
+                // Current Scroll Weight
+                final currentScrollWeight = _animationManager.animation.value *
+                        targetTotalScrollWeight +
+                    panWeight * isAnimatingPanFactor;
 
-                      final scrollOffset = currentScrollWeight * unitWidth;
+                final scrollOffset = currentScrollWeight * unitWidth;
 
-                      return _InfiniteBar(
-                        size: size,
-                        scrollOffset: scrollOffset,
-                        itemWidths: itemWidths,
-                        totalWidth: totalWidth,
-                        children: [
-                          for (int i = 0; i < widget.items.length; i++)
-                            _FortuneBarItem(
-                              item: widget.items[i],
-                              style: widget.items[i].style ??
-                                  widget.styleStrategy.getItemStyle(
-                                    theme,
-                                    i,
-                                    widget.items.length,
-                                  ),
-                            )
-                        ],
-                      );
-                    }),
-                for (var it in widget.indicators)
-                  IgnorePointer(
-                    child: Align(
-                      alignment: it.alignment,
-                      child: SizedBox(
-                        width: size.width / widget.visibleItemCount, // Indicator size assumes uniform?
-                        // The user can customize indicator.
-                        // Standard indicator assumes uniform items.
-                        // Ideally indicator should match the item being pointed at?
-                        // But in FortuneBar, indicator is usually fixed.
-                        // If we have variable weights, the item under indicator has variable width.
-                        // So the indicator width probably shouldn't depend on "visibleItemCount" if items vary?
-                        // Or maybe it should just be a fixed size visual?
-                        // "SizedBox(width: size.width / visibleItemCount)" makes indicator same size as "average item".
-                        height: widget.height,
-                        child: it.child,
-                      ),
+                return Stack(
+                  children: [
+                    _InfiniteBar(
+                      size: size,
+                      scrollOffset: scrollOffset,
+                      itemWidths: itemWidths,
+                      totalWidth: totalWidth,
+                      children: [
+                        for (int i = 0; i < widget.items.length; i++)
+                          _FortuneBarItem(
+                            item: widget.items[i],
+                            style: widget.items[i].style ??
+                                widget.styleStrategy.getItemStyle(
+                                  theme,
+                                  i,
+                                  widget.items.length,
+                                ),
+                          )
+                      ],
                     ),
-                  ),
-              ],
+                    for (var it in widget.indicators)
+                      IgnorePointer(
+                        child: Align(
+                          alignment: it.alignment,
+                          child: SizedBox(
+                            width: _getIndicatorWidth(
+                              it.alignment.resolve(Directionality.of(context)),
+                              scrollOffset,
+                              itemWidths,
+                              size.width,
+                              totalWidth,
+                            ),
+                            height: widget.height,
+                            child: it.child,
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
             );
           });
         });
