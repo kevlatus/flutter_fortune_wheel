@@ -171,36 +171,43 @@ class _FortuneBarState extends State<FortuneBar> with SingleTickerProviderStateM
             final itemWidths = widget.items.map((e) => e.weight * unitWidth).toList();
             final totalWidth = totalWeight * unitWidth;
 
-            // Calculate Target
-            final selectedIndex = _animationManager.selectedIndex.value;
-            double targetCenterWeight = 0;
-            for(int i=0; i<selectedIndex; i++) {
-                targetCenterWeight += widget.items[i].weight;
-            }
-            targetCenterWeight += widget.items[selectedIndex].weight / 2;
-
-            final targetTotalScrollWeight = widget.rotationCount * totalWeight + targetCenterWeight;
-
-            // Pan logic
-            // We want panning width/2 to correspond to 1 item (avg weight).
-            // panWeight = -dist * (2 * avgWeight / size.width)
-            final panWeight = -panState.distance * (2 * avgWeight / size.width);
-
-            final isAnimating = _animationManager.controller.isAnimating;
-            final isAnimatingPanFactor = isAnimating ? 0 : 1;
-
-            // Current Scroll Weight
-            final currentScrollWeight =
-                _animationManager.animation.value * targetTotalScrollWeight
-                + panWeight * isAnimatingPanFactor;
-
-            final scrollOffset = currentScrollWeight * unitWidth;
-
             return Stack(
               children: [
                 AnimatedBuilder(
                     animation: _animationManager.animation,
                     builder: (context, _) {
+                      // Calculate Target
+                      final selectedIndex =
+                          _animationManager.selectedIndex.value;
+                      double targetCenterWeight = 0;
+                      for (int i = 0; i < selectedIndex; i++) {
+                        targetCenterWeight += widget.items[i].weight;
+                      }
+                      targetCenterWeight +=
+                          widget.items[selectedIndex].weight / 2;
+
+                      final targetTotalScrollWeight =
+                          widget.rotationCount * totalWeight +
+                              targetCenterWeight;
+
+                      // Pan logic
+                      // We want panning width/2 to correspond to 1 item (avg weight).
+                      // panWeight = -dist * (2 * avgWeight / size.width)
+                      final panWeight = -panState.distance *
+                          (2 * avgWeight / size.width);
+
+                      final isAnimating =
+                          _animationManager.controller.isAnimating;
+                      final isAnimatingPanFactor = isAnimating ? 0 : 1;
+
+                      // Current Scroll Weight
+                      final currentScrollWeight =
+                          _animationManager.animation.value *
+                                  targetTotalScrollWeight +
+                              panWeight * isAnimatingPanFactor;
+
+                      final scrollOffset = currentScrollWeight * unitWidth;
+
                       return _InfiniteBar(
                         size: size,
                         scrollOffset: scrollOffset,
