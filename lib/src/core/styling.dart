@@ -9,6 +9,11 @@ class FortuneItemStyle {
   /// The color used for filling the background of a [FortuneItem].
   final Color color;
 
+  /// The gradient used for filling the background of a [FortuneItem].
+  ///
+  /// If this is not null, [color] is ignored.
+  final Gradient? gradient;
+
   /// The color used for painting the border of a [FortuneItem].
   final Color borderColor;
 
@@ -23,6 +28,7 @@ class FortuneItemStyle {
 
   const FortuneItemStyle({
     this.color = Colors.white,
+    this.gradient,
     this.borderColor = Colors.black,
     this.borderWidth = 1.0,
     this.textAlign = TextAlign.start,
@@ -45,6 +51,7 @@ class FortuneItemStyle {
         borderColor,
         borderWidth,
         color,
+        gradient,
         textAlign,
         textStyle,
       ]);
@@ -55,6 +62,7 @@ class FortuneItemStyle {
         borderColor == other.borderColor &&
         borderWidth == other.borderWidth &&
         color == other.color &&
+        gradient == other.gradient &&
         textAlign == other.textAlign &&
         textStyle == other.textStyle;
   }
