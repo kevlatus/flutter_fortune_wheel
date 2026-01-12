@@ -30,8 +30,7 @@ class _TransformedCircleSlice extends StatelessWidget {
         radius: wheelData.radius,
         angle: wheelData.itemAngle,
         fillColor: style.color,
-        strokeColor: style.borderColor,
-        strokeWidth: style.borderWidth,
+        border: style.border,
         gradient: style.gradient,
       ),
     );

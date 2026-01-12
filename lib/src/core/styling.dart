@@ -11,12 +11,7 @@ class FortuneItemStyle {
 
   /// The color used for filling the background of a [FortuneItem].
   final Gradient? gradient;
-
-  /// The color used for painting the border of a [FortuneItem].
-  final Color borderColor;
-
-  /// The border width of a [FortuneItem].
-  final double borderWidth;
+  final SliceBorder border;
 
   /// The alignment of text within a [FortuneItem]
   final TextAlign textAlign;
@@ -26,8 +21,7 @@ class FortuneItemStyle {
 
   const FortuneItemStyle({
     this.color = Colors.white,
-    this.borderColor = Colors.black,
-    this.borderWidth = 1.0,
+    this.border = const SliceBorder(),
     this.gradient,
     this.textAlign = TextAlign.start,
     this.textStyle = const TextStyle(),
@@ -40,14 +34,13 @@ class FortuneItemStyle {
             theme.disabledColor.withOpacity(opacity),
             theme.disabledColor,
           ),
-          borderWidth: 0.0,
+          border: const SliceBorder(),
           textStyle: TextStyle(color: theme.colorScheme.onPrimary),
         );
 
   @override
   int get hashCode => hashObjects([
-        borderColor,
-        borderWidth,
+        border,
         color,
         textAlign,
         textStyle,
@@ -56,8 +49,7 @@ class FortuneItemStyle {
   @override
   bool operator ==(Object other) {
     return other is FortuneItemStyle &&
-        borderColor == other.borderColor &&
-        borderWidth == other.borderWidth &&
+        border == other.border &&
         color == other.color &&
         textAlign == other.textAlign &&
         textStyle == other.textStyle;
@@ -109,17 +101,15 @@ mixin DisableAwareStyleStrategy {
 /// is drawn using the same color at 0.3 opacity.
 class UniformStyleStrategy with DisableAwareStyleStrategy implements StyleStrategy {
   final Color? color;
-  final Color? borderColor;
-  final double? borderWidth;
+  final SliceBorder? border;
   final TextAlign? textAlign;
   final TextStyle? textStyle;
   final List<int> disabledIndices;
 
   const UniformStyleStrategy({
     this.color,
-    this.borderColor,
-    this.borderWidth,
     this.textAlign,
+    this.border,
     this.textStyle,
     this.disabledIndices = const <int>[],
   });
@@ -137,8 +127,21 @@ class UniformStyleStrategy with DisableAwareStyleStrategy implements StyleStrate
               theme.colorScheme.primary.withOpacity(0.3),
               theme.colorScheme.surface,
             ),
-        borderColor: borderColor ?? theme.colorScheme.primary,
-        borderWidth: borderWidth ?? 1.0,
+        border: border ??
+            SliceBorder(
+              left: BorderSide(
+                color: theme.colorScheme.primary,
+                width: 1.0,
+              ),
+              right: BorderSide(
+                color: theme.colorScheme.primary,
+                width: 1.0,
+              ),
+              bottom: BorderSide(
+                color: theme.colorScheme.primary,
+                width: 1.0,
+              ),
+            ),
         textStyle: textStyle ?? TextStyle(color: theme.colorScheme.onSurface),
         textAlign: textAlign ?? TextAlign.center,
       ),
@@ -183,8 +186,7 @@ class AlternatingStyleStrategy with DisableAwareStyleStrategy implements StyleSt
       itemCount,
       () => FortuneItemStyle(
         color: _getFillColor(theme, index, itemCount),
-        borderColor: theme.colorScheme.primary,
-        borderWidth: 0.0,
+        border: SliceBorder(),
         textAlign: TextAlign.start,
         textStyle: TextStyle(color: theme.colorScheme.onPrimary),
       ),
