@@ -26,7 +26,7 @@ class AlignmentSelector extends StatelessWidget {
       decoration: InputDecoration(
         labelText: 'Indicator Alignment',
       ),
-      value: selected,
+      initialValue: selected,
       items: [
         for (final entry in alignments.entries)
           DropdownMenuItem(

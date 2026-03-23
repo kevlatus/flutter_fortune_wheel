@@ -12,15 +12,6 @@ Offset _calculateWheelOffset(
   return Offset(offsetX, constraints.maxHeight / 2);
 }
 
-double _calculateSliceAngle(int index, int itemCount) {
-  final anglePerChild = 2 * _math.pi / itemCount;
-  final childAngle = anglePerChild * index;
-  // first slice starts at 90 degrees, if 0 degrees is at the top.
-  // The angle offset puts the center of the first slice at the top.
-  final angleOffset = -(_math.pi / 2 + anglePerChild / 2);
-  return childAngle + angleOffset;
-}
-
 double _calculateAlignmentOffset(Alignment alignment) {
   if (alignment == Alignment.topRight) {
     return _math.pi * 0.25;
@@ -336,7 +327,9 @@ class _FortuneWheelState extends State<FortuneWheel>
                             _calculateSliceAngle(i, widget.items.length),
                         offset: wheelData.offset,
                       ),
-                  ];
+                    );
+                    currentStartAngle += sweepAngle;
+                  }
 
                   return SizedBox.expand(
                     child: _CircleSlices(
@@ -390,11 +383,12 @@ class _FortuneWheelState extends State<FortuneWheel>
     if (_lastVibratedAngle ~/ step == angleDegrees ~/ step) {
       return null;
     }
-    final index = angleDegrees ~/ step * angle.sign.toInt() * -1;
-    final hapticFeedbackFunction;
+
+    final VoidCallback hapticFeedbackFunction;
     switch (hapticImpact) {
       case HapticImpact.none:
-        return index;
+        hapticFeedbackFunction = () {};
+        break;
       case HapticImpact.heavy:
         hapticFeedbackFunction = HapticFeedback.heavyImpact;
         break;

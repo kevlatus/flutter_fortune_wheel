@@ -9,6 +9,11 @@ class FortuneItemStyle {
   /// The color used for filling the background of a [FortuneItem].
   final Color color;
 
+  /// The gradient used for filling the background of a [FortuneItem].
+  ///
+  /// If this is not null, [color] is ignored.
+  final Gradient? gradient;
+
   /// The color used for painting the border of a [FortuneItem].
   final Color borderColor;
 
@@ -23,6 +28,7 @@ class FortuneItemStyle {
 
   const FortuneItemStyle({
     this.color = Colors.white,
+    this.gradient,
     this.borderColor = Colors.black,
     this.borderWidth = 1.0,
     this.textAlign = TextAlign.start,
@@ -33,7 +39,7 @@ class FortuneItemStyle {
   FortuneItemStyle.disabled(ThemeData theme, {double opacity = 0.0})
       : this(
           color: Color.alphaBlend(
-            theme.disabledColor.withOpacity(opacity),
+            theme.disabledColor.withValues(alpha: opacity),
             theme.disabledColor,
           ),
           borderWidth: 0.0,
@@ -45,6 +51,7 @@ class FortuneItemStyle {
         borderColor,
         borderWidth,
         color,
+        gradient,
         textAlign,
         textStyle,
       ]);
@@ -55,6 +62,7 @@ class FortuneItemStyle {
         borderColor == other.borderColor &&
         borderWidth == other.borderWidth &&
         color == other.color &&
+        gradient == other.gradient &&
         textAlign == other.textAlign &&
         textStyle == other.textStyle;
   }
@@ -133,7 +141,7 @@ class UniformStyleStrategy
       () => FortuneItemStyle(
         color: color ??
             Color.alphaBlend(
-              theme.colorScheme.primary.withOpacity(0.3),
+              theme.colorScheme.primary.withValues(alpha: 0.3),
               theme.colorScheme.surface,
             ),
         borderColor: borderColor ?? theme.colorScheme.primary,
@@ -158,15 +166,15 @@ class AlternatingStyleStrategy
 
   Color _getFillColor(ThemeData theme, int index, int itemCount) {
     final color = theme.colorScheme.primary;
-    final background = theme.colorScheme.background;
+    final background = theme.colorScheme.surface;
     final opacity = itemCount % 2 == 1 && index == 0
-        ? 0.7 // TODO: make 0.75
+        ? 0.75
         : index % 2 == 0
             ? 0.5
             : 1.0;
 
     return Color.alphaBlend(
-      color.withOpacity(opacity),
+      color.withValues(alpha: opacity),
       background,
     );
   }

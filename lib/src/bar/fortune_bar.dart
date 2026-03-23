@@ -15,7 +15,7 @@ class FortuneBar extends StatefulWidget implements FortuneWidget {
   static const List<FortuneIndicator> kDefaultIndicators = <FortuneIndicator>[
     FortuneIndicator(
       alignment: Alignment.topCenter,
-      child: RectangleIndicator(),
+      child: BarIndicator(),
     ),
   ];
 
@@ -230,9 +230,9 @@ class _FortuneBarState extends State<FortuneBar>
                         height: widget.height,
                         child: it.child,
                       ),
-                    ),
-                  ),
-              ],
+                  ],
+                );
+              },
             );
           });
         });

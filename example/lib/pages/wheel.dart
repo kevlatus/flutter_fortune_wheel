@@ -69,6 +69,17 @@ class _FortuneWheelPageState extends State<FortuneWheelPage> {
           children: [
             alignmentSelector,
             SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Indefinite wait'),
+                Switch(
+                  value: isIndefinite.value,
+                  onChanged: (v) => isIndefinite.value = v,
+                ),
+              ],
+            ),
+            SizedBox(height: 8),
             RollButtonWithPreview(
               selected: _selectedIndex,
               items: Constants.fortuneValues,

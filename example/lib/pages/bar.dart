@@ -54,6 +54,17 @@ class _FortuneBarPageState extends State<FortuneBarPage> {
       child: Column(
         children: [
           SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Indefinite wait'),
+              Switch(
+                value: isIndefinite.value,
+                onChanged: (v) => isIndefinite.value = v,
+              ),
+            ],
+          ),
+          SizedBox(height: 8),
           RollButtonWithPreview(
             selected: _selectedIndex,
             items: Constants.fortuneValues,
@@ -65,8 +76,12 @@ class _FortuneBarPageState extends State<FortuneBarPage> {
               child: FortuneBar(
                 selected: _selected.stream,
                 items: [
-                  for (var it in Constants.fortuneValues)
-                    FortuneItem(child: Text(it), onTap: () => print(it))
+                  for (var i = 0; i < Constants.fortuneValues.length; i++)
+                    FortuneItem(
+                      child: Text(Constants.fortuneValues[i]),
+                      onTap: () => print(Constants.fortuneValues[i]),
+                      weight: i.isEven ? 1 : 2,
+                    )
                 ],
                 onFling: _handleRoll,
                 onAnimationStart: () {

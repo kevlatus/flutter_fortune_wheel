@@ -1,3 +1,4 @@
+// ignore: avoid_classes_with_only_static_members
 class Constants {
   static List<String> get fortuneValues => const <String>[
         'Grogu',
