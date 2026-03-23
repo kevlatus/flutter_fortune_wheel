@@ -171,8 +171,7 @@ class _FortuneBarState extends State<FortuneBar>
 
   @override
   Widget build(BuildContext context) {
-    final visibleItemCount =
-        _math.min(widget.visibleItemCount, widget.items.length);
+    final visibleItemCount = widget.visibleItemCount;
     final theme = Theme.of(context);
 
     return PanAwareBuilder(
@@ -188,51 +187,90 @@ class _FortuneBarState extends State<FortuneBar>
               widget.height,
             );
 
+            final totalWeight =
+                widget.items.fold<double>(0, (p, e) => p + e.weight);
+            final avgWeight = totalWeight / widget.items.length;
+            final visibleWeight = visibleItemCount * avgWeight;
+            final unitWidth = size.width / visibleWeight;
+            final minWeight = widget.items.fold<double>(
+                double.infinity, (p, e) => _math.min(p, e.weight));
+            final minItemWidth = minWeight * unitWidth;
+
             return Stack(
               children: [
-                AnimatedBuilder(
-                    animation: _animation,
-                    builder: (context, _) {
-                      final itemPosition =
-                          (widget.items.length * widget.rotationCount +
-                              _selectedIndex);
-                      final isAnimatingPanFactor =
-                          _animationCtrl.isAnimating ? 0 : 1;
-                      final panFactor = 2 / size.width;
-                      final panOffset = -panState.distance * panFactor;
-                      final position = _animation.value * itemPosition +
-                          panOffset * isAnimatingPanFactor;
+                  AnimatedBuilder(
+                      animation: _animation,
+                      builder: (context, _) {
+                        final itemWidths =
+                            widget.items.map((e) => e.weight * unitWidth).toList();
+                        final totalWidth = totalWeight * unitWidth;
 
-                      return _InfiniteBar(
-                        centerPosition: 1,
-                        visibleItemCount: visibleItemCount,
-                        size: size,
-                        position: position,
-                        children: [
-                          for (int i = 0; i < widget.items.length; i++)
-                            _FortuneBarItem(
-                              item: widget.items[i],
-                              style: widget.styleStrategy.getItemStyle(
-                                theme,
-                                i,
-                                widget.items.length,
-                              ),
-                            )
-                        ],
-                      );
-                    }),
+                        // Calculate Target
+                        double targetCenterWeight = 0;
+                        for (int i = 0; i < _selectedIndex; i++) {
+                          targetCenterWeight += widget.items[i].weight;
+                        }
+                        targetCenterWeight +=
+                            widget.items[_selectedIndex].weight / 2;
+
+                        final targetTotalScrollWeight =
+                            widget.rotationCount * totalWeight +
+                                targetCenterWeight;
+
+                        // Pan logic
+                        final panWeight = -panState.distance *
+                            (2 * avgWeight / size.width);
+
+                        final isAnimatingPanFactor =
+                            _animationCtrl.isAnimating ? 0 : 1;
+
+                        // Current Scroll Weight
+                        final currentScrollWeight = _animation.value *
+                                targetTotalScrollWeight +
+                            panWeight * isAnimatingPanFactor;
+
+                        final scrollOffset = currentScrollWeight * unitWidth;
+
+                        return _InfiniteBar(
+                          size: size,
+                          scrollOffset: scrollOffset,
+                          itemWidths: itemWidths,
+                          totalWidth: totalWidth,
+                          children: [
+                            for (int i = 0; i < widget.items.length; i++)
+                              _FortuneBarItem(
+                                item: widget.items[i],
+                                style: widget.items[i].style ?? widget.styleStrategy.getItemStyle(
+                                  theme,
+                                  i,
+                                  widget.items.length,
+                                ),
+                              )
+                          ],
+                        );
+                      }),
                 for (var it in widget.indicators)
                   IgnorePointer(
                     child: Align(
                       alignment: it.alignment,
                       child: SizedBox(
-                        width: size.width / visibleItemCount,
+                        width: unitWidth,
                         height: widget.height,
-                        child: it.child,
+                        child: Align(
+                          alignment: Alignment(
+                              it.alignment.x,
+                              it.alignment.y < 0
+                                  ? -1.0
+                                  : (it.alignment.y > 0 ? 1.0 : -1.0)),
+                          child: SizedBox(
+                            width: minItemWidth * 0.8,
+                            child: it.child,
+                          ),
+                        ),
                       ),
-                  ],
-                );
-              },
+                    ),
+                  ),
+              ],
             );
           });
         });

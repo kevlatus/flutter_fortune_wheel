@@ -53,18 +53,6 @@ class _FortuneBarPageState extends State<FortuneBarPage> {
     return AppLayout(
       child: Column(
         children: [
-          SizedBox(height: 8),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('Indefinite wait'),
-              Switch(
-                value: isIndefinite.value,
-                onChanged: (v) => isIndefinite.value = v,
-              ),
-            ],
-          ),
-          SizedBox(height: 8),
           RollButtonWithPreview(
             selected: _selectedIndex,
             items: Constants.fortuneValues,

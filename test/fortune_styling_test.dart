@@ -59,16 +59,11 @@ void main() {
       await tester.pumpAndSettle();
 
       final boxes = tester.widgetList<DecoratedBox>(find.byType(DecoratedBox));
-      print('Found ${boxes.length} DecoratedBoxes');
 
       var foundCorrectDecoration = false;
       for (var box in boxes) {
         if (box.decoration is BoxDecoration) {
           final decoration = box.decoration as BoxDecoration;
-          print(
-              // ignore: lines_longer_than_80_chars
-              'BoxDecoration: color=${decoration.color}, border=${decoration.border}');
-
           if (decoration.color == Colors.red) {
             if (decoration.border != null &&
                 decoration.border!.top.color == Colors.green) {
