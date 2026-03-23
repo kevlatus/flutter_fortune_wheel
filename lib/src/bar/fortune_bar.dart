@@ -9,7 +9,7 @@ part of 'bar.dart';
 ///  * [FortuneWidget()], which automatically chooses a fitting widget
 ///  * [Fortune.randomItem], which helps selecting random items from a list
 ///  * [Fortune.randomDuration], which helps choosing a random duration
-class FortuneBar extends HookWidget implements FortuneWidget {
+class FortuneBar extends StatefulWidget implements FortuneWidget {
   static const int kDefaultVisibleItemCount = 3;
 
   static const List<FortuneIndicator> kDefaultIndicators = <FortuneIndicator>[
@@ -99,64 +99,108 @@ class FortuneBar extends HookWidget implements FortuneWidget {
         super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    final visibleItemCount = _math.min(this.visibleItemCount, items.length);
-    final animationCtrl = useAnimationController(duration: duration);
-    final animation = CurvedAnimation(parent: animationCtrl, curve: curve);
+  _FortuneBarState createState() => _FortuneBarState();
+}
 
-    // TODO: refactor: implement shared fortune animation hook
-    Future<void> animate() async {
-      if (animationCtrl.isAnimating) {
-        return;
-      }
+class _FortuneBarState extends State<FortuneBar>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationCtrl;
+  late CurvedAnimation _animation;
+  int _selectedIndex = 0;
+  StreamSubscription<int>? _subscription;
 
-      await Future.microtask(() => onAnimationStart?.call());
-      await animationCtrl.forward(from: 0);
-      await Future.microtask(() => onAnimationEnd?.call());
+  @override
+  void initState() {
+    super.initState();
+    _animationCtrl =
+        AnimationController(vsync: this, duration: widget.duration);
+    _animation = CurvedAnimation(parent: _animationCtrl, curve: widget.curve);
+
+    if (widget.animateFirst) {
+      _animate();
     }
 
-    useEffect(() {
-      if (animateFirst) animate();
-      return null;
-    }, []);
+    _subscription = widget.selected.listen((event) {
+      if (mounted) {
+        setState(() {
+          _selectedIndex = event;
+        });
+      }
+      _animate();
+    });
+  }
 
-    final selectedIndex = useState<int>(0);
-
-    useEffect(() {
-      final subscription = selected.listen((event) {
-        selectedIndex.value = event;
-        animate();
+  @override
+  void didUpdateWidget(FortuneBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.duration != widget.duration) {
+      _animationCtrl.duration = widget.duration;
+    }
+    if (oldWidget.curve != widget.curve) {
+      _animation.curve = widget.curve;
+    }
+    if (oldWidget.selected != widget.selected) {
+      _subscription?.cancel();
+      _subscription = widget.selected.listen((event) {
+        if (mounted) {
+          setState(() {
+            _selectedIndex = event;
+          });
+        }
+        _animate();
       });
-      return subscription.cancel;
-    }, []);
+    }
+  }
 
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    _animationCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _animate() async {
+    if (_animationCtrl.isAnimating) {
+      return;
+    }
+
+    await Future.microtask(() => widget.onAnimationStart?.call());
+    await _animationCtrl.forward(from: 0);
+    await Future.microtask(() => widget.onAnimationEnd?.call());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final visibleItemCount =
+        _math.min(widget.visibleItemCount, widget.items.length);
     final theme = Theme.of(context);
 
     return PanAwareBuilder(
         behavior: HitTestBehavior.translucent,
-        physics: physics,
-        onFling: onFling,
+        physics: widget.physics,
+        onFling: widget.onFling,
         builder: (context, panState) {
           return LayoutBuilder(builder: (context, constraints) {
             final size = Size(
-              fullWidth
+              widget.fullWidth
                   ? MediaQuery.of(context).size.width
                   : constraints.maxWidth,
-              height,
+              widget.height,
             );
 
             return Stack(
               children: [
                 AnimatedBuilder(
-                    animation: animation,
+                    animation: _animation,
                     builder: (context, _) {
                       final itemPosition =
-                          (items.length * rotationCount + selectedIndex.value);
+                          (widget.items.length * widget.rotationCount +
+                              _selectedIndex);
                       final isAnimatingPanFactor =
-                          animationCtrl.isAnimating ? 0 : 1;
+                          _animationCtrl.isAnimating ? 0 : 1;
                       final panFactor = 2 / size.width;
                       final panOffset = -panState.distance * panFactor;
-                      final position = animation.value * itemPosition +
+                      final position = _animation.value * itemPosition +
                           panOffset * isAnimatingPanFactor;
 
                       return _InfiniteBar(
@@ -165,25 +209,25 @@ class FortuneBar extends HookWidget implements FortuneWidget {
                         size: size,
                         position: position,
                         children: [
-                          for (int i = 0; i < items.length; i++)
+                          for (int i = 0; i < widget.items.length; i++)
                             _FortuneBarItem(
-                              item: items[i],
-                              style: styleStrategy.getItemStyle(
+                              item: widget.items[i],
+                              style: widget.styleStrategy.getItemStyle(
                                 theme,
                                 i,
-                                items.length,
+                                widget.items.length,
                               ),
                             )
                         ],
                       );
                     }),
-                for (var it in indicators)
+                for (var it in widget.indicators)
                   IgnorePointer(
                     child: Align(
                       alignment: it.alignment,
                       child: SizedBox(
                         width: size.width / visibleItemCount,
-                        height: height,
+                        height: widget.height,
                         child: it.child,
                       ),
                     ),

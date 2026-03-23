@@ -1,12 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 
 import '../common/common.dart';
 import '../widgets/widgets.dart';
 
-class FortuneBarPage extends HookWidget {
+class FortuneBarPage extends StatefulWidget {
   static const kRouteName = 'FortuneBarPage';
 
   static void go(BuildContext context) {
@@ -14,41 +15,69 @@ class FortuneBarPage extends HookWidget {
   }
 
   @override
+  _FortuneBarPageState createState() => _FortuneBarPageState();
+}
+
+class _FortuneBarPageState extends State<FortuneBarPage> {
+  late StreamController<int> _selected;
+  int _selectedIndex = 0;
+  bool _isAnimating = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _selected = StreamController<int>.broadcast();
+    _selected.stream.listen((event) {
+      if (mounted) {
+        setState(() {
+          _selectedIndex = event;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _selected.close();
+    super.dispose();
+  }
+
+  void _handleRoll() {
+    _selected.add(
+      roll(Constants.fortuneValues.length),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final selected = useStreamController<int>();
-    final selectedIndex = useStream(selected.stream, initialData: 0).data ?? 0;
-    final isAnimating = useState(false);
-
-    void handleRoll() {
-      selected.add(
-        roll(Constants.fortuneValues.length),
-      );
-    }
-
     return AppLayout(
       child: Column(
         children: [
           SizedBox(height: 8),
           RollButtonWithPreview(
-            selected: selectedIndex,
+            selected: _selectedIndex,
             items: Constants.fortuneValues,
-            onPressed: isAnimating.value ? null : handleRoll,
+            onPressed: _isAnimating ? null : _handleRoll,
           ),
           SizedBox(height: 8),
           Expanded(
             child: Center(
               child: FortuneBar(
-                selected: selected.stream,
+                selected: _selected.stream,
                 items: [
                   for (var it in Constants.fortuneValues)
                     FortuneItem(child: Text(it), onTap: () => print(it))
                 ],
-                onFling: handleRoll,
+                onFling: _handleRoll,
                 onAnimationStart: () {
-                  isAnimating.value = true;
+                  setState(() {
+                    _isAnimating = true;
+                  });
                 },
                 onAnimationEnd: () {
-                  isAnimating.value = false;
+                  setState(() {
+                    _isAnimating = false;
+                  });
                 },
               ),
             ),

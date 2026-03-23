@@ -1,12 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_fortune_wheel/flutter_fortune_wheel.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 
 import '../common/common.dart';
 import '../widgets/widgets.dart';
 
-class FortuneWheelPage extends HookWidget {
+class FortuneWheelPage extends StatefulWidget {
   static const kRouteName = 'FortuneWheelPage';
 
   static void go(BuildContext context) {
@@ -14,22 +15,52 @@ class FortuneWheelPage extends HookWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final alignment = useState(Alignment.topCenter);
-    final selected = useStreamController<int>();
-    final selectedIndex = useStream(selected.stream, initialData: 0).data ?? 0;
-    final isAnimating = useState(false);
+  _FortuneWheelPageState createState() => _FortuneWheelPageState();
+}
 
-    final alignmentSelector = AlignmentSelector(
-      selected: alignment.value,
-      onChanged: (v) => alignment.value = v!,
+class _FortuneWheelPageState extends State<FortuneWheelPage> {
+  Alignment _alignment = Alignment.topCenter;
+  late StreamController<int> _selected;
+  int _selectedIndex = 0;
+  bool _isAnimating = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _selected = StreamController<int>.broadcast();
+    _selected.stream.listen((event) {
+      if (mounted) {
+        setState(() {
+          _selectedIndex = event;
+        });
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _selected.close();
+    super.dispose();
+  }
+
+  void _handleRoll() {
+    _selected.add(
+      roll(Constants.fortuneValues.length),
     );
+  }
 
-    void handleRoll() {
-      selected.add(
-        roll(Constants.fortuneValues.length),
-      );
-    }
+  @override
+  Widget build(BuildContext context) {
+    final alignmentSelector = AlignmentSelector(
+      selected: _alignment,
+      onChanged: (v) {
+        if (v != null) {
+          setState(() {
+            _alignment = v;
+          });
+        }
+      },
+    );
 
     return AppLayout(
       child: Padding(
@@ -39,22 +70,22 @@ class FortuneWheelPage extends HookWidget {
             alignmentSelector,
             SizedBox(height: 8),
             RollButtonWithPreview(
-              selected: selectedIndex,
+              selected: _selectedIndex,
               items: Constants.fortuneValues,
-              onPressed: isAnimating.value ? null : handleRoll,
+              onPressed: _isAnimating ? null : _handleRoll,
             ),
             SizedBox(height: 8),
             Expanded(
               child: FortuneWheel(
-                alignment: alignment.value,
-                selected: selected.stream,
-                onAnimationStart: () => isAnimating.value = true,
-                onAnimationEnd: () => isAnimating.value = false,
-                onFling: handleRoll,
+                alignment: _alignment,
+                selected: _selected.stream,
+                onAnimationStart: () => setState(() => _isAnimating = true),
+                onAnimationEnd: () => setState(() => _isAnimating = false),
+                onFling: _handleRoll,
                 hapticImpact: HapticImpact.heavy,
                 indicators: [
                   FortuneIndicator(
-                    alignment: alignment.value,
+                    alignment: _alignment,
                     child: TriangleIndicator(),
                   ),
                 ],
